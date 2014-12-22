@@ -38,8 +38,9 @@ function main(){
 	}
 	window.drawPitchClass = drawPitchClass;
 	function drawPitchClass(pitchClass){
-		var c = getChordNames();
 		selectedPitchClass = pitchClass;
+		var c = getChordNames();
+		getAllXadIntervalMatrices();
 		content.innerHTML = '';
 		var title = gi('pageTitle');
 		var subTitle = gi('pageSubTitle');
@@ -92,6 +93,77 @@ function main(){
 		var s=["th","st","nd","rd"],
 			v=n%100;
 		return n+(s[(v-20)%10]||s[v]||s[0]);
+	}
+	function getAllIntervals(){
+		var intv = [0];
+		for(var x = 0; x < intervalKeys.length; x++){
+			if(toggledIntervals[intervalKeys[x]] === true){
+				intv.push(intervals[intervalKeys[x]]);
+			}
+		}
+		return intv;
+	}
+	function getAllXadChords(xAd){
+		var matches = [];
+		Object.keys(chords[xAd]).map(function(family){
+			Object.keys(chords[xAd][family]).map(function(chord){
+				matches.push({ad: xAd, family: family, name: chord, chord: chords[xAd][family][chord]});
+			});
+		});
+		return matches;
+	}
+	function isSubsetOf(searchFor, searchIn){
+		var isSubset = true;
+		for(var x = 0; x < searchFor.length; x++){
+			if(searchIn.indexOf(searchFor[x]) === -1){
+				return false;
+			}
+		}
+		return isSubset;
+	}
+	function getXadIntervalMatrix(xAd){
+		var intvs = getAllIntervals(),
+			allChords = getAllXadChords(xAd),
+			matches = [];
+		for(var x = 0; x < intvs.length; x ++){
+			tInvers = intvs.map(function(intv){
+				return (intv - intvs[x] + 12) % 12;
+			});
+			// loop thru every chord in the xad and see if any match
+			allChords.map(function(chordMap){
+				if(isSubsetOf(chordMap.chord.root, tInvers)){
+					matches.push(chordMap);
+				}
+				/*
+				Eric says delete this, but you never know
+				chordMap.chord.inversions.map(function(invers){
+					if(isSubsetOf(invers, tInvers)){
+						matches.push(chordMap);
+					}
+				});
+				*/
+			});
+		}
+		return matches;
+	}
+	function getAllXadIntervalMatrices(){
+		var chordTypes = Object.keys(chords),
+			matches = [];
+		for(var x = 0; x < chordTypes.length; x++){
+			var m = getXadIntervalMatrix(chordTypes[x]);
+			if(m.length > 0){
+				matches.concat(m);
+			}
+		}
+		return m;
+	}
+	function drawXAdTable(){
+		var mt = ce('table');
+		var types = Object.keys(chords);
+		types.map(function(type){
+			var tyRow = ce('row');
+			
+		})
 	}
 	function getChordNames() {
 	    var types = Object.keys(chords);
@@ -157,11 +229,14 @@ function main(){
 		var lower = ce('div');
 		upper.className = 'upper';
 		lower.className = 'lower';
-		function createOctave(){
+		var midiNoteNumber = 0;
+		var nlist = [];
+		function createOctave(octaveNumber){
 			var blackKeys = ce('div');
 			blackKeys.className = 'blackOctave';
 			var whiteKeys = ce('div');
 			whiteKeys.className = 'whiteOctave';
+			
 			for(var x = 0; x < 12; x++){
 				(function(x){
 					var k = ce('div');
@@ -174,7 +249,9 @@ function main(){
 						className += ' selectedRootKey';
 					}
 					k.className = className;
-					k.innerHTML = '<div>' + keys[x] + '</div>';
+					k.innerHTML = '<div>' + keys[x] + (octaveNumber-2) + '</div>' + 
+					'<div class="midiNoteNumber">' + midiNoteNumber++ + '</div>';
+					nlist.push(keys[x] + (octaveNumber-2));
 					(flat ? blackKeys : whiteKeys).appendChild(k);
 					k.onclick = function(){
 						selectInterval(getIntervalValue(    (x + 12 - pitchClass) % 12));
@@ -189,10 +266,11 @@ function main(){
 		}
 		p.appendChild(lower);
 		p.appendChild(upper);
-		for(var x = 0; x < 2; x++){
+		for(var x = 0; x < 9; x++){
 			createOctave(x);
 		}
 		noSelect([p, lower, upper]);
+		console.log(nlist.join(' '));
 	}
 	function createSeptadsList(c){
 		var ele = ce('div');

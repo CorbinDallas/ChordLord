@@ -310,28 +310,28 @@ var chords = {
         "tertial": {
             "Major": { root: [0, 4, 7], inversions: [[0, 3, 8], [0, 5, 9]] },
             "Minor": { root: [0, 3, 7], inversions: [[0, 4, 9], [0, 5, 8]] },
-            "Diminished": { root: [0, 3, 6], inversions: [[0, 3, 9], [0, 6, 9]] },
+            "Diminished": { root: [0, 3, 6], inversions: [[0, 3, 9], [0, 6, 9]] }
         },
         "Secundal": {
             "Major Trichord": { root: [0, 2, 4], inversions: [[0, 2, 10], [0, 8, 10]] },
             "Minor Trichord": { root: [0, 2, 3], inversions: [[0, 1, 10], [0, 9, 11]] },
-            "Phrygian Trichord": { root: [0, 1, 3], inversions: [[0, 2, 11], [0, 9, 10]] },
+            "Phrygian Trichord": { root: [0, 1, 3], inversions: [[0, 2, 11], [0, 9, 10]] }
         },
         "Quartal": {
             "Sus 4": { root: [0, 5, 7], inversions: [[0, 2, 7], [0, 5, 10]] },
             "Diminished sus 4": { root: [0, 5, 6], inversions: [[0, 1, 7], [0, 6, 11]] },
-            "Sus #4": { root: [0, 6, 7], inversions: [[0, 1, 6], [0, 5, 11]] },
+            "Sus #4": { root: [0, 6, 7], inversions: [[0, 1, 6], [0, 5, 11]] }
 
         },
         "7 no 3": {
             "Major 7 no 3": { root: [0, 7, 11], inversions: [[0, 4, 5], [0, 1, 8]] },
             "7 no 3": { root: [0, 7, 10], inversions: [[0, 3, 5], [0, 2, 9]] },
-            "Half Diminished no 3": { root: [0, 6, 10], inversions: [[0, 4, 6], [0, 2, 8]] },
+            "Half Diminished no 3": { root: [0, 6, 10], inversions: [[0, 4, 6], [0, 2, 8]] }
         },
         "7 no 5": {
             "Major 7 no 5": { root: [0, 4, 11], inversions: [[0, 7, 8], [0, 1, 5]] },
             "7 no 5": { root: [0, 4, 10], inversions: [[0, 6, 8], [0, 2, 6]] },
-            "Minor 7 no 5": { root: [0, 3, 10], inversions: [[0, 7, 9], [0, 2, 5]] },
+            "Minor 7 no 5": { root: [0, 3, 10], inversions: [[0, 7, 9], [0, 2, 5]] }
         },
         "Nondiatonic": {
             "Augmented": { root: [0, 4, 8], inversions: [] },
