@@ -162,7 +162,7 @@ function main(){
 		var types = Object.keys(chords);
 		types.map(function(type){
 			var tyRow = ce('row');
-			
+
 		})
 	}
 	function getChordNames() {
@@ -272,7 +272,7 @@ function main(){
 		noSelect([p, lower, upper]);
 		console.log(nlist.join(' '));
 	}
-	function createSeptadsList(c){
+	function createSeptadsList(){
 		var ele = ce('div');
 		for(var x = 0; x < families.length; x++){
 			(function(x){
@@ -309,7 +309,7 @@ function main(){
 				}
 			})(x);
 		}
-		c.appendChild(ele);
+		return ele;
 	}
 	function invert(i){
 		return i > 6 ? 11 - i + 1 : i;
@@ -389,49 +389,35 @@ function main(){
 		}
 		drawPitchClass(selectedPitchClass);
 	}
-	function createXadList(parentNode, xad){
-		function formatIntervals(n){
-			return n;
-		}
-		var d = ce('div');
-		var xadKeys = Object.keys(xad);
-		function addEle(e, text, className, parent){
-			var ele = ce(e);
-			ele.className = className || 'chordHeader';
-			ele.innerHTML = text;
-			(parent || d).appendChild(ele);
-			return ele;
-		}
-		['Name', 'Root', 'Inv. 1', 'Inv. 2'].map(function(i){
-			var x = addEle('div', i);
-			if(i==='Name'){
-				x.style.width = '150px';
-			}
-		});
-		for(var x = 0; x < xadKeys.length; x++){
-			(function(x){
-				var i = ce('div');
-				i.className = 'chord';
-				var t = xad[xadKeys[x]]; 
-				addEle('div', xadKeys[x], 'chordName', i);
-				var root = addEle('button', t.root.map(formatIntervals).join(','), 'root', i);
-				root.addEventListener('click', function(){
-					selectAd(t.root);
-				});
-				for(var y = 0; y < t.inversions.length; y++ ){
-					(function(y){
-						var b = addEle('button', t.inversions[y]
-							.map(formatIntervals)
-							.join(','), 'inversion', i);
-						b.addEventListener('click', function(){
-							selectAd(t.inversions[y]);
-						});					
-					})(y);
+	function createXadList(xad){
+		var t = ce('table');
+		Object.keys(chords[xad]).forEach(function(family){
+			var r = ce('row'),
+				c = ce('td');
+			c.className = 'xadfamily';
+			t.appendChild(r);
+			c.innerHTML = '<span>' + family + '</span>';
+			r.appendChild(c);
+			Object.keys(chords[xad][family]).forEach(function(chord){
+				var d = ce('div'),
+					oc = chords[xad][family][chord];
+				d.className = 'xadchord';
+				d.innerHTML = chord;
+				function makeChordSelect(inv){
+					var r = ce('button');
+					r.innerHTML = inv.join();
+					r.onclick = function(){
+						selectAd(inv);
+					}
+					d.appendChild(r);
 				}
-				d.appendChild(i);
-			})(x);
-		}
-		parentNode.appendChild(d);
+				makeChordSelect(oc.root);
+				oc.inversions.forEach(function(inv){
+					makeChordSelect(inv);
+				});
+			});
+		});
+		return t;
 	}
 	function popup(){
 		var c = ce('div');
@@ -457,7 +443,7 @@ function main(){
 			title.className = 'popupTitle';
 			title.innerHTML = 'Triads'
 			c.appendChild(title);
-			createXadList(c, chords.triads);
+			c.appendChild(createXadList('triads'));
 		}
 		var quadradsButton = gi('quadradsButton');
 		quadradsButton.onclick = function(){
@@ -466,7 +452,7 @@ function main(){
 			title.className = 'popupTitle';
 			title.innerHTML = 'Quadrads'
 			c.appendChild(title);
-			createXadList(c, chords.quadrads);
+			c.appendChild(createXadList('quadrads'));
 		}
 		var colorsButton = gi('colorsButton');
 		colorsButton.onclick = function(){
@@ -481,7 +467,7 @@ function main(){
 			title.className = 'popupTitle';
 			c.appendChild(title);
 			c.style.width = '350px';
-			createSeptadsList(c);
+			c.appendChild(createSeptadsList);
 		}
 	}
 	function drawIntervals(){
