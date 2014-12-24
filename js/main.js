@@ -19,7 +19,6 @@ function main(){
 		'#660099',
 		'#CC0099'
 	];
-
 	var intervalKeys = Object.keys(intervals);
 	var cirlceOfFithsNotes = cirlceOfFiths.map(function(pitchClass){
 		return noteNames[pitchClass];
@@ -63,6 +62,7 @@ function main(){
 		drawCircle(c, pitchClasses, pitchClass);
 		drawIntervals();
 		updateIntervalMatrix();
+		updateXadMatrix();
 		var aim = gi('allIntervalMatrix');
 		createPiano(pitchClass);
 		//aim.innerHTML = getAllVectorMatrices();
@@ -102,6 +102,13 @@ function main(){
 			}
 		}
 		return intv;
+	}
+	function getAllChords(){
+		var matches = [];
+		Object.keys(chords).forEach(function(xAd){
+			matches = matches.concat(getAllXadChords(xAd));
+		});
+		return matches;
 	}
 	function getAllXadChords(xAd){
 		var matches = [];
@@ -152,18 +159,10 @@ function main(){
 		for(var x = 0; x < chordTypes.length; x++){
 			var m = getXadIntervalMatrix(chordTypes[x]);
 			if(m.length > 0){
-				matches.concat(m);
+				matches = matches.concat(m);
 			}
 		}
-		return m;
-	}
-	function drawXAdTable(){
-		var mt = ce('table');
-		var types = Object.keys(chords);
-		types.map(function(type){
-			var tyRow = ce('row');
-
-		})
+		return matches;
 	}
 	function getChordNames() {
 	    var types = Object.keys(chords);
@@ -270,7 +269,7 @@ function main(){
 			createOctave(x);
 		}
 		noSelect([p, lower, upper]);
-		console.log(nlist.join(' '));
+		//console.log(nlist.join(' '));
 	}
 	function createSeptadsList(){
 		var ele = ce('div');
@@ -359,6 +358,28 @@ function main(){
 		}
 		return matrix;
 	}
+	function updateXadMatrix(){
+		var m = getAllXadIntervalMatrices();
+		var chords = getAllChords();
+		var t = ce('table');
+		var hr = ce('tr');
+		var cr = ce('tr');
+		t.appendChild(hr);
+		t.appendChild(cr);
+		debugger;
+		chords.forEach(function(chord){
+			var hrc = ce('td');
+			hr.appendChild(hrc);
+			hrc.innerHTML = chord.name;
+
+			var crc = ce('td');
+			cr.appendChild(crc);
+			crc.innerHTML = 'x';
+			// somthin somthin m
+		});
+		var i = gi('chordMatrix');
+		i.appendChild(t);
+	}
 	function updateIntervalMatrix(){
 		var i = gi('intervalMatrix');
 		var intv = [];
@@ -393,28 +414,35 @@ function main(){
 		var t = ce('table');
 		Object.keys(chords[xad]).forEach(function(family){
 			var r = ce('row'),
-				c = ce('td');
+				c = ce('td'),
+				h = ce('h3'),
+				n = ce('div');
+			n.className = 'xadgroup';
+			h.innerHTML = family;
 			c.className = 'xadfamily';
 			t.appendChild(r);
-			c.innerHTML = '<span>' + family + '</span>';
+			n.appendChild(h);
 			r.appendChild(c);
+			c.appendChild(n);
 			Object.keys(chords[xad][family]).forEach(function(chord){
 				var d = ce('div'),
 					oc = chords[xad][family][chord];
 				d.className = 'xadchord';
-				d.innerHTML = chord;
-				function makeChordSelect(inv){
-					var r = ce('button');
-					r.innerHTML = inv.join();
-					r.onclick = function(){
+				d.innerHTML = '<div>' + chord + '</div>';
+				function makeChordSelect(inv, msg){
+					var q = ce('button');
+					q.innerHTML = msg + '<br>' + inv.join();
+					q.onclick = function(){
 						selectAd(inv);
 					}
-					d.appendChild(r);
+					d.appendChild(q);
 				}
-				makeChordSelect(oc.root);
+				makeChordSelect(oc.root, 'Root');
+				var invCount = 1;
 				oc.inversions.forEach(function(inv){
-					makeChordSelect(inv);
+					makeChordSelect(inv, getGetOrdinal(invCount++) + ' inversion' );
 				});
+				n.appendChild(d);
 			});
 		});
 		return t;
@@ -443,6 +471,9 @@ function main(){
 			title.className = 'popupTitle';
 			title.innerHTML = 'Triads'
 			c.appendChild(title);
+			c.style.overflow = 'auto';
+			c.style.width = '550px';
+			c.style.height = '80%';
 			c.appendChild(createXadList('triads'));
 		}
 		var quadradsButton = gi('quadradsButton');
@@ -451,6 +482,9 @@ function main(){
 			var title = ce('div');
 			title.className = 'popupTitle';
 			title.innerHTML = 'Quadrads'
+			c.style.overflow = 'auto';
+			c.style.width = '550px';
+			c.style.height = '80%';
 			c.appendChild(title);
 			c.appendChild(createXadList('quadrads'));
 		}
@@ -467,7 +501,7 @@ function main(){
 			title.className = 'popupTitle';
 			c.appendChild(title);
 			c.style.width = '350px';
-			c.appendChild(createSeptadsList);
+			c.appendChild(createSeptadsList());
 		}
 	}
 	function drawIntervals(){
@@ -536,7 +570,7 @@ function main(){
 				}
 				if(n.indexOf(interval) !== -1){
 					// create note
-					createNote(x, y);	
+					createNote(x, y);
 				}
 			}
 		}
@@ -554,7 +588,6 @@ function main(){
 		var ctx = renderer.getContext();
 		var stave = new Vex.Flow.Stave(10, 0, w);
 		stave.addClef("treble").setContext(ctx).draw();
-		console.log('note: ' + noteNames[pitchClass]);
 		var notes = [];
 		var n = [];
 		var note;

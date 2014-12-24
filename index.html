@@ -126,7 +126,7 @@
 				text-align: center;
 			}
 			.popupTitle {
-				font-size:22px;
+				font-size:14px;
 				font-weight: 600;
 			}
 			#content {
@@ -234,19 +234,33 @@
 				color: black;
 				background: #666;
 			}
-			.xadfamily span {
-				background: #EEE;
+			.xadfamily h3 {
+				margin: 0;
+				padding: 0;
 				border: solid 1px black;
-				clear: both;
-				display: block;
+				background: black;
+				color: white;
+				font-size: 12px;
+			}
+			.xadgroup {
+				width: 500px;
+			}
+			.xadchord {
+				display: inline-block;
 			}
 			.xadchord {
 				background: #BBB;
 				border: solid 1px black;
-				width: 100px;
-				height: 60px;
-				float: left;
+				width: 160px;
+				height: 90px;
 				margin: 2.5px;
+				font-size: 12px;
+				font-weight: bold;
+				color: black;
+			}
+			.xadchord button {
+				font-size: 9px;
+				width: 75px;
 			}
 		</style>
 	</head>
@@ -306,6 +320,12 @@
 					<div class="intervalMatrix">
 						<h3>Interval Vector</h3>
 						<div id="intervalMatrix"></div>
+					</div>
+				</div>
+				<div class="col-md-3" style="width:320px;">
+					<div class="intervalMatrix">
+						<h3>Chord Matrix</h3>
+						<div id="chordMatrix"></div>
 					</div>
 				</div>
 				<div class="col-md-3" style="width:200px;"><div id="circlef"></div></div>
