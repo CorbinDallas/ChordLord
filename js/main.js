@@ -361,23 +361,22 @@ function main(){
 	function updateXadMatrix(){
 		var m = getAllXadIntervalMatrices();
 		var chords = getAllChords();
-		var t = ce('table');
-		var hr = ce('tr');
-		var cr = ce('tr');
-		t.appendChild(hr);
-		t.appendChild(cr);
-		debugger;
+		var t = ce('div');
+		t.style.overflowY = 'scroll';
+		t.style.height = '140px';
 		chords.forEach(function(chord){
-			var hrc = ce('td');
-			hr.appendChild(hrc);
-			hrc.innerHTML = chord.name;
+			m.forEach(function(matrixItem){
+				if(matrixItem.name === chord.name){
+					var hrc = ce('div');
+					hrc.className = 'xadMatrixChord';
+					hrc.innerHTML = chord.name;
+					t.appendChild(hrc);
 
-			var crc = ce('td');
-			cr.appendChild(crc);
-			crc.innerHTML = 'x';
-			// somthin somthin m
+				}
+			});
 		});
 		var i = gi('chordMatrix');
+		i.innerHTML = '';
 		i.appendChild(t);
 	}
 	function updateIntervalMatrix(){
@@ -411,23 +410,27 @@ function main(){
 		drawPitchClass(selectedPitchClass);
 	}
 	function createXadList(xad){
-		var t = ce('table');
+		var t = ce('div');
 		Object.keys(chords[xad]).forEach(function(family){
-			var r = ce('row'),
-				c = ce('td'),
-				h = ce('h3'),
+			var h = ce('div'),
 				n = ce('div');
 			n.className = 'xadgroup';
+			h.className = 'xadfamily';
 			h.innerHTML = family;
-			c.className = 'xadfamily';
-			t.appendChild(r);
-			n.appendChild(h);
-			r.appendChild(c);
-			c.appendChild(n);
+			n.style.display = 'none';
+			t.appendChild(h);
+			t.appendChild(n);
+			h.onclick = function(){
+				if(/none/.test(n.style.display)){
+					n.style.display = 'block';
+				}else{
+					n.style.display = 'none';
+				}
+			}
 			Object.keys(chords[xad][family]).forEach(function(chord){
 				var d = ce('div'),
 					oc = chords[xad][family][chord];
-				d.className = 'xadchord';
+				d.className = 'family';
 				d.innerHTML = '<div>' + chord + '</div>';
 				function makeChordSelect(inv, msg){
 					var q = ce('button');

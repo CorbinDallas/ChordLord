@@ -234,13 +234,12 @@
 				color: black;
 				background: #666;
 			}
-			.xadfamily h3 {
-				margin: 0;
-				padding: 0;
+			.xadfamily {
+				width: 100%;
+				background: #EEE;
 				border: solid 1px black;
-				background: black;
-				color: white;
-				font-size: 12px;
+				margin: 1px;
+				cursor: pointer;
 			}
 			.xadgroup {
 				width: 500px;
@@ -261,6 +260,11 @@
 			.xadchord button {
 				font-size: 9px;
 				width: 75px;
+			}
+			.xadMatrixChord {
+				border: solid 1px black;
+				background: rgb(85, 85, 85);
+				color: white;
 			}
 		</style>
 	</head>
@@ -324,7 +328,7 @@
 				</div>
 				<div class="col-md-3" style="width:320px;">
 					<div class="intervalMatrix">
-						<h3>Chord Matrix</h3>
+						<h3>Scale/Chord Vector</h3>
 						<div id="chordMatrix"></div>
 					</div>
 				</div>
