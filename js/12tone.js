@@ -1,4 +1,3 @@
-
 var families = [
 	{
 		name: 'Major Scale Family',
