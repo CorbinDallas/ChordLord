@@ -43,7 +43,7 @@
         window.addEventListener('resize', function(){
             drawPitchClass(selectedPitchClass);
         });
-        selectAd([0, 2, 3, 6, 7, 8, 11]);
+        selectAd([0, 4, 7]);
         drawPitchClass(selectedPitchClass);
         function d3FormatSetList() {
             var o = {
@@ -149,7 +149,9 @@
             content.appendChild(fifthCircle);
             content.appendChild(piano);
             selectedPitchClass = pitchClass;
-            c = getChordNames();
+            c = getChordNames().map(function (c){
+                return c.name;
+            });
             getAllXadIntervalMatrices();
             t = noteNames[pitchClass];
             if(c.length > 0){
@@ -207,6 +209,7 @@
             return intv;
         }
         function getAllChords(){
+            return;
             var matches = [];
             Object.keys(chords).forEach(function(xAd){
                 matches = matches.concat(getAllXadChords(xAd));
@@ -267,12 +270,53 @@
             }
             return matches;
         }
+        function getSelectedIntervals() {
+            var o = [];
+            Object.keys(intervalKeys).forEach(function (interval) {
+                if(toggledIntervals[intervalKeys[interval]]){
+                    o.push(intervals[intervalKeys[interval]]);
+                }
+            });
+            return o;
+        }
+/*  
+    setList = {
+        triads: {
+            "Tertial (3-11M) Major Triad": {
+                "Major Triad": [0, 4, 7],
+                "b6/b3 Tertial Triad": [0, 3, 8],
+                "6/4 Tertial Triad": [0, 5, 9]
+            },...
+        },...
+    }
+*/
         function getChordNames() {
-            var types = Object.keys(setList);
-           toggledIntervals
-           debugger;
-
-            return chordNames;
+            var selectedIntervals = getSelectedIntervals(),
+                names = [];
+            selectedIntervals.unshift(0);
+            selectedIntervals.sort();
+            Object.keys(setList).forEach(function (rootItem) {
+                Object.keys(setList[rootItem]).forEach(function (subItem) {
+                    Object.keys(setList[rootItem][subItem]).forEach(function (name) {
+                        var v = setList[rootItem][subItem][name].sort(),
+                            x;
+                        if (v.length !== selectedIntervals.length) {
+                            return;
+                        }
+                        for(x = 0; x < v.length; x+=1){
+                            if(selectedIntervals.indexOf(v[x]) === -1) {
+                                return;
+                            }
+                        }
+                        names.push({
+                            rootItem: rootItem,
+                            subItem: subItem,
+                            name: name
+                        });
+                    });
+                });
+            });
+            return names;
         }
         function isAnInterval(pitchClass, interval){
             for(var z = 0; z < intervalKeys.length; z ++) {
@@ -443,6 +487,7 @@
             return matrix;
         }
         function updateXadMatrix(){
+            return;
             var m = getAllXadIntervalMatrices();
             var chords = getAllChords();
             var t = ce('div');
@@ -464,6 +509,7 @@
             i.appendChild(t);
         }
         function updateIntervalMatrix(){
+            return;
             var i = gi('intervalMatrix');
             var intv = [];
             for(var x = 0; x < intervalKeys.length; x++){
@@ -551,6 +597,7 @@
             return c;
         }
         function drawIntervals(){
+            return;
             var container = gi('intervals');
             container.className = 'intervals';
             var i = ce('div');

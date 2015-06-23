@@ -35,876 +35,825 @@ var setList = {
         }
     },
     triads: {
-        "Tertial": {
-            "(3-11M) Major Triad": {
-                "Major Triad": [0, 4, 7],
-                "b6/b3 Tertial Triad": [0, 3, 8],
-                "6/4 Tertial Triad": [0, 5, 9]
-            },
-            "(3-11) Minor Triad": {
-                "Minor Triad": [0, 3, 7],
-                "6/3 Tertial Triad, Major 6 no5": [0, 4, 9],
-                "b6/4 Triad, Augmented sus4": [0, 5, 8]
-            },
-            "(3-10) Diminished Triad": {
-                "Diminished Triad": [0, 3, 6],
-                "6/b3 Tertial Triad, Minor 6 no5, Diminished 7 no5": [0, 3, 9],
-                "6/#4 Triad, Diminished 7 no3": [0, 6, 9]
-            }
+        "Tertial (3-11M) Major Triad": {
+            "Major Triad": [0, 4, 7],
+            "b6/b3 Tertial Triad": [0, 3, 8],
+            "6/4 Tertial Triad": [0, 5, 9]
         },
-        "Secundal": {
-            "(3-6) Major Trichord": {
-                "Major Trichord": [0, 2, 4],
-                "b7/2 Triad Cluster, 7 sus2 no5": [0, 2, 10],
-                "b7/b6 Triad Cluster, Augmented 7 no3": [0, 8, 10]
-            },
-            "(3-2M) Minor Trichord": {
-                "Minor Trichord": [0, 2, 3],
-                "b7/b2 Triad Cluster, 7 susb2 no5": [0, 1, 10],
-                "7/6 Triad Cluster": [0, 9, 11]
-            },
-            "(3-2) Phrygian Trichord": {
-                "Phrygian Trichord": [0, 1, 3],
-                "7/2 Triad Cluster, Major 7 sus2 no5": [0, 2, 11],
-                "b7/6 Triad Cluster": [0, 9, 10]
-            }
+        "Tertial (3-11) Minor Triad": {
+            "Minor Triad": [0, 3, 7],
+            "6/3 Tertial Triad, Major 6 no5": [0, 4, 9],
+            "b6/4 Triad, Augmented sus4": [0, 5, 8]
         },
-        "Quartal": {
-            "(3-9) sus4": {
-                "sus4": [0, 5, 7],
-                "sus2": [0, 2, 7],
-                "Perfect Quartal Triad, 7 sus4 no5": [0, 5, 10]
-            },
-            "(3-5M) Diminished sus4": {
-                "Diminished sus4, Rite Chord 1": [0, 5, 6],
-                "susb2": [0, 1, 7],
-                "Lydian Quartal Triad, Major 7 sus#4 no5": [0, 6, 11]
-            },
-            "(3-5) sus#4": {
-                "sus#4": [0, 6, 7],
-                "Diminished susb2, Rite Chord 2, Viennese Trichord": [0, 1, 6],
-                "Ionian Quartal Triad, Major 7 sus4 no5": [0, 5, 11]
-            }
+        "Tertial (3-10) Diminished Triad": {
+            "Diminished Triad": [0, 3, 6],
+            "6/b3 Tertial Triad, Minor 6 no5, Diminished 7 no5": [0, 3, 9],
+            "6/#4 Triad, Diminished 7 no3": [0, 6, 9]
         },
-        "7 no 3": {
-            "(3-4M) Major 7 no3": {
-                "Major 7 no3": [0, 7, 11],
-                "4/3 Mixed Triad": [0, 4, 5],
-                "b6/b2 Mixed Triad": [0, 1, 8]
-            },
-            "(3-7M) 7 no3": {
-                "7 no3": [0, 7, 10],
-                "4/b3 Mixed Triad": [0, 3, 5],
-                "6/2 Mixed Triad": [0, 2, 9]
-            },
-            "(3-8M) Half Diminished 7 no3": {
-                "Half-Diminished 7 no3": [0, 6, 10],
-                "#4/3 Mixed Triad": [0, 4, 6],
-                "b6/2 Mixed Triad": [0, 2, 8]
-            }
+        "Secundal (3-6) Major Trichord": {
+            "Major Trichord": [0, 2, 4],
+            "b7/2 Triad Cluster, 7 sus2 no5": [0, 2, 10],
+            "b7/b6 Triad Cluster, Augmented 7 no3": [0, 8, 10]
         },
-        "7 no 5": {
-            "(3-4) Major 7 no 5": {
-                "Major 7 no5": [0, 4, 11],
-                "b6/5 Mixed Triad ": [0, 7, 8],
-                "4/b2 Mixed Triad": [0, 1, 5]
-            },
-            "(3-8) Dominant 7 no 5": {
-                "Dominant 7 no5, Italian Augmented Sixth": [0, 4, 10],
-                "b6/b5 Mixed Triad": [0, 6, 8],
-                "#4/2 Mixed Triad": [0, 2, 6]
-            },
-            "(3-7) Minor 7 no 5": {
-                "Minor 7 no5": [0, 3, 10],
-                "6/5 Mixed Triad": [0, 7, 9],
-                "4/2 Mixed Triad": [0, 2, 5]
-            }
+        "Secundal (3-2M) Minor Trichord": {
+            "Minor Trichord": [0, 2, 3],
+            "b7/b2 Triad Cluster, 7 susb2 no5": [0, 1, 10],
+            "7/6 Triad Cluster": [0, 9, 11]
         },
-        "Ambiguous, Diatonic to Melodic/Harmonic Minor": {
-            "(3-12S) Augmented Triad": {
-                "Augmented Triad, b6/3 Tertial Triad, 6/b4 Tertial Triad": [0, 4, 8]
-            },
-            "(3-3M) Major #2 Trichord": {
-                "Major #2 Trichord, b4/b3 Mixed Trichord": [0, 3, 4],
-                "6/b2 Mixed Triad, bb7/b2 Triad Cluster": [0, 1, 9],
-                "Augmented Major 7 no3, 7/b6 Triad Cluster": [0, 8, 11]
-            },
-            "(3-3) Phrygian Major Trichord": {
-                "Phrygian Major Trichord, b4/b2 Mixed Triad": [0, 1, 4],
-                "Minor Major 7 no5, 7/#2 Triad Cluster": [0, 3, 11],
-                "6/#5 Mixed Triad, bb7/b6 Triad Cluster": [0, 8, 9]
-            }
+        "Secundal (3-2) Phrygian Trichord": {
+            "Phrygian Trichord": [0, 1, 3],
+            "7/2 Triad Cluster, Major 7 sus2 no5": [0, 2, 11],
+            "b7/6 Triad Cluster": [0, 9, 10]
         },
-        "Chromatic Trichord": {
-            "(3-1) Phrygian bb3 Trichord": {
-                "Phrygian bb3 Trichord": [0, 1, 2],
-                "7/b2 Triad Cluster": [0, 1, 11],
-                "7/#6 Triad Cluster": [0, 10, 11]
-            }
+        "Quartal (3-9) sus4": {
+            "sus4": [0, 5, 7],
+            "sus2": [0, 2, 7],
+            "Perfect Quartal Triad, 7 sus4 no5": [0, 5, 10]
+        },
+        "Quartal (3-5M) Diminished sus4": {
+            "Diminished sus4, Rite Chord 1": [0, 5, 6],
+            "susb2": [0, 1, 7],
+            "Lydian Quartal Triad, Major 7 sus#4 no5": [0, 6, 11]
+        },
+        "Quartal (3-5) sus#4": {
+            "sus#4": [0, 6, 7],
+            "Diminished susb2, Rite Chord 2, Viennese Trichord": [0, 1, 6],
+            "Ionian Quartal Triad, Major 7 sus4 no5": [0, 5, 11]
+        },
+        "7 no 3 (3-4M) Major 7 no3": {
+            "Major 7 no3": [0, 7, 11],
+            "4/3 Mixed Triad": [0, 4, 5],
+            "b6/b2 Mixed Triad": [0, 1, 8]
+        },
+        "7 no 3 (3-7M) 7 no3": {
+            "7 no3": [0, 7, 10],
+            "4/b3 Mixed Triad": [0, 3, 5],
+            "6/2 Mixed Triad": [0, 2, 9]
+        },
+        "7 no 3 (3-8M) Half Diminished 7 no3": {
+            "Half-Diminished 7 no3": [0, 6, 10],
+            "#4/3 Mixed Triad": [0, 4, 6],
+            "b6/2 Mixed Triad": [0, 2, 8]
+        },
+        "7 no 5 (3-4) Major 7 no 5": {
+            "Major 7 no5": [0, 4, 11],
+            "b6/5 Mixed Triad ": [0, 7, 8],
+            "4/b2 Mixed Triad": [0, 1, 5]
+        },
+        "7 no 5 (3-8) Dominant 7 no 5": {
+            "Dominant 7 no5, Italian Augmented Sixth": [0, 4, 10],
+            "b6/b5 Mixed Triad": [0, 6, 8],
+            "#4/2 Mixed Triad": [0, 2, 6]
+        },
+        "7 no 5 (3-7) Minor 7 no 5": {
+            "Minor 7 no5": [0, 3, 10],
+            "6/5 Mixed Triad": [0, 7, 9],
+            "4/2 Mixed Triad": [0, 2, 5]
+        },
+        "Diatonic to Melodic/Harmonic Minor (3-12S) Augmented Triad": {
+            "Augmented Triad, b6/3 Tertial Triad, 6/b4 Tertial Triad": [0, 4, 8]
+        },
+        "Diatonic to Melodic/Harmonic Minor (3-3M) Major #2 Trichord": {
+            "Major #2 Trichord, b4/b3 Mixed Trichord": [0, 3, 4],
+            "6/b2 Mixed Triad, bb7/b2 Triad Cluster": [0, 1, 9],
+            "Augmented Major 7 no3, 7/b6 Triad Cluster": [0, 8, 11]
+        },
+        "Diatonic to Melodic/Harmonic Minor (3-3) Phrygian Major Trichord": {
+            "Phrygian Major Trichord, b4/b2 Mixed Triad": [0, 1, 4],
+            "Minor Major 7 no5, 7/#2 Triad Cluster": [0, 3, 11],
+            "6/#5 Mixed Triad, bb7/b6 Triad Cluster": [0, 8, 9]
+        },
+        "Chromatic Trichord (3-1) Phrygian bb3 Trichord": {
+            "Phrygian bb3 Trichord": [0, 1, 2],
+            "7/b2 Triad Cluster": [0, 1, 11],
+            "7/#6 Triad Cluster": [0, 10, 11]
         }
     },
     quadrads: {
-        "Tertial": {
-            "(4-27) Minor 7 b5": {
-                "Minor 7 b5, Half-Diminished 7": [0, 3, 6, 10],
-                "Minor 6, Minor (13)": [0, 3, 7, 9],
-                "6/#4/3 Tertial Quadrad, Major 6 b5, Major 6 no5 (#11), Major no5 (#11 13)": [0, 4, 6, 9],
-                "b6/4/2 Tertial Quadrad, Augmented sus4 (9)": [0, 2, 5, 8]
-            },
-            "(4-26) Minor 7": {
-                "Minor 7": [0, 3, 7, 10],
-                "Major 6, Major (13)": [0, 4, 7, 9],
-                "b6/4/b3 Tertial Quadrad": [0, 3, 5, 8],
-                "6/4/2 Tertial Quadrad": [0, 2, 5, 9]
-            },
-            "(4-20) Major 7": {
-                "Major 7": [0, 4, 7, 11],
-                "Minor (b13)": [0, 3, 7, 8],
-                "6/4/3 Tertial Quadrad, Major 6 no5 (11)": [0, 4, 5, 9],
-                "b6/4/b2 Tertial Quadrad": [0, 1, 5, 8]
-            },
-            "(4-27M) Dominant 7": {
-                "Dominant 7": [0, 4, 7, 10],
-                "Diminished (b13)": [0, 3, 6, 8],
-                "6/4/b3 Tertial Triad, Minor 6 no5 (11)": [0, 3, 5, 9],
-                "6/#4/2 Tertial Quadrad": [0, 2, 6, 9]
-            }
+        "Tertial (4-27) Minor 7 b5": {
+            "Minor 7 b5, Half-Diminished 7": [0, 3, 6, 10],
+            "Minor 6, Minor (13)": [0, 3, 7, 9],
+            "6/#4/3 Tertial Quadrad, Major 6 b5, Major 6 no5 (#11), Major no5 (#11 13)": [0, 4, 6, 9],
+            "b6/4/2 Tertial Quadrad, Augmented sus4 (9)": [0, 2, 5, 8]
         },
-        "Quartal": {
-            "(4-23) Perfect Quartal Quadrad": {
-                "Minor Quartal Quadrad, Minor 7 no5 (11)": [0, 3, 5, 10],
-                "sus2 (13), Major 6 sus2": [0, 2, 7, 9],
-                "7 sus4": [0, 5, 7, 10],
-                "sus4 (9)": [0, 2, 5, 7]
-            },
-            "(4-16M) Mixolydian Quartal Quadrad": {
-                "Mixolydian Quartal Quadrad, Dominant 7 no5 (11)": [0, 4, 5, 10],
-                "Diminished susb2 (b13)": [0, 1, 6, 8],
-                "Major 7 sus4": [0, 5, 7, 11],
-                "sus#4 (9)": [0, 2, 6, 7]
-            },
-            "(4-8) Ionian Quartal Quadrad": {
-                "Ionian Quartal Quadrad, Major 7 no5 (11)": [0, 4, 5, 11],
-                "susb2 (b13)": [0, 1, 7, 8],
-                "Major 7 sus#4": [0, 6, 7, 11],
-                "Diminished sus4 (b9)": [0, 1, 5, 6]
-            },
-            "(4-16) Lydian Quartal Quadrad": {
-                "Lydian Quartal Quadrad, Major 7 no5 (#11)": [0, 4, 6, 11],
-                "sus2 (b13)": [0, 2, 7, 8],
-                "Half-Diminished sus4": [0, 5, 6, 10],
-                "sus4 (b9)": [0, 1, 5, 7]
-            }
+        "Tertial (4-26) Minor 7": {
+            "Minor 7": [0, 3, 7, 10],
+            "Major 6, Major (13)": [0, 4, 7, 9],
+            "b6/4/b3 Tertial Quadrad": [0, 3, 5, 8],
+            "6/4/2 Tertial Quadrad": [0, 2, 5, 9]
         },
-        "Secundal": {
-            "(4-11M) Major Tetrachord": {
-                "Major Tetrachord": [0, 2, 4, 5],
-                "Minor 9 no5": [0, 2, 3, 10],
-                "b7/b6/b2 Quadrad Cluster": [0, 1, 8, 10],
-                "7/6/5 Quadrad Cluster, Major 7 no3 (13)": [0, 7, 9, 11]
-            },
-            "(4-11) Phrygian Tetrachord": {
-                "Phrygian Tetrachord": [0, 1, 3, 5],
-                "Major 9 no5": [0, 2, 4, 11],
-                "b7/6/2 Quadrad Cluster": [0, 2, 9, 10],
-                "b7/b6/5 Quadrad Cluster, 7 no3 (b13)": [0, 7, 8, 10]
-            },
-            "(4-10) Minor Tetrachord": {
-                "Minor Tetrachord": [0, 2, 3, 5],
-                "Minor 7 no5 (b9)": [0, 1, 3, 10],
-                "7/6/2 Quadrad Cluster": [0, 2, 9, 11],
-                "b7/6/5 Quadrad Cluster, 7 no3 (13)": [0, 7, 9, 10]
-            },
-            "(4-21) Lydian Tetrachord": {
-                "Lydian Tetrachord": [0, 2, 4, 6],
-                "Dominant 9 no5": [0, 2, 4, 10],
-                "b7/b6/2 Quadrad Cluster": [0, 2, 8, 10],
-                "b7/b6/b5 Quadrad Cluster, Half-Diminished 7 no3 (b13)": [0, 6, 8, 10]
-            }
+        "Tertial (4-20) Major 7": {
+            "Major 7": [0, 4, 7, 11],
+            "Minor (b13)": [0, 3, 7, 8],
+            "6/4/3 Tertial Quadrad, Major 6 no5 (11)": [0, 4, 5, 9],
+            "b6/4/b2 Tertial Quadrad": [0, 1, 5, 8]
         },
-        "Add 9": {
-            "(4-22) Add 9": {
-                "Add 9, Major (9), 'Mu Chord', 'Steely Dan Chord'": [0, 2, 4, 7],
-                "7 sus4 no5 (9)": [0, 2, 5, 10],
-                "Minor 7 no5 (b13), Minor 7 #5": [0, 3, 8, 10],
-                "sus4 (13)": [0, 5, 7, 9]
-            },
-            "(4-13) Diminished Add b9": {
-                "Diminished (b9)": [0, 1, 3, 6],
-                "Major 7 sus4 no5 (9)": [0, 2, 5, 11],
-                "Minor 7 no5 (13)": [0, 3, 9, 10],
-                "sus#4 (13)": [0, 6, 7, 9]
-            },
-            "(4-Y15) Minor Add b9, All Interval Tetrachord 3": {
-                "Minor (b9)": [0, 1, 3, 7],
-                "Major 7 sus2 (#11)": [0, 2, 6, 11],
-                "Dominant 7 no5 (13)": [0, 4, 9, 10],
-                "Diminished sus4 (b13)": [0, 5, 6, 8]
-            },
-            "(4-14) Minor Add 9": {
-                "Minor (9)": [0, 2, 3, 7],
-                "7 sus4 (b9)": [0, 1, 5, 10],
-                "Major 7 no5 (13)": [0, 4, 9, 11],
-                "sus4 (b13)": [0, 5, 7, 8]
-            }
+        "Tertial (4-27M) Dominant 7": {
+            "Dominant 7": [0, 4, 7, 10],
+            "Diminished (b13)": [0, 3, 6, 8],
+            "6/4/b3 Tertial Triad, Minor 6 no5 (11)": [0, 3, 5, 9],
+            "6/#4/2 Tertial Quadrad": [0, 2, 6, 9]
         },
-        "Add 11": {
-            "(4-14M) Major (11)": {
-                "Major 7 sus2": [0, 2, 7, 11],
-                "b7/6/4 Mixed Quadrad": [0, 5, 9, 10],
-                "Major (11)": [0, 4, 5, 7],
-                "b6/b3/b2 Mixed Quadrad": [0, 1, 3, 8]
-            },
-            "(4-22M) Minor (11)": {
-                "7 sus2": [0, 2, 7, 10],
-                "b7/b6/4 Mixed Quadrad": [0, 5, 8, 10],
-                "Minor (11)": [0, 3, 5, 7],
-                "6/3/2 Mixed Quadrad, Major 6 no5 (9)": [0, 2, 4, 9]
-            },
-            "(4-13M) Diminished (11)": {
-                "7 susb2": [0, 1, 7, 10],
-                "7/6/#4 Mixed Quadrad": [0, 6, 9, 11],
-                "Diminished (11)": [0, 3, 5, 6],
-                "6/b3/2 Mixed Quadrad": [0, 2, 3, 9]
-            },
-            "(4-Y15M) Major (#11), All Interval Tetrachord 4": {
-                "Major (#11)": [0, 4, 6, 7],
-                "b6/b3/2 Mixed Quadrad": [0, 2, 3, 8],
-                "Half-Diminished susb2": [0, 1, 6, 10],
-                "7/6/4 Mixed Quadrad": [0, 5, 9, 11]
-            }
+        "Quartal (4-23) Perfect Quartal Quadrad": {
+            "Minor Quartal Quadrad, Minor 7 no5 (11)": [0, 3, 5, 10],
+            "sus2 (13), Major 6 sus2": [0, 2, 7, 9],
+            "7 sus4": [0, 5, 7, 10],
+            "sus4 (9)": [0, 2, 5, 7]
         },
-        "Diatonic to Melodic Minor": {
-            "(4-X15M) Super Locrian Quartal Quadrad": {
-                "7 (#9) no5, Minor 7 no5 (b11), Super Locrian Quartal Quadrad, 'Jimi Hendrix Chord' ": [0, 3, 4, 10],
-                "6 susb2": [0, 1, 7, 9],
-                "Augmented Major 7 sus#4": [0, 6, 8, 11],
-                "Diminished sus4 (9)": [0, 2, 5, 6]
-            },
-            "(4-25S) Dominant 7 b5": {
-                "Dominant 7 b5, Half-Diminished susb4, Dominant 7 no5 (#11), French Augmented Sixth": [0, 4, 6, 10],
-                "Augmented sus2 (#11), Diminished sus2 (b13)": [0, 2, 6, 8]
-            }
+        "Quartal (4-16M) Mixolydian Quartal Quadrad": {
+            "Mixolydian Quartal Quadrad, Dominant 7 no5 (11)": [0, 4, 5, 10],
+            "Diminished susb2 (b13)": [0, 1, 6, 8],
+            "Major 7 sus4": [0, 5, 7, 11],
+            "sus#4 (9)": [0, 2, 6, 7]
         },
-        "Diatonic to Melodic and Harmonic Minor": {
-            "(4-3) Phrygian b4 Tetrachord": {
-                "Minor Major 9 no5": [0, 2, 3, 11],
-                "b7/6/b2 Quadrad Cluster": [0, 1, 9, 10],
-                "7/6/#5 Quadrad Cluster": [0, 8, 9, 11],
-                "Phrygian b4 Tetrachord": [0, 1, 3, 4]
-            },
-            "(4-12M) Diminished (b11)": {
-                "Augmented Major 7 sus2, 7/b6/2 Quadrad Cluster": [0, 2, 8, 11],
-                "b7/6/b5 Quadrad Cluster, b7/6/#4 Mixed Quadrad": [0, 6, 9, 10],
-                "Lydian #2 Tetrachord, Diminished (b11)": [0, 3, 4, 6],
-                "bb7/b3/b2 Quadrad Cluster, 6/b3/b2 Mixed Quadrad": [0, 1, 3, 9]
-            },
-            "(4-X15) Melodic/Harmonic Minor Quartal Quadrad, All Interval Tetrachord 1": {
-                "7 sus#4": [0, 6, 7, 10],
-                "Diminished susb4 (b9), Lydian b2 Tetrachord": [0, 1, 4, 6],
-                "Minor Major 7 no5 (11), Melodic/Harmonic Minor Quartal Quadrad": [0, 3, 5, 11],
-                "Augmented sus2 (13)": [0, 2, 8, 9]
-            },
-            "(4-19) Minor Major 7": {
-                "Minor Major 7": [0, 3, 7, 11],
-                "Augmented (13), Diminished 7 susb4 no5 (b13)": [0, 4, 8, 9],
-                "Augmented (11), b6/4/3 Tertial Quadrad": [0, 4, 5, 8],
-                "Augmented (b9), b6/3/b2 Mixed Quadrad, b6/b4/b2 Tertial Quadrad": [0, 1, 4, 8]
-            },
-            "(4-12) Diminished (9)": {
-                "Diminished (9)": [0, 2, 3, 6],
-                "b7/b4/b2 Quartal Quadrad, Dominant 7 no 5 (b9)": [0, 1, 4, 10],
-                "Minor Major 7 no 5 (13)": [0, 3, 9, 11],
-                "Augmented sus#4 (13), Diminished 7 no3 (b13)": [0, 6, 8, 9]
-            },
-            "(4-19M) Augmented Major 7": {
-                "Augmented Major 7": [0, 4, 8, 11],
-                "Major (b13)": [0, 4, 7, 8],
-                "Augmented (#9)": [0, 3, 4, 8],
-                "6/4/b2 Tertial Quadrad": [0, 1, 5, 9]
-            },
-            "(4-X15M) Super Locrian Quartal Quadrad, All Interval Tetrachord 2": {
-                "7 (#9) no 5, Minor 7 no5 (b11), Super Locrian Quartal Quadrad, 'Jimi Hendrix' ": [0, 3, 4, 10],
-                "6 susb2": [0, 1, 7, 9],
-                "Augmented Major 7 sus#4": [0, 6, 8, 11],
-                "Diminished sus4 (9)": [0, 2, 5, 6]
-            },
-            "(4-24) Dominant 7 #5": {
-                "Augmented 7, b7/b6/b4 Mixed Quadrad, 7 no5 (b13)": [0, 4, 8, 10],
-                "Augmented (#11), Diminished susb4 (b13)": [0, 4, 6, 8],
-                "Augmented (9), Major Trichord (b13)": [0, 2, 4, 8],
-                "Half-Diminished sus2, b7/#4/2 Mixed Quadrad": [0, 2, 6, 10]
-            },
-            "(4-25S) Dominant 7 b5": {
-                "Dominant 7 b5, Half-Diminished susb4, Dominant 7 no5 (#11)": [0, 4, 6, 10],
-                "Augmented sus2 (#11), Diminished sus2 (b13)": [0, 2, 6, 8]
-            }
+        "Quartal (4-8) Ionian Quartal Quadrad": {
+            "Ionian Quartal Quadrad, Major 7 no5 (11)": [0, 4, 5, 11],
+            "susb2 (b13)": [0, 1, 7, 8],
+            "Major 7 sus#4": [0, 6, 7, 11],
+            "Diminished sus4 (b9)": [0, 1, 5, 6]
         },
-        "Diatonic to Harmonic Minor": {
-            "(4-7) Phrygian Major Tetrachord": {
-                "Major 7 no5 (#9)": [0, 3, 4, 11],
-                "bb7/b6/b2 Quadrad Cluster": [0, 1, 8, 9],
-                "7/b6/5 Quadrad Cluster": [0, 7, 8, 11],
-                "Phrygian Major Tetrachord": [0, 1, 4, 5]
-            },
-            "(4-28S) Diminished 7": {
-                "Diminished 7, 6/#4/#2 Tertial Quadrad, Diminished (13), 6/#4/3 Tertial Quadrad": [0, 3, 6, 9]
-            },
-            "(4-18) Diminished Major 7": {
-                "Diminished Major 7, 7/#4/#2 Mixed Quadrad": [0, 3, 6, 11],
-                "Diminished 7 no 5 (b13)": [0, 3, 8, 9],
-                "Diminished sus4 (13), Diminished 7 sus4": [0, 5, 6, 9],
-                "Major (b9)": [0, 1, 4, 7]
-            },
-            "(4-17) Major (#9)": {
-                "Major (#9), Minor (b11)": [0, 3, 4, 7],
-                "bb7/b4/b2 Mixed Quadrad, 6/3/b2 Mixed Quadrad": [0, 1, 4, 9],
-                "Minor Major 7 no 5 (b13), Augmented Major 7 sus#2, Minor Major 7 #5": [0, 3, 8, 11],
-                "Augmented sus4 (13)": [0, 5, 8, 9]
-            },
-            "(4-18M) Minor (#11)": {
-                "Minor (#11), sus#4 (#9)": [0, 3, 6, 7],
-                "6/3/#2 Mixed Quadrad, Super Locrian bb7 Quartal Quadrad": [0, 3, 4, 9],
-                "Diminished 7 susb2, Diminished susb2 (13)": [0, 1, 6, 9],
-                "7/b6/4 Quartal Quadrad, Augmented Major 7 sus4": [0, 5, 8, 11]
-            },
-
+        "Quartal (4-16) Lydian Quartal Quadrad": {
+            "Lydian Quartal Quadrad, Major 7 no5 (#11)": [0, 4, 6, 11],
+            "sus2 (b13)": [0, 2, 7, 8],
+            "Half-Diminished sus4": [0, 5, 6, 10],
+            "sus4 (b9)": [0, 1, 5, 7]
         },
-        "Irregular": {
-            "(4-2) Phrygian bb3 b4 Tetrachord": {
-                "Phrygian bb3 b4 Tetrachord": [0, 1, 2, 4],
-                "Minor Major 7 no5 (b9)": [0, 1, 3, 11],
-                "Major 7 sus2 no5 (#13)": [0, 2, 10, 11],
-                "b7/6/#5 Quadrad Cluster": [0, 8, 9, 10]
-            },
-            "(4-5) Diminished sus2 (b9)*": {
-                "Diminished sus2 (b9)*": [0, 1, 2, 6],
-                "7/4/b2 Mixed Quadrad": [0, 1, 5, 11],
-                "Major 7 no 5 (#13)": [0, 4, 10, 11],
-                "sus#4 (b13)": [0, 6, 7, 8]
-            },
-            "(4-5M) Diminished nat3 (11)": {
-                "b6/bb3/b2 Mixed Quadrad": [0, 1, 2, 8],
-                "Major 7 susb2": [0, 1, 7, 11],
-                "7/#6/#4 Mixed Quadrad": [0, 6, 10, 11],
-                "Diminished nat3 (11)": [0, 4, 5, 6]
-            },
-            "(4-2M) Minor b4 Tetrachord": {
-                "7/bb3/b2 Quadrad Cluster": [0, 1, 2, 10],
-                "7/6/b2 Quadrad Cluster": [0, 1, 9, 11],
-                "7/#6/#5 Quadrad Cluster": [0, 8, 10, 11],
-                "Minor b4 Tetrachord": [0, 2, 3, 4]
-            },
-            "(4-1) Chromatic Tetrachord": {
-                "Chromatic Tetrachord": [0, 1, 2, 3],
-                "Major 7 sus2 (b9)": [0, 1, 2, 11],
-                "7/#6/b2 Quadrad Cluster": [0, 1, 10, 11],
-                "Inverted Chromatic Tetrachord": [0, 9, 10, 11]
-            },
-            "(4-4) Phrygian bb3 Tetrachord": {
-                "Phrygian bb3 Tetrachord": [0, 1, 2, 5],
-                "Major 7 no 5 (b9)": [0, 1, 4, 11],
-                "Minor Major 7 no 5 (#13)": [0, 3, 10, 11],
-                "bb7/b6/5 Quadrad Cluster": [0, 7, 8, 9]
-            },
-            "(4-6) sus4 (#11)": {
-                "sus2 (b9)*": [0, 1, 2, 7],
-                "Diminished Major 7 susb2": [0, 1, 6, 11],
-                "7/#6/4 Mixed Quadrad": [0, 5, 10, 11],
-                "sus4 (#11)*, 'Dream Chord'": [0, 5, 6, 7]
-            },
-            "(4-4M) Ionian #2 Tetrachord": {
-                "bb7/bb3/b2 Quadrad Cluster": [0, 1, 2, 9],
-                "Augmented Major 7 susb2": [0, 1, 8, 11],
-                "Major 7 no3 (#13)": [0, 7, 10, 11],
-                "Ionian #2 Tetrachord": [0, 3, 4, 5]
-            },
-            "(4-9S) Diminished Major 7 sus4": {
-                "sus#4 (b9)": [0, 1, 6, 7],
-                "Diminished Major 7 sus4": [0, 5, 6, 11]
-            }
+        "Secundal (4-11M) Major Tetrachord": {
+            "Major Tetrachord": [0, 2, 4, 5],
+            "Minor 9 no5": [0, 2, 3, 10],
+            "b7/b6/b2 Quadrad Cluster": [0, 1, 8, 10],
+            "7/6/5 Quadrad Cluster, Major 7 no3 (13)": [0, 7, 9, 11]
+        },
+        "Secundal (4-11) Phrygian Tetrachord": {
+            "Phrygian Tetrachord": [0, 1, 3, 5],
+            "Major 9 no5": [0, 2, 4, 11],
+            "b7/6/2 Quadrad Cluster": [0, 2, 9, 10],
+            "b7/b6/5 Quadrad Cluster, 7 no3 (b13)": [0, 7, 8, 10]
+        },
+        "Secundal (4-10) Minor Tetrachord": {
+            "Minor Tetrachord": [0, 2, 3, 5],
+            "Minor 7 no5 (b9)": [0, 1, 3, 10],
+            "7/6/2 Quadrad Cluster": [0, 2, 9, 11],
+            "b7/6/5 Quadrad Cluster, 7 no3 (13)": [0, 7, 9, 10]
+        },
+        "Secundal (4-21) Lydian Tetrachord": {
+            "Lydian Tetrachord": [0, 2, 4, 6],
+            "Dominant 9 no5": [0, 2, 4, 10],
+            "b7/b6/2 Quadrad Cluster": [0, 2, 8, 10],
+            "b7/b6/b5 Quadrad Cluster, Half-Diminished 7 no3 (b13)": [0, 6, 8, 10]
+        },
+        "Add 9 (4-22) Add 9": {
+            "Add 9, Major (9), 'Mu Chord', 'Steely Dan Chord'": [0, 2, 4, 7],
+            "7 sus4 no5 (9)": [0, 2, 5, 10],
+            "Minor 7 no5 (b13), Minor 7 #5": [0, 3, 8, 10],
+            "sus4 (13)": [0, 5, 7, 9]
+        },
+        "Add 9 (4-13) Diminished Add b9": {
+            "Diminished (b9)": [0, 1, 3, 6],
+            "Major 7 sus4 no5 (9)": [0, 2, 5, 11],
+            "Minor 7 no5 (13)": [0, 3, 9, 10],
+            "sus#4 (13)": [0, 6, 7, 9]
+        },
+        "Add 9 (4-Y15) Minor Add b9, All Interval Tetrachord 3": {
+            "Minor (b9)": [0, 1, 3, 7],
+            "Major 7 sus2 (#11)": [0, 2, 6, 11],
+            "Dominant 7 no5 (13)": [0, 4, 9, 10],
+            "Diminished sus4 (b13)": [0, 5, 6, 8]
+        },
+        "Add 9 (4-14) Minor Add 9": {
+            "Minor (9)": [0, 2, 3, 7],
+            "7 sus4 (b9)": [0, 1, 5, 10],
+            "Major 7 no5 (13)": [0, 4, 9, 11],
+            "sus4 (b13)": [0, 5, 7, 8]
+        },
+        "Add 11 (4-14M) Major (11)": {
+            "Major 7 sus2": [0, 2, 7, 11],
+            "b7/6/4 Mixed Quadrad": [0, 5, 9, 10],
+            "Major (11)": [0, 4, 5, 7],
+            "b6/b3/b2 Mixed Quadrad": [0, 1, 3, 8]
+        },
+        "Add 11 (4-22M) Minor (11)": {
+            "7 sus2": [0, 2, 7, 10],
+            "b7/b6/4 Mixed Quadrad": [0, 5, 8, 10],
+            "Minor (11)": [0, 3, 5, 7],
+            "6/3/2 Mixed Quadrad, Major 6 no5 (9)": [0, 2, 4, 9]
+        },
+        "Add 11 (4-13M) Diminished (11)": {
+            "7 susb2": [0, 1, 7, 10],
+            "7/6/#4 Mixed Quadrad": [0, 6, 9, 11],
+            "Diminished (11)": [0, 3, 5, 6],
+            "6/b3/2 Mixed Quadrad": [0, 2, 3, 9]
+        },
+        "Add 11 (4-Y15M) Major (#11), All Interval Tetrachord 4": {
+            "Major (#11)": [0, 4, 6, 7],
+            "b6/b3/2 Mixed Quadrad": [0, 2, 3, 8],
+            "Half-Diminished susb2": [0, 1, 6, 10],
+            "7/6/4 Mixed Quadrad": [0, 5, 9, 11]
+        },
+        "Diatonic to Melodic Minor (4-X15M) Super Locrian Quartal Quadrad": {
+            "7 (#9) no5, Minor 7 no5 (b11), Super Locrian Quartal Quadrad, 'Jimi Hendrix Chord' ": [0, 3, 4, 10],
+            "6 susb2": [0, 1, 7, 9],
+            "Augmented Major 7 sus#4": [0, 6, 8, 11],
+            "Diminished sus4 (9)": [0, 2, 5, 6]
+        },
+        "Diatonic to Melodic Minor (4-25S) Dominant 7 b5": {
+            "Dominant 7 b5, Half-Diminished susb4, Dominant 7 no5 (#11), French Augmented Sixth": [0, 4, 6, 10],
+            "Augmented sus2 (#11), Diminished sus2 (b13)": [0, 2, 6, 8]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-3) Phrygian b4 Tetrachord": {
+            "Minor Major 9 no5": [0, 2, 3, 11],
+            "b7/6/b2 Quadrad Cluster": [0, 1, 9, 10],
+            "7/6/#5 Quadrad Cluster": [0, 8, 9, 11],
+            "Phrygian b4 Tetrachord": [0, 1, 3, 4]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-12M) Diminished (b11)": {
+            "Augmented Major 7 sus2, 7/b6/2 Quadrad Cluster": [0, 2, 8, 11],
+            "b7/6/b5 Quadrad Cluster, b7/6/#4 Mixed Quadrad": [0, 6, 9, 10],
+            "Lydian #2 Tetrachord, Diminished (b11)": [0, 3, 4, 6],
+            "bb7/b3/b2 Quadrad Cluster, 6/b3/b2 Mixed Quadrad": [0, 1, 3, 9]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-X15) Melodic/Harmonic Minor Quartal Quadrad, All Interval Tetrachord 1": {
+            "7 sus#4": [0, 6, 7, 10],
+            "Diminished susb4 (b9), Lydian b2 Tetrachord": [0, 1, 4, 6],
+            "Minor Major 7 no5 (11), Melodic/Harmonic Minor Quartal Quadrad": [0, 3, 5, 11],
+            "Augmented sus2 (13)": [0, 2, 8, 9]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-19) Minor Major 7": {
+            "Minor Major 7": [0, 3, 7, 11],
+            "Augmented (13), Diminished 7 susb4 no5 (b13)": [0, 4, 8, 9],
+            "Augmented (11), b6/4/3 Tertial Quadrad": [0, 4, 5, 8],
+            "Augmented (b9), b6/3/b2 Mixed Quadrad, b6/b4/b2 Tertial Quadrad": [0, 1, 4, 8]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-12) Diminished (9)": {
+            "Diminished (9)": [0, 2, 3, 6],
+            "b7/b4/b2 Quartal Quadrad, Dominant 7 no 5 (b9)": [0, 1, 4, 10],
+            "Minor Major 7 no 5 (13)": [0, 3, 9, 11],
+            "Augmented sus#4 (13), Diminished 7 no3 (b13)": [0, 6, 8, 9]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-19M) Augmented Major 7": {
+            "Augmented Major 7": [0, 4, 8, 11],
+            "Major (b13)": [0, 4, 7, 8],
+            "Augmented (#9)": [0, 3, 4, 8],
+            "6/4/b2 Tertial Quadrad": [0, 1, 5, 9]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-X15M) Super Locrian Quartal Quadrad, All Interval Tetrachord 2": {
+            "7 (#9) no 5, Minor 7 no5 (b11), Super Locrian Quartal Quadrad, 'Jimi Hendrix' ": [0, 3, 4, 10],
+            "6 susb2": [0, 1, 7, 9],
+            "Augmented Major 7 sus#4": [0, 6, 8, 11],
+            "Diminished sus4 (9)": [0, 2, 5, 6]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-24) Dominant 7 #5": {
+            "Augmented 7, b7/b6/b4 Mixed Quadrad, 7 no5 (b13)": [0, 4, 8, 10],
+            "Augmented (#11), Diminished susb4 (b13)": [0, 4, 6, 8],
+            "Augmented (9), Major Trichord (b13)": [0, 2, 4, 8],
+            "Half-Diminished sus2, b7/#4/2 Mixed Quadrad": [0, 2, 6, 10]
+        },
+        "Diatonic to Melodic and Harmonic Minor (4-25S) Dominant 7 b5": {
+            "Dominant 7 b5, Half-Diminished susb4, Dominant 7 no5 (#11)": [0, 4, 6, 10],
+            "Augmented sus2 (#11), Diminished sus2 (b13)": [0, 2, 6, 8]
+        },
+        "Diatonic to Harmonic Minor (4-7) Phrygian Major Tetrachord": {
+            "Major 7 no5 (#9)": [0, 3, 4, 11],
+            "bb7/b6/b2 Quadrad Cluster": [0, 1, 8, 9],
+            "7/b6/5 Quadrad Cluster": [0, 7, 8, 11],
+            "Phrygian Major Tetrachord": [0, 1, 4, 5]
+        },
+        "Diatonic to Harmonic Minor (4-28S) Diminished 7": {
+            "Diminished 7, 6/#4/#2 Tertial Quadrad, Diminished (13), 6/#4/3 Tertial Quadrad": [0, 3, 6, 9]
+        },
+        "Diatonic to Harmonic Minor (4-18) Diminished Major 7": {
+            "Diminished Major 7, 7/#4/#2 Mixed Quadrad": [0, 3, 6, 11],
+            "Diminished 7 no 5 (b13)": [0, 3, 8, 9],
+            "Diminished sus4 (13), Diminished 7 sus4": [0, 5, 6, 9],
+            "Major (b9)": [0, 1, 4, 7]
+        },
+        "Diatonic to Harmonic Minor (4-17) Major (#9)": {
+            "Major (#9), Minor (b11)": [0, 3, 4, 7],
+            "bb7/b4/b2 Mixed Quadrad, 6/3/b2 Mixed Quadrad": [0, 1, 4, 9],
+            "Minor Major 7 no 5 (b13), Augmented Major 7 sus#2, Minor Major 7 #5": [0, 3, 8, 11],
+            "Augmented sus4 (13)": [0, 5, 8, 9]
+        },
+        "Diatonic to Harmonic Minor (4-18M) Minor (#11)": {
+            "Minor (#11), sus#4 (#9)": [0, 3, 6, 7],
+            "6/3/#2 Mixed Quadrad, Super Locrian bb7 Quartal Quadrad": [0, 3, 4, 9],
+            "Diminished 7 susb2, Diminished susb2 (13)": [0, 1, 6, 9],
+            "7/b6/4 Quartal Quadrad, Augmented Major 7 sus4": [0, 5, 8, 11]
+        },
+        "Irregular (4-2) Phrygian bb3 b4 Tetrachord": {
+            "Phrygian bb3 b4 Tetrachord": [0, 1, 2, 4],
+            "Minor Major 7 no5 (b9)": [0, 1, 3, 11],
+            "Major 7 sus2 no5 (#13)": [0, 2, 10, 11],
+            "b7/6/#5 Quadrad Cluster": [0, 8, 9, 10]
+        },
+        "Irregular (4-5) Diminished sus2 (b9)*": {
+            "Diminished sus2 (b9)*": [0, 1, 2, 6],
+            "7/4/b2 Mixed Quadrad": [0, 1, 5, 11],
+            "Major 7 no 5 (#13)": [0, 4, 10, 11],
+            "sus#4 (b13)": [0, 6, 7, 8]
+        },
+        "Irregular (4-5M) Diminished nat3 (11)": {
+            "b6/bb3/b2 Mixed Quadrad": [0, 1, 2, 8],
+            "Major 7 susb2": [0, 1, 7, 11],
+            "7/#6/#4 Mixed Quadrad": [0, 6, 10, 11],
+            "Diminished nat3 (11)": [0, 4, 5, 6]
+        },
+        "Irregular (4-2M) Minor b4 Tetrachord": {
+            "7/bb3/b2 Quadrad Cluster": [0, 1, 2, 10],
+            "7/6/b2 Quadrad Cluster": [0, 1, 9, 11],
+            "7/#6/#5 Quadrad Cluster": [0, 8, 10, 11],
+            "Minor b4 Tetrachord": [0, 2, 3, 4]
+        },
+        "Irregular (4-1) Chromatic Tetrachord": {
+            "Chromatic Tetrachord": [0, 1, 2, 3],
+            "Major 7 sus2 (b9)": [0, 1, 2, 11],
+            "7/#6/b2 Quadrad Cluster": [0, 1, 10, 11],
+            "Inverted Chromatic Tetrachord": [0, 9, 10, 11]
+        },
+        "Irregular (4-4) Phrygian bb3 Tetrachord": {
+            "Phrygian bb3 Tetrachord": [0, 1, 2, 5],
+            "Major 7 no 5 (b9)": [0, 1, 4, 11],
+            "Minor Major 7 no 5 (#13)": [0, 3, 10, 11],
+            "bb7/b6/5 Quadrad Cluster": [0, 7, 8, 9]
+        },
+        "Irregular (4-6) sus4 (#11)": {
+            "sus2 (b9)*": [0, 1, 2, 7],
+            "Diminished Major 7 susb2": [0, 1, 6, 11],
+            "7/#6/4 Mixed Quadrad": [0, 5, 10, 11],
+            "sus4 (#11)*, 'Dream Chord'": [0, 5, 6, 7]
+        },
+        "Irregular (4-4M) Ionian #2 Tetrachord": {
+            "bb7/bb3/b2 Quadrad Cluster": [0, 1, 2, 9],
+            "Augmented Major 7 susb2": [0, 1, 8, 11],
+            "Major 7 no3 (#13)": [0, 7, 10, 11],
+            "Ionian #2 Tetrachord": [0, 3, 4, 5]
+        },
+        "Irregular (4-9S) Diminished Major 7 sus4": {
+            "sus#4 (b9)": [0, 1, 6, 7],
+            "Diminished Major 7 sus4": [0, 5, 6, 11]
         }
     },
     pentads: {
-        "Diatonic Secundal": {
-            "(5-Z12) Locrian Pentachord": {
-                "Locrian Pentachord, Diminished (b9 11)": [0, 1, 3, 5, 6],
-                "Major 7 no5 (9 11)": [0, 2, 4, 5, 11],
-                "Minor 7 no5 (9, 13)": [0, 2, 3, 9, 10],
-                "7 susb2 (b13)": [0, 1, 7, 8, 10],
-                "Major 7 sus#4 (13)": [0, 6, 7, 9, 11]
-            },
-            "(5-23) Minor Pentachord": {
-                "Minor Pentachord, Minor (9 11)": [0, 2, 3, 5, 7],
-                "Minor 7 no5 (b9 11)": [0, 1, 3, 5, 10],
-                "Major 7 no5 (9 13)": [0, 2, 4, 9, 11],
-                "7 sus2 (13)": [0, 2, 7, 9, 10],
-                "7 sus4 (b13)": [0, 5, 7, 8, 10]
-            },
-            "(5-23M) Major Pentachord": {
-                "Major Pentachord, Major (9 11)": [0, 2, 4, 5, 7],
-                "Minor 7 no5 (9 11)": [0, 2, 3, 5, 10],
-                "Minor 7 no5 (b9 b13)": [0, 1, 3, 8, 10],
-                "Major 7 sus2 (13)": [0, 2, 7, 9, 11],
-                "7 sus4 (13)": [0, 5, 7, 9, 10]
-            },
-            "(5-24) Phrygian Pentachord": {
-                "Phrygian Pentachord, Minor (b9 11)": [0, 1, 3, 5, 7],
-                "Major 7 no5 (9 #11)": [0, 2, 4, 6, 11],
-                "7 no 5 (9 13)": [0, 2, 4, 9, 10],
-                "7 sus2 (b13)": [0, 2, 7, 8, 10],
-                "Half-Diminished sus4 (b13)": [0, 5, 6, 8, 10]
-            },
-            "(5-24M) Lydian Pentachord": {
-                "Lydian Pentachord, Major (9 #11)": [0, 2, 4, 6, 7],
-                "7 no5 (9 11)": [0, 2, 4, 5, 10],
-                "Minor 7 no5 (9 b13)": [0, 2, 3, 8, 10],
-                "Half-Diminished susb2 (b13)": [0, 1, 6, 8, 10],
-                "Major 7 sus4 (13)": [0, 5, 7, 9, 11]
-            }
+        "Diatonic Secundal (5-Z12) Locrian Pentachord": {
+            "Locrian Pentachord, Diminished (b9 11)": [0, 1, 3, 5, 6],
+            "Major 7 no5 (9 11)": [0, 2, 4, 5, 11],
+            "Minor 7 no5 (9, 13)": [0, 2, 3, 9, 10],
+            "7 susb2 (b13)": [0, 1, 7, 8, 10],
+            "Major 7 sus#4 (13)": [0, 6, 7, 9, 11]
         },
-        "Diatonic Tertial": {
-            "(5-25) Half-Diminished (b9)": {
-                "Minor Tetrachord (b13)": [0, 2, 3, 5, 8],
-                "Half-Diminished (b9)": [0, 1, 3, 6, 10],
-                "Ionian Quartal Triad ( 9 13 )": [0, 2, 5, 9, 11],
-                "Minor 7 (b13)": [0, 3, 7, 9, 10],
-                "Major ( #11 13 ), Major 6 (#11)": [0, 4, 6, 7, 9]
-            },
-            "(5-25M) Minor 7 (b9)": {
-                "Diminished ( 11 b13 )": [0, 3, 5, 6, 8],
-                "Minor Tetrachord (13)": [0, 2, 3, 5, 9],
-                "Minor 7 (b9)": [0, 1, 3, 7, 10],
-                "Lydian Quartal Triad ( 9 13 )": [0, 2, 6, 9, 11],
-                "Dominant 7 (13)": [0, 4, 7, 9, 10]
-            },
-            "(5-27) Major 7 (9)": {
-                "Phrygian Tetrachord (b13)": [0, 1, 3, 5, 8],
-                "Major 7 (9)": [0, 2, 4, 7, 11],
-                "Perfect Quartal Triad ( 9 13 )": [0, 2, 5, 9, 10],
-                "Minor 7 (b13)": [0, 3, 7, 8, 10],
-                "Major (11 13)": [0, 4, 5, 7, 9]
-            },
-            "(5-27M) Minor 7 (9)": {
-                "Minor (11 b13)": [0, 3, 5, 7, 8],
-                "Major Tetrachord (13)": [0, 2, 4, 5, 9],
-                "Minor 7 (9)": [0, 2, 3, 7, 10],
-                "Perfect Quartal Triad ( b9 b13 )": [0, 1, 5, 8, 10],
-                "Major 7 (13)": [0, 4, 7, 9, 11]
-            },
-            "(5-34) Dominant 7 (9)": {
-                "Lydian Tetrachord (13)": [0, 2, 4, 6, 9],
-                "Dominant 7 (9)": [0, 2, 4, 7, 10],
-                "Perfect Quartal Triad ( 9 b13 )": [0, 2, 5, 8, 10],
-                "Half-Diminished (b13)": [0, 3, 6, 8, 10],
-                "Minor (11 13)": [0, 3, 5, 7, 9]
-            }
+        "Diatonic Secundal (5-23) Minor Pentachord": {
+            "Minor Pentachord, Minor (9 11)": [0, 2, 3, 5, 7],
+            "Minor 7 no5 (b9 11)": [0, 1, 3, 5, 10],
+            "Major 7 no5 (9 13)": [0, 2, 4, 9, 11],
+            "7 sus2 (13)": [0, 2, 7, 9, 10],
+            "7 sus4 (b13)": [0, 5, 7, 8, 10]
         },
-        "Diatonic Quartal": {
-            "(5-29) Dorian Quartal Pentad": {
-                "Diminished ( b9 b13 )": [0, 1, 3, 6, 8],
-                "Major 7 sus2 sus4": [0, 2, 5, 7, 11],
-                "Dorian Quartal Pentad, Minor 7 no5 (11 b13)": [0, 3, 5, 9, 10],
-                "6 sus2 sus#4": [0, 2, 6, 7, 9],
-                "Dominant 7 (11)": [0, 4, 5, 7, 10]
-            },
-            "(5-29M) Lydian Quartal Pentad": {
-                "sus2 sus4 (b13)": [0, 2, 5, 7, 8],
-                "Half-Diminished (11)": [0, 3, 5, 6, 10],
-                "Kumoi, Minor (9 13)": [0, 2, 3, 7, 9],
-                "Insen, 7 susb2 sus4": [0, 1, 5, 7, 10],
-                "Lydian Quartal Pentad, Major 7 no5 ( #11 13 )": [0, 4, 6, 9, 11]
-            },
-            "(5-20) Mixolydian Quartal Pentad": {
-                "Minor (b9 b13)": [0, 1, 3, 7, 8],
-                "Major 7 sus2 sus#4": [0, 2, 6, 7, 11],
-                "Mixolydian Quartal Pentad, Dominant 7 no5 (11 13)": [0, 4, 5, 9, 10],
-                "Diminished  susb2 sus4 (b13)": [0, 1, 5, 6, 8],
-                "Major 7 (11)": [0, 4, 5, 7, 11]
-            },
-            "(5-20M) Ionian Quartal Pentad": {
-                "susb2 sus4 (b13)": [0, 1, 5, 7, 8],
-                "Major 7 (#11)": [0, 4, 6, 7, 11],
-                "Hirajoshi, Minor (9 b13)": [0, 2, 3, 7, 8],
-                "Iwato, Half-Diminished susb2 sus4": [0, 1, 5, 6, 10],
-                "Ionian Quartal Pentad, Major 7 no5 ( 11 13 )": [0, 4, 5, 9, 11]
-            },
-            "(5-35) Major/Minor Pentatonic": {
-                "Major Pentatonic, Major (9 13)": [0, 2, 4, 7, 9],
-                "7 sus2 sus4": [0, 2, 5, 7, 10],
-                "Minor Quartal Pentad, Minor 7 no 5 (11 b13)": [0, 3, 5, 8, 10],
-                "6 sus2 sus4": [0, 2, 5, 7, 9],
-                "Minor Pentatonic, Minor 7 (11)": [0, 3, 5, 7, 10]
-            }
+        "Diatonic Secundal (5-23M) Major Pentachord": {
+            "Major Pentachord, Major (9 11)": [0, 2, 4, 5, 7],
+            "Minor 7 no5 (9 11)": [0, 2, 3, 5, 10],
+            "Minor 7 no5 (b9 b13)": [0, 1, 3, 8, 10],
+            "Major 7 sus2 (13)": [0, 2, 7, 9, 11],
+            "7 sus4 (13)": [0, 5, 7, 9, 10]
         },
-        "Diatonic to Melodic Minor": {
-            "(5-33) Lydian Augmented Pentachord": {
-                "Whole Tone Pentachord, Lydian Augmented Pentachord": [0, 2, 4, 6, 8],
-                "Dominant 7 b5 (9)": [0, 2, 4, 6, 10],
-                "Augmented 7 (9)": [0, 2, 4, 8, 10],
-                "Augmented 7 sus2 (#11), Dominant 7 b5 sus2 (b13)": [0, 2, 6, 8, 10],
-                "Augmented 7 (#11), Dominant7 b5 (b13) ": [0, 4, 6, 8, 10]
-            },
-            "(5-30M) Augmented Major 7 (#11)": {
-                "Major (9 b13)": [0, 2, 4, 7, 8],
-                "Half-Diminished sus2 sus4": [0, 2, 5, 6, 10],
-                "Augmented 7 (#9), Super Locrian Quartal Pentad, Minor 7 no5 (b11 b13)": [0, 3, 4, 8, 10],
-                "susb2 sus4 (b13)": [0, 1, 5, 7, 9],
-                "Augmented Major 7 (#11)": [0, 4, 6, 8, 11]
-            },
-            "(5-28M) Dominant 7 b5 (#9)": {
-                "Diminished sus2 sus4 (b13)": [0, 2, 5, 6, 8],
-                "Dominant 7 b5 (#9), Half-Diminished (b11)": [0, 3, 4, 6, 10],
-                "Minor 6 (b9)": [0, 1, 3, 7, 9],
-                "Augmented Major 7 sus2 sus#4": [0, 2, 6, 8, 11],
-                "Dominant 7 no5 ( #11 13 )": [0, 4, 6, 9, 10]
-            },
-            "(5-28) Dominant 7 (#11)": {
-                "Diminished (9 b13)": [0, 2, 3, 6, 8],
-                "Dominant 7 b5 (b9), Half-Diminished susb2 susb4": [0, 1, 4, 6, 10],
-                "Melodic Minor Quartal Pentad, Minor Major 7 no5 ( 11 13 )": [0, 3, 5, 9, 11],
-                "Augmented 6 sus2 sus#4": [0, 2, 6, 8, 9],
-                "Dominant 7 (#11)": [0, 4, 6, 7, 10]
-            },
-            "(5-10M) Locrian nat2 Pentachord": {
-                "Locrian nat2 Pentachord": [0, 2, 3, 5, 6],
-                "Minor 7 no5 (b9 b11)": [0, 1, 3, 4, 10],
-                "Minor Major 7 no5 (9 13)": [0, 2, 3, 9, 11],
-                "7 susb2 (13)": [0, 1, 7, 9, 10],
-                "Augmented Major 7 sus#4 (13)": [0, 6, 8, 9, 11]
-            }
+        "Diatonic Secundal (5-24) Phrygian Pentachord": {
+            "Phrygian Pentachord, Minor (b9 11)": [0, 1, 3, 5, 7],
+            "Major 7 no5 (9 #11)": [0, 2, 4, 6, 11],
+            "7 no 5 (9 13)": [0, 2, 4, 9, 10],
+            "7 sus2 (b13)": [0, 2, 7, 8, 10],
+            "Half-Diminished sus4 (b13)": [0, 5, 6, 8, 10]
         },
-        "Diatonic to Harmonic Minor": {
-            "(5-32) Minor 7 (#11)": {
-                "Diminished 7 susb2 susb4": [0, 1, 4, 6, 9],
-                "Harmonic Minor Quartal Pentad, Minor Major 7 no5 ( 11 b13 )": [0, 3, 5, 8, 11],
-                "Augmented 6 sus2 sus4": [0, 2, 5, 8, 9],
-                "Minor 7 (#11)": [0, 3, 6, 7, 10],
-                "Major 6 (#9)": [0, 3, 4, 7, 9]
-            },
-            "(5-31M) Dominant 7 (b9)": {
-                "Diminished 7 (9), Minor #4 Tetrachord (13)": [0, 2, 3, 6, 9],
-                "Dominant 7 (b9)": [0, 1, 4, 7, 10],
-                "Diminished Major 7 (13), Lydian Quartal Trichord ( #9 13 )": [0, 3, 6, 9, 11],
-                "Diminished 7 (b13)": [0, 3, 6, 8, 9],
-                "Diminished (11 13), Diminished 7 (11)": [0, 3, 5, 6, 9]
-            },
-            "(5-31) Diminished 7 (b9)": {
-                "Diminished 7 (b9)": [0, 1, 3, 6, 9],
-                "Augmented Major 7 sus2 sus4": [0, 2, 5, 8, 11],
-                "Half-Diminished 7 (13)": [0, 3, 6, 9, 10],
-                "Minor 6 (#11)": [0, 3, 6, 7, 9],
-                "Lydian #2 Tetrachord (13)": [0, 3, 4, 6, 9]
-            },
-            "(5-22) Augmented Major 7 (11)": {
-                "Major ( b9 b13 )": [0, 1, 4, 7, 8],
-                "Minor Major 7 (#11), Major 7 sus#2 sus#4": [0, 3, 6, 7, 11],
-                "Augmented (#9 13), Diminished 7 no5 ( b11 b13 ), Super Locrian bb7 Quartal Pentad": [0, 3, 4, 8, 9],
-                "Diminished 7 susb2 sus4, Diminished susb2 sus4 (13)": [0, 1, 5, 6, 9],
-                "Augmented Major 7 (11), Harmonic Major Quartal Pentad": [0, 4, 5, 8, 11]
-            },
-            "(5-21) Major 7 (#9)": {
-                "Augmented (b9 11), Phrygian Major Tetrachord (b13)": [0, 1, 4, 5, 8],
-                "Major 7 (#9), Minor 7 (b11)": [0, 3, 4, 7, 11],
-                "Super Locrian bb7 Quartal Triad (b9 b13), Augmented 6 (b9)": [0, 1, 4, 8, 9],
-                "Minor Major 7 (b13)": [0, 3, 7, 8, 11],
-                "Augmented 6 (11)": [0, 4, 5, 8, 9]
-            },
-            "(5-X18) Phrygian Major Pentachord": {
-                "Phrygian Major Pentachord": [0, 1, 4, 5, 7],
-                "Major 7 no5 (#9 #11)": [0, 3, 4, 6, 11],
-                "Diminished 7 no5 (b9 b13)": [0, 1, 3, 8, 9],
-                "Major 7 sus2 (b13)": [0, 2, 7, 8, 11],
-                "Half-Diminished sus4 (13)": [0, 5, 6, 9, 10]
-            },
-            "(5-16M) Lydian #2 Pentachord": {
-                "Lydian #2 Pentachord": [0, 3, 4, 6, 7],
-                "Diminished 7 no5 (b9 b11)": [0, 1, 3, 4, 9],
-                "Minor Major 7 no5 (9 b13)": [0, 2, 3, 8, 11],
-                "Half-Diminished susb2 (13)": [0, 1, 6, 9, 10],
-                "Augmented Major 7 sus4 (13)": [0, 5, 8, 9, 11]
-            }
+        "Diatonic Secundal (5-24M) Lydian Pentachord": {
+            "Lydian Pentachord, Major (9 #11)": [0, 2, 4, 6, 7],
+            "7 no5 (9 11)": [0, 2, 4, 5, 10],
+            "Minor 7 no5 (9 b13)": [0, 2, 3, 8, 10],
+            "Half-Diminished susb2 (b13)": [0, 1, 6, 8, 10],
+            "Major 7 sus4 (13)": [0, 5, 7, 9, 11]
         },
-        "Diatonic to Harmonic Major": {
-            "(5-16) Phrygian b4 Pentachord": {
-                "Phrygian b4 Pentachord": [0, 1, 3, 4, 7],
-                "Diminished Major 7 (9)": [0, 2, 3, 6, 11],
-                "Dominant 7 no 5 (b9 13)": [0, 1, 4, 9, 10],
-                "Augmented Major 7 sus#2 (13)": [0, 3, 8, 9, 11],
-                "Diminished 7 sus4 (b13)": [0, 5, 6, 8, 9]
-            },
-            "(5-32M) Dominant 7 (#9)": {
-                "Major 6 (b9), 'Elektra Chord'": [0, 1, 4, 7, 9],
-                "Diminished Major 7 (b13)": [0, 3, 6, 8, 11],
-                "Super Locrian bb7 Quartal Pentad": [0, 3, 5, 8, 9],
-                "Diminished 7 sus2 sus4, Diminished sus2 sus4 (13)": [0, 2, 5, 6, 9],
-                "Dominant 7 (#9), Minor 7 (b11)": [0, 3, 4, 7, 10]
-            },
-            "(5-21M) Augmented Major 7 (#9)": {
-                "Major (#9 b13), Minor ( b11 b13 )": [0, 3, 4, 7, 8],
-                "Phrygian Major Tetrachord (13)": [0, 1, 4, 5, 9],
-                "Augmented Major 7 (#9)": [0, 3, 4, 8, 11],
-                "Augmented 6 susb2 sus4": [0, 1, 5, 8, 9],
-                "Major 7 (b13)": [0, 4, 7, 8, 11]
-            },
-            "(5-X18M) Minor #4 Tetrachord": {
-                "Minor #4 Tetrachord": [0, 2, 3, 6, 7],
-                "Mixolydian Quartal Triad (b9 11)": [0, 1, 4, 5, 10],
-                "Major 7 no5 (#9 13)": [0, 3, 4, 9, 11],
-                "Diminished 7 susb2 (b13)": [0, 1, 6, 8, 9],
-                "Major 7 sus4 (b13)": [0, 5, 7, 8, 11]
-            }
+        "Diatonic Tertial (5-25) Half-Diminished (b9)": {
+            "Minor Tetrachord (b13)": [0, 2, 3, 5, 8],
+            "Half-Diminished (b9)": [0, 1, 3, 6, 10],
+            "Ionian Quartal Triad ( 9 13 )": [0, 2, 5, 9, 11],
+            "Minor 7 (b13)": [0, 3, 7, 9, 10],
+            "Major ( #11 13 ), Major 6 (#11)": [0, 4, 6, 7, 9]
         },
-        "Diatonic to Double Harmonic": {
-            "(5-Y18M) Minor (#11 b13)": {
-                "Minor (#11 b13)": [0, 3, 6, 7, 8],
-                "Ionian #2 Tetrachord (13)": [0, 3, 4, 5, 9],
-                "Diminished 7 bb3 (b9)": [0, 1, 2, 6, 9],
-                "Ionian Quartal Triad (b9 b13), Augmented Major 7 susb2 sus4": [0, 1, 5, 8, 11],
-                "Major 7 no5 (#13)": [0, 4, 7, 10, 11]
-            },
-            "(5-Y18) Major 7 (b9)": {
-                "Phrygian bb3 Tetrachord (b13)": [0, 1, 2, 5, 8],
-                "Major 7 (b9)": [0, 1, 4, 7, 11],
-                "Lydian Quartal Triad (#9 #13)": [0, 3, 6, 10, 11],
-                "Minor bb7 (b13)": [0, 3, 7, 8, 9],
-                "Major b5 (11 13)": [0, 4, 5, 6, 9]
-            },
-            "(5-15) Dominant 7 b5 (11)": {
-                "Diminished bb3 (b9 b13)": [0, 1, 2, 6, 8],
-                "Major 7 susb2 sus4": [0, 1, 5, 7, 11],
-                "Major 7 no5 (#11 #13), Lydian #6 Quartal Pentad": [0, 4, 6, 10, 11],
-                "sus2 sus#4 (b13)": [0, 2, 6, 7, 8],
-                "Dominant 7 b5 (11)": [0, 4, 5, 6, 10]
-            },
-            "(5-6M) Locrian nat3 Pentachord": {
-                "Locrian nat3 Pentachord": [0, 1, 4, 5, 6],
-                "Major 7 no5 (#9 11)": [0, 3, 4, 5, 11],
-                "Diminished bb3 no5 (b9 b13)": [0, 1, 2, 8, 9],
-                "Major 7 susb2 (b13)": [0, 1, 7, 8, 11],
-                "Major 7 sus#4 (#13)": [0, 6, 7, 10, 11]
-            },
-            "(5-6) Locrian bb3 Pentachord": {
-                "Locrian bb3 Pentachord": [0, 1, 2, 5, 6],
-                "Major 7 no5 (b9 11)": [0, 1, 4, 5, 11],
-                "Major 7 no5 (#9 #13)": [0, 3, 4, 10, 11],
-                "Minor susb2 bb7 (b13)": [0, 1, 7, 8, 9],
-                "Major 7 sus#4 (b13) ": [0, 6, 7, 8, 11]
-            }
+        "Diatonic Tertial (5-25M) Minor 7 (b9)": {
+            "Diminished ( 11 b13 )": [0, 3, 5, 6, 8],
+            "Minor Tetrachord (13)": [0, 2, 3, 5, 9],
+            "Minor 7 (b9)": [0, 1, 3, 7, 10],
+            "Lydian Quartal Triad ( 9 13 )": [0, 2, 6, 9, 11],
+            "Dominant 7 (13)": [0, 4, 7, 9, 10]
         },
-        "Diatonic to Harmonic and Melodic Minor": {
-            "(5-30) Minor Major 7 (11)": {
-                "Diminished susb2 susb4 (b13)": [0, 1, 4, 6, 8],
-                "Minor Major 7 (11)": [0, 3, 5, 7, 11],
-                "Augmented ( 9 13 )": [0, 2, 4, 8, 9],
-                "7 sus2 sus#4": [0, 2, 6, 7, 10],
-                "Mixolydian b6 Quartal Pentad, Dominant 7 no5 ( 11 b13 )": [0, 4, 5, 8, 10]
-            },
-            "(5-26M) Dominant 7 (b13)": {
-                "Augmented (#9 #11), Diminished (b11 b13)": [0, 3, 4, 6, 8],
-                "Phrygian Tetrachord (13)": [0, 1, 3, 5, 9],
-                "Augmented Major 7 (9)": [0, 2, 4, 8, 11],
-                "Lydian b7 Quartal triad ( 9 13 )": [0, 2, 6, 9, 10],
-                "Dominant 7 (b13)": [0, 4, 7, 8, 10]
-            },
-            "(5-Z17) Minor Major 7 (9)": {
-                "Super Locrian Tetrachord (b13)": [0, 1, 3, 4, 8],
-                "Minor Major 7 (9)": [0, 2, 3, 7, 11],
-                "Mixolydian Quartal Triad (b9 13)": [0, 1, 5, 9, 10],
-                "Augmented Major 7 (13), 'Farben Chord'": [0, 4, 8, 9, 11],
-                "Major (11 b13)": [0, 4, 5, 7, 8]
-            },
-            "(5-26) Major (#11 b13 )": {
-                "Major Tetrachord (b13)": [0, 2, 4, 5, 8],
-                "Half-Diminished (9)": [0, 2, 3, 6, 10],
-                "Augmented 7 (b9), Dominant 7 no5 (b9 b13)": [0, 1, 4, 8, 10],
-                "Minor Major 7 (13)": [0, 3, 7, 9, 11],
-                "Diminished 7 susb4 (b13)": [0, 4, 6, 8, 9]
-            },
-            "(5-10) Locrian b4 Pentachord": {
-                "Locrian b4 Pentachord": [0, 1, 3, 4, 6],
-                "Minor Major 7 (9 11)": [0, 2, 3, 5, 11],
-                "Minor 7 (b9 13)": [0, 1, 3, 9, 10],
-                "Augmented Major 7 sus2 (13)": [0, 2, 8, 9, 11],
-                "7 sus#4 (13)": [0, 6, 7, 9, 10]
-            }
+        "Diatonic Tertial (5-27) Major 7 (9)": {
+            "Phrygian Tetrachord (b13)": [0, 1, 3, 5, 8],
+            "Major 7 (9)": [0, 2, 4, 7, 11],
+            "Perfect Quartal Triad ( 9 13 )": [0, 2, 5, 9, 10],
+            "Minor 7 (b13)": [0, 3, 7, 8, 10],
+            "Major (11 13)": [0, 4, 5, 7, 9]
         },
-        "Irregular": {
-            "(5-19M) Major (b9 #11)": {
-                "Major (b9 #11)": [0, 1, 4, 6, 7],
-                "Diminished Major 7 (11)": [0, 3, 5, 6, 11],
-                "Diminished 7 no5 (9 b13)": [0, 2, 3, 8, 9],
-                "7 susb2 sus#4": [0, 1, 6, 7, 10],
-                "Diminished Major 7 sus4 (13)": [0, 5, 6, 9, 11]
-            },
-            "(5-19) Phrygian #4 Pentachord": {
-                "Phrygian #4 Pentachord": [0, 1, 3, 6, 7],
-                "Diminished Major 7 sus2 sus4": [0, 2, 5, 6, 11],
-                "Dominant 7 no5 (#9 13)": [0, 3, 4, 9, 10],
-                "6 susb2 sus#4": [0, 1, 6, 7, 9],
-                "Diminished Major 7 sus4 (b13)": [0, 5, 6, 8, 11]
-            },
-            "(5-14M) Lydian #3 Pentachord": {
-                "Lydian #3 Pentachord": [0, 2, 5, 6, 7],
-                "Dominant 7 no5 (#9 11)": [0, 3, 4, 5, 10],
-                "Minor 6 bb3 (b9) ": [0, 1, 2, 7, 9],
-                "Augmented Major 7 susb2 sus#4, Lydian Quartal Triad (b9 b13)": [0, 1, 6, 8, 11],
-                "Major 7 sus4 (#13)": [0, 5, 7, 10, 11]
-            },
-            "(5-14) Phrygian bb3 Pentachord": {
-                "Phrygian bb3 Pentachord": [0, 1, 2, 5, 7],
-                "Major 7 b5 (b9)": [0, 1, 4, 6, 11],
-                "Minor Major 7 no5 (11 #13)": [0, 3, 5, 10, 11],
-                "sus2 bb7 (b13)": [0, 2, 7, 8, 9],
-                "Half-Diminished sus4 (b13)": [0, 5, 6, 7, 10]
-            },
-            "(5-13M) Major (#11 b13)": {
-                "Minor b4 Tetrachord (b13)": [0, 2, 3, 4, 8],
-                "Half-Diminished bb3 (b9)": [0, 1, 2, 6, 10],
-                "Ionian Quartal Triad (b9 13)": [0, 1, 5, 9, 11],
-                "Augmented Major 7 (#13)": [0, 4, 8, 10, 11],
-                "Major (#11 b13)": [0, 4, 6, 7, 8]
-            },
-            "(5-13) Minor Major 7 (b9)": {
-                "Phrygian bb3 b4 Tetrachord (b13)": [0, 1, 2, 4, 8],
-                "Minor Major 7 (b9)": [0, 1, 3, 7, 11],
-                "Lydian Quartal Triad (9 #13)": [0, 2, 6, 10, 11],
-                "Augmented 7 (13)": [0, 4, 8, 9, 10],
-                "Major b5 (11 b13)": [0, 4, 5, 6, 8]
-            },
-            "(5-17) Augmented Major 7 (b9)": {
-                "Augmented (#9 11), Augmented #2 Pentachord, Major #2 Pentachord (b13)": [0, 3, 4, 5, 8],
-                "Phrygian bb3 Tetrachord (13)": [0, 1, 2, 5, 9],
-                "Augmented Major 7 (b9)": [0, 1, 4, 8, 11],
-                "Minor Major 7 (#13)": [0, 3, 7, 10, 11],
-                "Major bb7 (b13)": [0, 4, 7, 8, 9]
-            },
-            "(5-12M) Lydian #2 #3 Pentachord": {
-                "Lydian #2 #3 Pentachord": [0, 3, 5, 6, 7],
-                "Minor b4 Tetrachord (13), Diminished 7 no5 (9 b11) ": [0, 2, 3, 4, 9],
-                "Minor 7 bb3 (b9)": [0, 1, 2, 7, 10],
-                "Lydian Quartal Triad (b9 13) ": [0, 1, 6, 9, 11],
-                "Augmented Major 7 sus4 (#13)": [0, 5, 8, 10, 11]
-            },
-            "(5-12) Phrygian bb3 b4": {
-                "Phrygian bb3 b4 Pentachord": [0, 1, 2, 4, 7],
-                "Diminished Major 7 (b9)": [0, 1, 3, 6, 11],
-                "Ionian Quartal Triad (9 #13)": [0, 2, 5, 10, 11],
-                "Augmented 7 sus#2 (13)": [0, 3, 8, 9, 10],
-                "Diminished 7 sus4 (bb13),  Major #3 (#11 13)": [0, 5, 6, 7, 9]
-            },
-            "(5-11M) Major #2 Pentachord": {
-                "Major #2 Pentachord": [0, 3, 4, 5, 7],
-                "Ionian": [0, 1, 2, 4, 9],
-                "Minor Major 7 no5 (b9 b13)": [0, 1, 3, 8, 11],
-                "Major 7 sus2 (#13)": [0, 2, 7, 10, 11],
-                "Augmented 7 sus4 (13)": [0, 5, 8, 9, 10]
-            },
-            "(5-11) Minor b4 Pentachord": {
-                "Minor b4 Pentachord": [0, 2, 3, 4, 7],
-                "Minor 7 bb3 no5 (b9 11)": [0, 1, 2, 5, 10],
-                "Major 7 no5 (b9 13)": [0, 1, 4, 9, 11],
-                "Augmented Major 7 sus#2 (#13)": [0, 3, 8, 10, 11],
-                "sus4 bb7 (b13)": [0, 5, 7, 8, 9]
-            },
-            "(5-9M) Major b5 Pentachord": {
-                "Major b5 Pentachord": [0, 2, 4, 5, 6],
-                "Minor 7 no5 (9 11)": [0, 2, 3, 4, 10],
-                "Minor 7 bb3 no5 (b9 b13)": [0, 1, 2, 8, 10],
-                "Major 7 susb2 (13)": [0, 1, 7, 9, 11],
-                "Augmented Major 7 sus#4 (#13)": [0, 6, 8, 10, 11]
-            },
-            "(5-9) Locrian bb3 b4 Pentachord": {
-                "Locrian bb3 b4 Pentachord": [0, 1, 2, 4, 6],
-                "Minor Major 7 no5 (b9 11)": [0, 1, 3, 5, 11],
-                "Major 7 no5 (9 #13)": [0, 2, 4, 10, 11],
-                "Augmented 7 sus2 (13)": [0, 2, 8, 9, 10],
-                "7 sus#4 (b13)": [0, 6, 7, 8, 10]
-            },
-            "(5-8) Locrian nat2 b4 Pentachord": {
-                "Locrian nat2 b4 Pentachord": [0, 2, 3, 4, 6],
-                "Minor 7 bb3 no5 (b9 b11)": [0, 1, 2, 4, 10],
-                "Minor Major 7 no 5 (b9 13)": [0, 1, 3, 9, 11],
-                "Augmented Major 7 sus2 (#13)": [0, 2, 8, 10, 11],
-                "Augmented 7 sus#4 (13)": [0, 6, 8, 9, 10]
-            },
-            "(5-7M) Major 7 b5 (11)": {
-                "Lydian b2 #3 Tetrachord": [0, 1, 5, 6, 7],
-                "Major 7 b5 (11)": [0, 4, 5, 6, 11],
-                "Minor bb3 (b9 b13)": [0, 1, 2, 7, 8],
-                "Major 7 susb2 sus#4": [0, 1, 6, 7, 11],
-                "Diminished Major 7 sus4 (#13)": [0, 5, 6, 10, 11]
-            },
-            "(5-7) bb3 #4 Pentachord": {
-                "bb3 #4 Pentachord": [0, 1, 2, 6, 7],
-                "Diminished Major 7 susb2 sus4": [0, 1, 5, 6, 11],
-                "Ionian #6 Quartal Pentad, Major 7 no5 (11 #13)": [0, 4, 5, 10, 11],
-                "susb2 sus#4 (b13)": [0, 1, 6, 7, 8],
-                "Major 7 #3 (#11)": [0, 5, 6, 7, 11]
-            },
-            "(5-5M) Lydian ##2 #3 Pentachord": {
-                "Lydian ##2 #3 Pentachord": [0, 4, 5, 6, 7],
-                "bb4 Tetrachord (b13)": [0, 1, 2, 3, 8],
-                "Minor Major 7 bb3 (b9)": [0, 1, 2, 7, 11],
-                "Lydian Quartal Triad (b9 #13)": [0, 1, 6, 10, 11],
-                "Major 7 ##5 sus4 (#13)": [0, 5, 9, 10, 11]
-            },
-            "(5-5) Phrygian bb3 bb4 Pentachord": {
-                "Phrygian bb3 bb4 Pentachord": [0, 1, 2, 3, 7],
-                "Diminished Major 7 bb3 (b9)": [0, 1, 2, 6, 11],
-                "Ionian Quartal Triad (b9 #13)": [0, 1, 5, 10, 11],
-                "Major 7 ##5 (#13)": [0, 4, 9, 10, 11],
-                "Aeolian": [0, 5, 6, 7, 8]
-            },
-            "(5-4M) Major #2 b5 Pentachord": {
-                "Major #2 b5 Pentachord": [0, 3, 4, 5, 6],
-                "Diminished 7 bb3 no5 (b9 bb11) ": [0, 1, 2, 3, 9],
-                "Augmented Major 7 bb3 (b9)": [0, 1, 2, 8, 11],
-                "Major 7 susb2 (#13)": [0, 1, 7, 10, 11],
-                "Major 7 ##5 sus#4 (#13)": [0, 6, 9, 10, 11]
-            },
-            "(5-4) Locrian bb3 bb4 Pentachord": {
-                "Locrian bb3 bb4 Pentachord": [0, 1, 2, 3, 6],
-                "Minor Major 7 bb3 no 5 (b9 11)": [0, 1, 2, 5, 11],
-                "Major 7 no5 (b9 #13)": [0, 1, 4, 10, 11],
-                "Minor Major 7 ##5 (#13)": [0, 3, 9, 10, 11],
-                "sus#4 bb7 (b13)": [0, 6, 7, 8, 9]
-            },
-            "(5-3M) Phrygian b4 bb5 Pentachord": {
-                "Phrygian b4 bb5 Pentachord": [0, 1, 3, 4, 5],
-                "Minor Major 7 no 5 (9 b11)": [0, 2, 3, 4, 11],
-                "Minor 7 bb3 no 5 (b9 13)": [0, 1, 2, 9, 10],
-                "Augmented Major 7 susb2 (13)": [0, 1, 8, 9, 11],
-                "Augmented Major 7 sus ##4 (#13)": [0, 7, 8, 10, 11]
-            },
-            "(5-3) Locrian bb3 b4 bb5 Pentachord": {
-                "Locrian bb3 b4 bb5 Pentachord": [0, 1, 2, 4, 5],
-                "Minor Major 7 no5 (b9 b11)": [0, 1, 3, 4, 11],
-                "Minor Major 7 no5 (9 #13)": [0, 2, 3, 10, 11],
-                "Augmented 7 susb2 (13)": [0, 1, 8, 9, 10],
-                "Augmented Major 7 sus ##4 (13)": [0, 7, 8, 9, 11]
-            },
-            "(5-2M) Minor b4 bb5 Pentachord": {
-                "Minor b4 bb5 Pentachord": [0, 2, 3, 4, 5],
-                "Minor 7 bb3 no5 (b9 bb11)": [0, 1, 2, 3, 10],
-                "Minor bb3 Major 7 (b9 13)": [0, 1, 2, 9, 11],
-                "Augmented Major 7 susb2 (#13)": [0, 1, 8, 10, 11],
-                "Phrygian nat3, Phrygian Dominant": [0, 7, 9, 10, 11]
-            },
-            "(5-2) Locrian bb3 bb4 bb5 Pentachord": {
-                "Locrian bb3 bb4 bb5 Pentachord": [0, 1, 2, 3, 5],
-                "Minor bb3 Major 7 no5 (b9 b11)": [0, 1, 2, 4, 11],
-                "Minor Major 7 no5 (b9 #13)": [0, 1, 3, 10, 11],
-                "Augmented Major 7 ##5 sus2": [0, 2, 9, 10, 11],
-                "Augmented 7 sus##4 (13)": [0, 7, 8, 9, 10]
-            },
-            "(5-1) Chromatic Pentachord": {
-                "Locrian bb3 bb4 bbb5 Pentachord": [0, 1, 2, 3, 4],
-                "Minor Major 7 bb3 no5 (b9 bb11) ": [0, 1, 2, 3, 11],
-                "Minor Major 7 bb3 no5 (b9 #13)": [0, 1, 2, 10, 11],
-                "Augmented Major 7 ##5 susb2 (#13)": [0, 1, 9, 10, 11],
-                "Augmented Major 7 ##5 sus##4 ": [0, 8, 9, 10, 11]
-            }
+        "Diatonic Tertial (5-27M) Minor 7 (9)": {
+            "Minor (11 b13)": [0, 3, 5, 7, 8],
+            "Major Tetrachord (13)": [0, 2, 4, 5, 9],
+            "Minor 7 (9)": [0, 2, 3, 7, 10],
+            "Perfect Quartal Triad ( b9 b13 )": [0, 1, 5, 8, 10],
+            "Major 7 (13)": [0, 4, 7, 9, 11]
+        },
+        "Diatonic Tertial (5-34) Dominant 7 (9)": {
+            "Lydian Tetrachord (13)": [0, 2, 4, 6, 9],
+            "Dominant 7 (9)": [0, 2, 4, 7, 10],
+            "Perfect Quartal Triad ( 9 b13 )": [0, 2, 5, 8, 10],
+            "Half-Diminished (b13)": [0, 3, 6, 8, 10],
+            "Minor (11 13)": [0, 3, 5, 7, 9]
+        },
+        "Diatonic Quartal (5-29) Dorian Quartal Pentad": {
+            "Diminished ( b9 b13 )": [0, 1, 3, 6, 8],
+            "Major 7 sus2 sus4": [0, 2, 5, 7, 11],
+            "Dorian Quartal Pentad, Minor 7 no5 (11 b13)": [0, 3, 5, 9, 10],
+            "6 sus2 sus#4": [0, 2, 6, 7, 9],
+            "Dominant 7 (11)": [0, 4, 5, 7, 10]
+        },
+        "Diatonic Quartal (5-29M) Lydian Quartal Pentad": {
+            "sus2 sus4 (b13)": [0, 2, 5, 7, 8],
+            "Half-Diminished (11)": [0, 3, 5, 6, 10],
+            "Kumoi, Minor (9 13)": [0, 2, 3, 7, 9],
+            "Insen, 7 susb2 sus4": [0, 1, 5, 7, 10],
+            "Lydian Quartal Pentad, Major 7 no5 ( #11 13 )": [0, 4, 6, 9, 11]
+        },
+        "Diatonic Quartal (5-20) Mixolydian Quartal Pentad": {
+            "Minor (b9 b13)": [0, 1, 3, 7, 8],
+            "Major 7 sus2 sus#4": [0, 2, 6, 7, 11],
+            "Mixolydian Quartal Pentad, Dominant 7 no5 (11 13)": [0, 4, 5, 9, 10],
+            "Diminished  susb2 sus4 (b13)": [0, 1, 5, 6, 8],
+            "Major 7 (11)": [0, 4, 5, 7, 11]
+        },
+        "Diatonic Quartal (5-20M) Ionian Quartal Pentad": {
+            "susb2 sus4 (b13)": [0, 1, 5, 7, 8],
+            "Major 7 (#11)": [0, 4, 6, 7, 11],
+            "Hirajoshi, Minor (9 b13)": [0, 2, 3, 7, 8],
+            "Iwato, Half-Diminished susb2 sus4": [0, 1, 5, 6, 10],
+            "Ionian Quartal Pentad, Major 7 no5 ( 11 13 )": [0, 4, 5, 9, 11]
+        },
+        "Diatonic Quartal (5-35) Major/Minor Pentatonic": {
+            "Major Pentatonic, Major (9 13)": [0, 2, 4, 7, 9],
+            "7 sus2 sus4": [0, 2, 5, 7, 10],
+            "Minor Quartal Pentad, Minor 7 no 5 (11 b13)": [0, 3, 5, 8, 10],
+            "6 sus2 sus4": [0, 2, 5, 7, 9],
+            "Minor Pentatonic, Minor 7 (11)": [0, 3, 5, 7, 10]
+        },
+        "Diatonic to Melodic Minor (5-33) Lydian Augmented Pentachord": {
+            "Whole Tone Pentachord, Lydian Augmented Pentachord": [0, 2, 4, 6, 8],
+            "Dominant 7 b5 (9)": [0, 2, 4, 6, 10],
+            "Augmented 7 (9)": [0, 2, 4, 8, 10],
+            "Augmented 7 sus2 (#11), Dominant 7 b5 sus2 (b13)": [0, 2, 6, 8, 10],
+            "Augmented 7 (#11), Dominant7 b5 (b13) ": [0, 4, 6, 8, 10]
+        },
+        "Diatonic to Melodic Minor (5-30M) Augmented Major 7 (#11)": {
+            "Major (9 b13)": [0, 2, 4, 7, 8],
+            "Half-Diminished sus2 sus4": [0, 2, 5, 6, 10],
+            "Augmented 7 (#9), Super Locrian Quartal Pentad, Minor 7 no5 (b11 b13)": [0, 3, 4, 8, 10],
+            "susb2 sus4 (b13)": [0, 1, 5, 7, 9],
+            "Augmented Major 7 (#11)": [0, 4, 6, 8, 11]
+        },
+        "Diatonic to Melodic Minor (5-28M) Dominant 7 b5 (#9)": {
+            "Diminished sus2 sus4 (b13)": [0, 2, 5, 6, 8],
+            "Dominant 7 b5 (#9), Half-Diminished (b11)": [0, 3, 4, 6, 10],
+            "Minor 6 (b9)": [0, 1, 3, 7, 9],
+            "Augmented Major 7 sus2 sus#4": [0, 2, 6, 8, 11],
+            "Dominant 7 no5 ( #11 13 )": [0, 4, 6, 9, 10]
+        },
+        "Diatonic to Melodic Minor (5-28) Dominant 7 (#11)": {
+            "Diminished (9 b13)": [0, 2, 3, 6, 8],
+            "Dominant 7 b5 (b9), Half-Diminished susb2 susb4": [0, 1, 4, 6, 10],
+            "Melodic Minor Quartal Pentad, Minor Major 7 no5 ( 11 13 )": [0, 3, 5, 9, 11],
+            "Augmented 6 sus2 sus#4": [0, 2, 6, 8, 9],
+            "Dominant 7 (#11)": [0, 4, 6, 7, 10]
+        },
+        "Diatonic to Melodic Minor (5-10M) Locrian nat2 Pentachord": {
+            "Locrian nat2 Pentachord": [0, 2, 3, 5, 6],
+            "Minor 7 no5 (b9 b11)": [0, 1, 3, 4, 10],
+            "Minor Major 7 no5 (9 13)": [0, 2, 3, 9, 11],
+            "7 susb2 (13)": [0, 1, 7, 9, 10],
+            "Augmented Major 7 sus#4 (13)": [0, 6, 8, 9, 11]
+        },
+        "Diatonic to Harmonic Minor(5-32) Minor 7 (#11)": {
+            "Diminished 7 susb2 susb4": [0, 1, 4, 6, 9],
+            "Harmonic Minor Quartal Pentad, Minor Major 7 no5 ( 11 b13 )": [0, 3, 5, 8, 11],
+            "Augmented 6 sus2 sus4": [0, 2, 5, 8, 9],
+            "Minor 7 (#11)": [0, 3, 6, 7, 10],
+            "Major 6 (#9)": [0, 3, 4, 7, 9]
+        },
+        "Diatonic to Harmonic Minor(5-31M) Dominant 7 (b9)": {
+            "Diminished 7 (9), Minor #4 Tetrachord (13)": [0, 2, 3, 6, 9],
+            "Dominant 7 (b9)": [0, 1, 4, 7, 10],
+            "Diminished Major 7 (13), Lydian Quartal Trichord ( #9 13 )": [0, 3, 6, 9, 11],
+            "Diminished 7 (b13)": [0, 3, 6, 8, 9],
+            "Diminished (11 13), Diminished 7 (11)": [0, 3, 5, 6, 9]
+        },
+        "Diatonic to Harmonic Minor(5-31) Diminished 7 (b9)": {
+            "Diminished 7 (b9)": [0, 1, 3, 6, 9],
+            "Augmented Major 7 sus2 sus4": [0, 2, 5, 8, 11],
+            "Half-Diminished 7 (13)": [0, 3, 6, 9, 10],
+            "Minor 6 (#11)": [0, 3, 6, 7, 9],
+            "Lydian #2 Tetrachord (13)": [0, 3, 4, 6, 9]
+        },
+        "Diatonic to Harmonic Minor(5-22) Augmented Major 7 (11)": {
+            "Major ( b9 b13 )": [0, 1, 4, 7, 8],
+            "Minor Major 7 (#11), Major 7 sus#2 sus#4": [0, 3, 6, 7, 11],
+            "Augmented (#9 13), Diminished 7 no5 ( b11 b13 ), Super Locrian bb7 Quartal Pentad": [0, 3, 4, 8, 9],
+            "Diminished 7 susb2 sus4, Diminished susb2 sus4 (13)": [0, 1, 5, 6, 9],
+            "Augmented Major 7 (11), Harmonic Major Quartal Pentad": [0, 4, 5, 8, 11]
+        },
+        "Diatonic to Harmonic Minor(5-21) Major 7 (#9)": {
+            "Augmented (b9 11), Phrygian Major Tetrachord (b13)": [0, 1, 4, 5, 8],
+            "Major 7 (#9), Minor 7 (b11)": [0, 3, 4, 7, 11],
+            "Super Locrian bb7 Quartal Triad (b9 b13), Augmented 6 (b9)": [0, 1, 4, 8, 9],
+            "Minor Major 7 (b13)": [0, 3, 7, 8, 11],
+            "Augmented 6 (11)": [0, 4, 5, 8, 9]
+        },
+        "Diatonic to Harmonic Minor(5-X18) Phrygian Major Pentachord": {
+            "Phrygian Major Pentachord": [0, 1, 4, 5, 7],
+            "Major 7 no5 (#9 #11)": [0, 3, 4, 6, 11],
+            "Diminished 7 no5 (b9 b13)": [0, 1, 3, 8, 9],
+            "Major 7 sus2 (b13)": [0, 2, 7, 8, 11],
+            "Half-Diminished sus4 (13)": [0, 5, 6, 9, 10]
+        },
+        "Diatonic to Harmonic Minor(5-16M) Lydian #2 Pentachord": {
+            "Lydian #2 Pentachord": [0, 3, 4, 6, 7],
+            "Diminished 7 no5 (b9 b11)": [0, 1, 3, 4, 9],
+            "Minor Major 7 no5 (9 b13)": [0, 2, 3, 8, 11],
+            "Half-Diminished susb2 (13)": [0, 1, 6, 9, 10],
+            "Augmented Major 7 sus4 (13)": [0, 5, 8, 9, 11]
+        },
+        "Diatonic to Harmonic Major(5-16) Phrygian b4 Pentachord": {
+            "Phrygian b4 Pentachord": [0, 1, 3, 4, 7],
+            "Diminished Major 7 (9)": [0, 2, 3, 6, 11],
+            "Dominant 7 no 5 (b9 13)": [0, 1, 4, 9, 10],
+            "Augmented Major 7 sus#2 (13)": [0, 3, 8, 9, 11],
+            "Diminished 7 sus4 (b13)": [0, 5, 6, 8, 9]
+        },
+        "Diatonic to Harmonic Major(5-32M) Dominant 7 (#9)": {
+            "Major 6 (b9), 'Elektra Chord'": [0, 1, 4, 7, 9],
+            "Diminished Major 7 (b13)": [0, 3, 6, 8, 11],
+            "Super Locrian bb7 Quartal Pentad": [0, 3, 5, 8, 9],
+            "Diminished 7 sus2 sus4, Diminished sus2 sus4 (13)": [0, 2, 5, 6, 9],
+            "Dominant 7 (#9), Minor 7 (b11)": [0, 3, 4, 7, 10]
+        },
+        "Diatonic to Harmonic Major(5-21M) Augmented Major 7 (#9)": {
+            "Major (#9 b13), Minor ( b11 b13 )": [0, 3, 4, 7, 8],
+            "Phrygian Major Tetrachord (13)": [0, 1, 4, 5, 9],
+            "Augmented Major 7 (#9)": [0, 3, 4, 8, 11],
+            "Augmented 6 susb2 sus4": [0, 1, 5, 8, 9],
+            "Major 7 (b13)": [0, 4, 7, 8, 11]
+        },
+        "Diatonic to Harmonic Major(5-X18M) Minor #4 Tetrachord": {
+            "Minor #4 Tetrachord": [0, 2, 3, 6, 7],
+            "Mixolydian Quartal Triad (b9 11)": [0, 1, 4, 5, 10],
+            "Major 7 no5 (#9 13)": [0, 3, 4, 9, 11],
+            "Diminished 7 susb2 (b13)": [0, 1, 6, 8, 9],
+            "Major 7 sus4 (b13)": [0, 5, 7, 8, 11]
+        },
+        "Diatonic to Double Harmonic (5-Y18M) Minor (#11 b13)": {
+            "Minor (#11 b13)": [0, 3, 6, 7, 8],
+            "Ionian #2 Tetrachord (13)": [0, 3, 4, 5, 9],
+            "Diminished 7 bb3 (b9)": [0, 1, 2, 6, 9],
+            "Ionian Quartal Triad (b9 b13), Augmented Major 7 susb2 sus4": [0, 1, 5, 8, 11],
+            "Major 7 no5 (#13)": [0, 4, 7, 10, 11]
+        },
+        "Diatonic to Double Harmonic (5-Y18) Major 7 (b9)": {
+            "Phrygian bb3 Tetrachord (b13)": [0, 1, 2, 5, 8],
+            "Major 7 (b9)": [0, 1, 4, 7, 11],
+            "Lydian Quartal Triad (#9 #13)": [0, 3, 6, 10, 11],
+            "Minor bb7 (b13)": [0, 3, 7, 8, 9],
+            "Major b5 (11 13)": [0, 4, 5, 6, 9]
+        },
+        "Diatonic to Double Harmonic (5-15) Dominant 7 b5 (11)": {
+            "Diminished bb3 (b9 b13)": [0, 1, 2, 6, 8],
+            "Major 7 susb2 sus4": [0, 1, 5, 7, 11],
+            "Major 7 no5 (#11 #13), Lydian #6 Quartal Pentad": [0, 4, 6, 10, 11],
+            "sus2 sus#4 (b13)": [0, 2, 6, 7, 8],
+            "Dominant 7 b5 (11)": [0, 4, 5, 6, 10]
+        },
+        "Diatonic to Double Harmonic (5-6M) Locrian nat3 Pentachord": {
+            "Locrian nat3 Pentachord": [0, 1, 4, 5, 6],
+            "Major 7 no5 (#9 11)": [0, 3, 4, 5, 11],
+            "Diminished bb3 no5 (b9 b13)": [0, 1, 2, 8, 9],
+            "Major 7 susb2 (b13)": [0, 1, 7, 8, 11],
+            "Major 7 sus#4 (#13)": [0, 6, 7, 10, 11]
+        },
+        "Diatonic to Double Harmonic (5-6) Locrian bb3 Pentachord": {
+            "Locrian bb3 Pentachord": [0, 1, 2, 5, 6],
+            "Major 7 no5 (b9 11)": [0, 1, 4, 5, 11],
+            "Major 7 no5 (#9 #13)": [0, 3, 4, 10, 11],
+            "Minor susb2 bb7 (b13)": [0, 1, 7, 8, 9],
+            "Major 7 sus#4 (b13) ": [0, 6, 7, 8, 11]
+        },
+        "Diatonic to Harmonic and Melodic Minor (5-30) Minor Major 7 (11)": {
+            "Diminished susb2 susb4 (b13)": [0, 1, 4, 6, 8],
+            "Minor Major 7 (11)": [0, 3, 5, 7, 11],
+            "Augmented ( 9 13 )": [0, 2, 4, 8, 9],
+            "7 sus2 sus#4": [0, 2, 6, 7, 10],
+            "Mixolydian b6 Quartal Pentad, Dominant 7 no5 ( 11 b13 )": [0, 4, 5, 8, 10]
+        },
+        "Diatonic to Harmonic and Melodic Minor (5-26M) Dominant 7 (b13)": {
+            "Augmented (#9 #11), Diminished (b11 b13)": [0, 3, 4, 6, 8],
+            "Phrygian Tetrachord (13)": [0, 1, 3, 5, 9],
+            "Augmented Major 7 (9)": [0, 2, 4, 8, 11],
+            "Lydian b7 Quartal triad ( 9 13 )": [0, 2, 6, 9, 10],
+            "Dominant 7 (b13)": [0, 4, 7, 8, 10]
+        },
+        "Diatonic to Harmonic and Melodic Minor (5-Z17) Minor Major 7 (9)": {
+            "Super Locrian Tetrachord (b13)": [0, 1, 3, 4, 8],
+            "Minor Major 7 (9)": [0, 2, 3, 7, 11],
+            "Mixolydian Quartal Triad (b9 13)": [0, 1, 5, 9, 10],
+            "Augmented Major 7 (13), 'Farben Chord'": [0, 4, 8, 9, 11],
+            "Major (11 b13)": [0, 4, 5, 7, 8]
+        },
+        "Diatonic to Harmonic and Melodic Minor (5-26) Major (#11 b13 )": {
+            "Major Tetrachord (b13)": [0, 2, 4, 5, 8],
+            "Half-Diminished (9)": [0, 2, 3, 6, 10],
+            "Augmented 7 (b9), Dominant 7 no5 (b9 b13)": [0, 1, 4, 8, 10],
+            "Minor Major 7 (13)": [0, 3, 7, 9, 11],
+            "Diminished 7 susb4 (b13)": [0, 4, 6, 8, 9]
+        },
+        "Diatonic to Harmonic and Melodic Minor (5-10) Locrian b4 Pentachord": {
+            "Locrian b4 Pentachord": [0, 1, 3, 4, 6],
+            "Minor Major 7 (9 11)": [0, 2, 3, 5, 11],
+            "Minor 7 (b9 13)": [0, 1, 3, 9, 10],
+            "Augmented Major 7 sus2 (13)": [0, 2, 8, 9, 11],
+            "7 sus#4 (13)": [0, 6, 7, 9, 10]
+        },
+        "Irregular (5-19M) Major (b9 #11)": {
+            "Major (b9 #11)": [0, 1, 4, 6, 7],
+            "Diminished Major 7 (11)": [0, 3, 5, 6, 11],
+            "Diminished 7 no5 (9 b13)": [0, 2, 3, 8, 9],
+            "7 susb2 sus#4": [0, 1, 6, 7, 10],
+            "Diminished Major 7 sus4 (13)": [0, 5, 6, 9, 11]
+        },
+        "Irregular (5-19) Phrygian #4 Pentachord": {
+            "Phrygian #4 Pentachord": [0, 1, 3, 6, 7],
+            "Diminished Major 7 sus2 sus4": [0, 2, 5, 6, 11],
+            "Dominant 7 no5 (#9 13)": [0, 3, 4, 9, 10],
+            "6 susb2 sus#4": [0, 1, 6, 7, 9],
+            "Diminished Major 7 sus4 (b13)": [0, 5, 6, 8, 11]
+        },
+        "Irregular (5-14M) Lydian #3 Pentachord": {
+            "Lydian #3 Pentachord": [0, 2, 5, 6, 7],
+            "Dominant 7 no5 (#9 11)": [0, 3, 4, 5, 10],
+            "Minor 6 bb3 (b9) ": [0, 1, 2, 7, 9],
+            "Augmented Major 7 susb2 sus#4, Lydian Quartal Triad (b9 b13)": [0, 1, 6, 8, 11],
+            "Major 7 sus4 (#13)": [0, 5, 7, 10, 11]
+        },
+        "Irregular (5-14) Phrygian bb3 Pentachord": {
+            "Phrygian bb3 Pentachord": [0, 1, 2, 5, 7],
+            "Major 7 b5 (b9)": [0, 1, 4, 6, 11],
+            "Minor Major 7 no5 (11 #13)": [0, 3, 5, 10, 11],
+            "sus2 bb7 (b13)": [0, 2, 7, 8, 9],
+            "Half-Diminished sus4 (b13)": [0, 5, 6, 7, 10]
+        },
+        "Irregular (5-13M) Major (#11 b13)": {
+            "Minor b4 Tetrachord (b13)": [0, 2, 3, 4, 8],
+            "Half-Diminished bb3 (b9)": [0, 1, 2, 6, 10],
+            "Ionian Quartal Triad (b9 13)": [0, 1, 5, 9, 11],
+            "Augmented Major 7 (#13)": [0, 4, 8, 10, 11],
+            "Major (#11 b13)": [0, 4, 6, 7, 8]
+        },
+        "Irregular (5-13) Minor Major 7 (b9)": {
+            "Phrygian bb3 b4 Tetrachord (b13)": [0, 1, 2, 4, 8],
+            "Minor Major 7 (b9)": [0, 1, 3, 7, 11],
+            "Lydian Quartal Triad (9 #13)": [0, 2, 6, 10, 11],
+            "Augmented 7 (13)": [0, 4, 8, 9, 10],
+            "Major b5 (11 b13)": [0, 4, 5, 6, 8]
+        },
+        "Irregular (5-17) Augmented Major 7 (b9)": {
+            "Augmented (#9 11), Augmented #2 Pentachord, Major #2 Pentachord (b13)": [0, 3, 4, 5, 8],
+            "Phrygian bb3 Tetrachord (13)": [0, 1, 2, 5, 9],
+            "Augmented Major 7 (b9)": [0, 1, 4, 8, 11],
+            "Minor Major 7 (#13)": [0, 3, 7, 10, 11],
+            "Major bb7 (b13)": [0, 4, 7, 8, 9]
+        },
+        "Irregular (5-12M) Lydian #2 #3 Pentachord": {
+            "Lydian #2 #3 Pentachord": [0, 3, 5, 6, 7],
+            "Minor b4 Tetrachord (13), Diminished 7 no5 (9 b11) ": [0, 2, 3, 4, 9],
+            "Minor 7 bb3 (b9)": [0, 1, 2, 7, 10],
+            "Lydian Quartal Triad (b9 13) ": [0, 1, 6, 9, 11],
+            "Augmented Major 7 sus4 (#13)": [0, 5, 8, 10, 11]
+        },
+        "Irregular (5-12) Phrygian bb3 b4": {
+            "Phrygian bb3 b4 Pentachord": [0, 1, 2, 4, 7],
+            "Diminished Major 7 (b9)": [0, 1, 3, 6, 11],
+            "Ionian Quartal Triad (9 #13)": [0, 2, 5, 10, 11],
+            "Augmented 7 sus#2 (13)": [0, 3, 8, 9, 10],
+            "Diminished 7 sus4 (bb13),  Major #3 (#11 13)": [0, 5, 6, 7, 9]
+        },
+        "Irregular (5-11M) Major #2 Pentachord": {
+            "Major #2 Pentachord": [0, 3, 4, 5, 7],
+            "Ionian": [0, 1, 2, 4, 9],
+            "Minor Major 7 no5 (b9 b13)": [0, 1, 3, 8, 11],
+            "Major 7 sus2 (#13)": [0, 2, 7, 10, 11],
+            "Augmented 7 sus4 (13)": [0, 5, 8, 9, 10]
+        },
+        "Irregular (5-11) Minor b4 Pentachord": {
+            "Minor b4 Pentachord": [0, 2, 3, 4, 7],
+            "Minor 7 bb3 no5 (b9 11)": [0, 1, 2, 5, 10],
+            "Major 7 no5 (b9 13)": [0, 1, 4, 9, 11],
+            "Augmented Major 7 sus#2 (#13)": [0, 3, 8, 10, 11],
+            "sus4 bb7 (b13)": [0, 5, 7, 8, 9]
+        },
+        "Irregular (5-9M) Major b5 Pentachord": {
+            "Major b5 Pentachord": [0, 2, 4, 5, 6],
+            "Minor 7 no5 (9 11)": [0, 2, 3, 4, 10],
+            "Minor 7 bb3 no5 (b9 b13)": [0, 1, 2, 8, 10],
+            "Major 7 susb2 (13)": [0, 1, 7, 9, 11],
+            "Augmented Major 7 sus#4 (#13)": [0, 6, 8, 10, 11]
+        },
+        "Irregular (5-9) Locrian bb3 b4 Pentachord": {
+            "Locrian bb3 b4 Pentachord": [0, 1, 2, 4, 6],
+            "Minor Major 7 no5 (b9 11)": [0, 1, 3, 5, 11],
+            "Major 7 no5 (9 #13)": [0, 2, 4, 10, 11],
+            "Augmented 7 sus2 (13)": [0, 2, 8, 9, 10],
+            "7 sus#4 (b13)": [0, 6, 7, 8, 10]
+        },
+        "Irregular (5-8) Locrian nat2 b4 Pentachord": {
+            "Locrian nat2 b4 Pentachord": [0, 2, 3, 4, 6],
+            "Minor 7 bb3 no5 (b9 b11)": [0, 1, 2, 4, 10],
+            "Minor Major 7 no 5 (b9 13)": [0, 1, 3, 9, 11],
+            "Augmented Major 7 sus2 (#13)": [0, 2, 8, 10, 11],
+            "Augmented 7 sus#4 (13)": [0, 6, 8, 9, 10]
+        },
+        "Irregular (5-7M) Major 7 b5 (11)": {
+            "Lydian b2 #3 Tetrachord": [0, 1, 5, 6, 7],
+            "Major 7 b5 (11)": [0, 4, 5, 6, 11],
+            "Minor bb3 (b9 b13)": [0, 1, 2, 7, 8],
+            "Major 7 susb2 sus#4": [0, 1, 6, 7, 11],
+            "Diminished Major 7 sus4 (#13)": [0, 5, 6, 10, 11]
+        },
+        "Irregular (5-7) bb3 #4 Pentachord": {
+            "bb3 #4 Pentachord": [0, 1, 2, 6, 7],
+            "Diminished Major 7 susb2 sus4": [0, 1, 5, 6, 11],
+            "Ionian #6 Quartal Pentad, Major 7 no5 (11 #13)": [0, 4, 5, 10, 11],
+            "susb2 sus#4 (b13)": [0, 1, 6, 7, 8],
+            "Major 7 #3 (#11)": [0, 5, 6, 7, 11]
+        },
+        "Irregular (5-5M) Lydian ##2 #3 Pentachord": {
+            "Lydian ##2 #3 Pentachord": [0, 4, 5, 6, 7],
+            "bb4 Tetrachord (b13)": [0, 1, 2, 3, 8],
+            "Minor Major 7 bb3 (b9)": [0, 1, 2, 7, 11],
+            "Lydian Quartal Triad (b9 #13)": [0, 1, 6, 10, 11],
+            "Major 7 ##5 sus4 (#13)": [0, 5, 9, 10, 11]
+        },
+        "Irregular (5-5) Phrygian bb3 bb4 Pentachord": {
+            "Phrygian bb3 bb4 Pentachord": [0, 1, 2, 3, 7],
+            "Diminished Major 7 bb3 (b9)": [0, 1, 2, 6, 11],
+            "Ionian Quartal Triad (b9 #13)": [0, 1, 5, 10, 11],
+            "Major 7 ##5 (#13)": [0, 4, 9, 10, 11],
+            "Aeolian": [0, 5, 6, 7, 8]
+        },
+        "Irregular (5-4M) Major #2 b5 Pentachord": {
+            "Major #2 b5 Pentachord": [0, 3, 4, 5, 6],
+            "Diminished 7 bb3 no5 (b9 bb11) ": [0, 1, 2, 3, 9],
+            "Augmented Major 7 bb3 (b9)": [0, 1, 2, 8, 11],
+            "Major 7 susb2 (#13)": [0, 1, 7, 10, 11],
+            "Major 7 ##5 sus#4 (#13)": [0, 6, 9, 10, 11]
+        },
+        "Irregular (5-4) Locrian bb3 bb4 Pentachord": {
+            "Locrian bb3 bb4 Pentachord": [0, 1, 2, 3, 6],
+            "Minor Major 7 bb3 no 5 (b9 11)": [0, 1, 2, 5, 11],
+            "Major 7 no5 (b9 #13)": [0, 1, 4, 10, 11],
+            "Minor Major 7 ##5 (#13)": [0, 3, 9, 10, 11],
+            "sus#4 bb7 (b13)": [0, 6, 7, 8, 9]
+        },
+        "Irregular (5-3M) Phrygian b4 bb5 Pentachord": {
+            "Phrygian b4 bb5 Pentachord": [0, 1, 3, 4, 5],
+            "Minor Major 7 no 5 (9 b11)": [0, 2, 3, 4, 11],
+            "Minor 7 bb3 no 5 (b9 13)": [0, 1, 2, 9, 10],
+            "Augmented Major 7 susb2 (13)": [0, 1, 8, 9, 11],
+            "Augmented Major 7 sus ##4 (#13)": [0, 7, 8, 10, 11]
+        },
+        "Irregular (5-3) Locrian bb3 b4 bb5 Pentachord": {
+            "Locrian bb3 b4 bb5 Pentachord": [0, 1, 2, 4, 5],
+            "Minor Major 7 no5 (b9 b11)": [0, 1, 3, 4, 11],
+            "Minor Major 7 no5 (9 #13)": [0, 2, 3, 10, 11],
+            "Augmented 7 susb2 (13)": [0, 1, 8, 9, 10],
+            "Augmented Major 7 sus ##4 (13)": [0, 7, 8, 9, 11]
+        },
+        "Irregular (5-2M) Minor b4 bb5 Pentachord": {
+            "Minor b4 bb5 Pentachord": [0, 2, 3, 4, 5],
+            "Minor 7 bb3 no5 (b9 bb11)": [0, 1, 2, 3, 10],
+            "Minor bb3 Major 7 (b9 13)": [0, 1, 2, 9, 11],
+            "Augmented Major 7 susb2 (#13)": [0, 1, 8, 10, 11],
+            "Phrygian nat3, Phrygian Dominant": [0, 7, 9, 10, 11]
+        },
+        "Irregular (5-2) Locrian bb3 bb4 bb5 Pentachord": {
+            "Locrian bb3 bb4 bb5 Pentachord": [0, 1, 2, 3, 5],
+            "Minor bb3 Major 7 no5 (b9 b11)": [0, 1, 2, 4, 11],
+            "Minor Major 7 no5 (b9 #13)": [0, 1, 3, 10, 11],
+            "Augmented Major 7 ##5 sus2": [0, 2, 9, 10, 11],
+            "Augmented 7 sus##4 (13)": [0, 7, 8, 9, 10]
+        },
+        "Irregular (5-1) Chromatic Pentachord": {
+            "Locrian bb3 bb4 bbb5 Pentachord": [0, 1, 2, 3, 4],
+            "Minor Major 7 bb3 no5 (b9 bb11) ": [0, 1, 2, 3, 11],
+            "Minor Major 7 bb3 no5 (b9 #13)": [0, 1, 2, 10, 11],
+            "Augmented Major 7 ##5 susb2 (#13)": [0, 1, 9, 10, 11],
+            "Augmented Major 7 ##5 sus##4 ": [0, 8, 9, 10, 11]
         }
     },
     hexads: {
