@@ -269,20 +269,9 @@
         }
         function getChordNames() {
             var types = Object.keys(setList);
-            var chordNames = [];
-            for (var x = 0; x < types.length; x++) {
-                var ad = setList[types[x]];
-                var adKeys = Object.keys(ad);
-                for (var y = 0; y < adKeys.length; y++) {
-                    var qKeys = Object.keys(ad[adKeys[y]]);
-                    for (var a = 0; a < qKeys.length; a++) {
-                        var c = ad[adKeys[y]][qKeys[a]];
-                        if (chordMatch(c)) {
-                            chordNames.push(qKeys[a]);
-                        }
-                    }
-                }
-            }
+           toggledIntervals
+           debugger;
+
             return chordNames;
         }
         function isAnInterval(pitchClass, interval){
