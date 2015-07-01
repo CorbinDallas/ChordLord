@@ -3,16 +3,16 @@ var noteNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'
 var cirlceOfFifths = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5];
 var intervals = {
     "Minor 2": 1,
-    "Major 7": 11,
     "Major 2": 2,
-    "Minor 7": 10,
     "Minor 3": 3,
-    "Major 6": 9,
     "Major 3": 4,
-    "Minor 6": 8,
     "Perfect 4": 5,
+    "Augmented 4 / Diminished 5": 6,
     "Perfect 5": 7,
-    "Augmented 4 / Diminished 5": 6
+    "Minor 6": 8,
+    "Major 6": 9,
+    "Minor 7": 10,
+    "Major 7": 11
 };
 var cycles = [
     {

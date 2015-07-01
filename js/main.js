@@ -29,7 +29,7 @@
             return noteNames[pitchClass];
         });
         var toggledIntervals = {};
-        var maxFret = 12;
+        var maxFret = 25;
         var cirlceOfFifthsCoords = null;
         var chromaticCoords = null;
         var menu = ce('div');
@@ -140,6 +140,7 @@
                 pitchCircle = ce('div');
                 fifthCircle = ce('div');
                 piano = ce('div');
+                fretBoard = ce('div');
             content.innerHTML = '';
             pitchCircle.className = 'pitchCircle';
             fifthCircle.className = 'fifthCircle';
@@ -148,6 +149,7 @@
             content.appendChild(pitchCircle);
             content.appendChild(fifthCircle);
             content.appendChild(piano);
+            
             selectedPitchClass = pitchClass;
             c = getChordNames().map(function (c){
                 return c.name;
@@ -169,7 +171,8 @@
             drawIntervals();
             updateIntervalMatrix();
             updateXadMatrix();
-            
+            content.appendChild(fretBoard);
+            drawFretboard(pitchClass, fretBoard);
             //aim.innerHTML = getAllVectorMatrices();
         }
         function getSelectedIntervalCount(){
@@ -623,7 +626,41 @@
             container.innerHTML = '';
             container.appendChild(i);
         }
-        
+        function drawFretboard(pitchClass, parentNode) {
+            var container = ce('div'),
+                table = ce('table');
+            parentNode.className = 'fretboard';
+            var notes = [];
+            for(var y = -1; y < tunings.guitarStandard.length; y++){
+                var row = ce('tr');
+                table.appendChild(row);
+                for(var x = 0; x < maxFret; x++){
+                    var n = [];
+                    var td = ce('td');
+                    row.appendChild(td);
+                    if (y === -1) {
+                        td.innerHTML = x;
+                        continue;
+                    }
+                    var interval = (x + tunings.guitarStandard[y]) % 12;
+                    if(interval === pitchClass){
+                        n.push(interval);
+                    }
+                    // add selected intervals
+                    for(var z = 0; z < intervalKeys.length; z++){
+                        if(toggledIntervals[intervalKeys[z]]){
+                            n.push((pitchClass + intervals[intervalKeys[z]]) % 12);
+                        }
+                    }
+                    if(n.indexOf(interval) !== -1){
+                        td.className = 'fretboard-note fretboard-note-selected';
+                    }else{
+                        td.className = 'fretboard-note';
+                    }
+                }
+            }
+            parentNode.appendChild(table);
+        }
         function drawPitchClassTab(pitchClass){
             // Get the rendering context
             var w = document.documentElement.clientWidth - 30;
@@ -643,12 +680,8 @@
 
             // Create some notes
             var notes = [];
-            function createNote(fret, y){
-                notes.push(new Vex.Flow.TabNote({
-                    positions: [{str: y+1, fret: fret}],
-                    duration: "64"}));
-            }
             for(var x = 0; x < maxFret; x++){
+                var positions = [];
                 for(var y = 0; y < tunings.guitarStandard.length; y++){
                     var n = [];
                     var interval = (x + tunings.guitarStandard[y]) % 12;
@@ -662,9 +695,13 @@
                         }
                     }
                     if(n.indexOf(interval) !== -1){
-                        // create note
-                        createNote(x, y);
+                        positions.push({str: y+1, fret: x});
                     }
+                }
+                if (positions.length > 0) {
+                    notes.push(new Vex.Flow.TabNote({
+                        positions: positions,
+                        duration: "q"}));
                 }
             }
             Vex.Flow.Formatter.FormatAndDraw(ctx, tabstave, notes);
