@@ -296,21 +296,11 @@ var setList = {
             "Augmented (#9)": [0, 3, 4, 8],
             "6/4/b2 Tertial Quadrad": [0, 1, 5, 9]
         },
-        "Diatonic to Melodic and Harmonic Minor (4-X15M) Super Locrian Quartal Quadrad, All Interval Tetrachord 2": {
-            "7 (#9) no 5, Minor 7 no5 (b11), Super Locrian Quartal Quadrad, 'Jimi Hendrix' ": [0, 3, 4, 10],
-            "6 susb2": [0, 1, 7, 9],
-            "Augmented Major 7 sus#4": [0, 6, 8, 11],
-            "Diminished sus4 (9)": [0, 2, 5, 6]
-        },
         "Diatonic to Melodic and Harmonic Minor (4-24) Dominant 7 #5": {
             "Augmented 7, b7/b6/b4 Mixed Quadrad, 7 no5 (b13)": [0, 4, 8, 10],
             "Augmented (#11), Diminished susb4 (b13)": [0, 4, 6, 8],
             "Augmented (9), Major Trichord (b13)": [0, 2, 4, 8],
             "Half-Diminished sus2, b7/#4/2 Mixed Quadrad": [0, 2, 6, 10]
-        },
-        "Diatonic to Melodic and Harmonic Minor (4-25S) Dominant 7 b5": {
-            "Dominant 7 b5, Half-Diminished susb4, Dominant 7 no5 (#11)": [0, 4, 6, 10],
-            "Augmented sus2 (#11), Diminished sus2 (b13)": [0, 2, 6, 8]
         },
         "Diatonic to Harmonic Minor (4-7) Phrygian Major Tetrachord": {
             "Major 7 no5 (#9)": [0, 3, 4, 11],
@@ -876,10 +866,10 @@ var setList = {
         "(6-2M) Locrian nat2 b4 bb5 bbb6 Hexachord": {
             "Diminished (9 b11 11)*": [0, 2, 3, 4, 5, 6],
             "Dominant 7 no5 (b9 9 #9)*": [0, 1, 2, 3, 4, 10],
-            "Major 7 no5 (b9 9 #9 11)*": [0, 1, 2, 3, 4, 5, 11],
-            "Major 7 no 5 (b9 9 #9 #13)*": [0, 1, 2, 3, 4, 10, 11],
-            "Minor Major 7 no5 (b9 9 13 #13)*": [0, 1, 2, 3, 9, 10, 11],
-            "Augmented 7 sus2 (b9 13)*": [0, 1, 2, 8, 9, 10]
+            "Major 7 no5 (b9 9 #9 11)*": [0, 1, 2, 3, 9, 11],
+            "Major 7 no 5 (b9 9 #9 #13)*": [0, 1, 2, 8, 10, 11],
+            "Minor Major 7 no5 (b9 9 13 #13)*": [0, 1, 7, 9, 10, 11],
+            "Augmented 7 sus2 (b9 13)*": [0, 6, 8, 9, 10, 11]
         },
         "(6-X3) Locrian bb3 bb4 bb5 bbb6 Hexachord": {
             "Diminished (b9 9 11)*": [0, 1, 2, 3, 5, 6],
@@ -1046,13 +1036,13 @@ var setList = {
             "Minor 7 (b13 13)*": [0, 3, 7, 8, 9, 10],
             "Major 6 (11 #11)*": [0, 4, 5, 6, 7, 9]
         },
-        "(6-Y11M) Lydian #2 b6 Hexachord": {
-            "Lydian #2 b6 Hexachord, Major (#9 #11 b13)": [0, 3, 4, 6, 7, 8],
-            "Major 6 no5 (b9 #9 11)*": [0, 1, 3, 4, 5, 9],
-            "Augmented Major 7 (9 #9)*": [0, 2, 3, 4, 8, 11],
-            "Half-Diminished 7 sus2 (b9 13)* ": [0, 1, 2, 6, 9, 10],
-            "Augmented Major 7 sus4 (b9 13)": [0, 1, 5, 8, 9, 11],
-            "Major 7 (b13 #13)*": [0, 4, 7, 8, 10, 11]
+        "(6-Y11M) Minor (11 #11 b13)": {
+            "Minor (11 #11 b13)": [0, 3, 5, 6, 7, 8],
+            "fix me1": [0, 2, 3, 4, 5, 9],
+            "fix me2": [0, 1, 2, 3, 7, 10],
+            "fix me3": [0, 1, 2, 6, 9, 11],
+            "fix me4": [0, 1, 5, 8, 10, 11],
+            "fix me5": [0, 4, 7, 9, 10, 11]
         },
         "(6-X12) Locrian bb3 b4 bb6 Hexachord": {
             "Major (b9 9 #11)*": [0, 1, 2, 4, 6, 7],
