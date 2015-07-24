@@ -6,8 +6,12 @@ body {
 button {
 	background: white;
 	color: black;
+	font-size: 17px;
 }
-.menu button {
+.title {
+	margin-top: 50px;
+}
+.menu {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -29,24 +33,42 @@ button {
 .pitchCircle, .fifthCircle {
 	display: inline-block;
 }
-.fretBoard {
+.fretboard {
 	
+	color:white;
+	margin-bottom: 20px;
 }
 .fretboard table {
 	width: 90%;
+	background: url("../img/fretboard.jpg");
 	margin: auto;
 }
 .fretboard-note {
 	width: 40px;
 	height: 5px;
-	outline: solid 1px black;
+	outline: solid 2px silver;
 	text-align: center;
-	background-color: burlywood;
+	transition: all 0.5s;
 }
-.fretboard-note-selected {
-	background-color: brown;
-	color: #EFEFEF;
+
+.fretboard-note-selected, .fretboard-note-root {
+	background-color: white;
+	color: black;
+	opacity: .65488778;
+}
+.fretboard-note-root {
+	background-color: red;
+}
+.fretboard-title {
+	background: white;
+	color: black;
+	border-color: white;
 }
 .fretboard-note-selected:before {
-	content: '\0025CF ';
+}
+.fretboard-note:hover{
+	cursor: pointer;
+	background: white;
+	color: black;
+	transition: all 0.275s;
 }

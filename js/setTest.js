@@ -32,6 +32,6 @@ Object.keys(setList).forEach(function (set) {
 });
 if (dupes.length > 0) {
     setTimeout(function () {
-        document.body.innerHTML = dupes.join('<br>');
+        console.log(dupes.join('\n'));
     }, 1000);
 }

@@ -1,8 +1,8 @@
 .piano {
 	line-height: .8;
 	margin-top: 20px;
+	margin-left: auto;
 	height: 170px;
-	width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
 	padding-left: 15px;
@@ -11,6 +11,7 @@
 	display: inline-block;
 	box-shadow: 1px 1px 14px 0px rgba(50, 50, 50, 0.75);
 	background: black;
+	font-size: 11px;
 }
 .key {
 	cursor: pointer;
@@ -19,6 +20,7 @@
 	display: inline-block;
 	color: black;
 	text-shadow: 0px 0px 14px rgba(255, 255, 255, 1);
+	transition: all 0.5s;
 }
 .key_Bb {
 	margin-right: 29px;
@@ -38,11 +40,10 @@
 
 .blackKeys {
 	background: linear-gradient(to bottom, #000000 0%,#000000 49%,#474747 87%,#000000 88%,#ffffff 89%,#000000 90%,#545454 97%,#000000 100%);
-	height: 120px;
-	width: 14px;
+	height: 21px;
+	width: 15px;
 	padding-top: 90px;
 	color: white;
-	font-size: 11px;
 }
 .whiteKeys div {
 	text-align: center;
@@ -93,4 +94,5 @@
 .key:hover {
 	color: black;
 	background: #666;
+	transition: all 0.275s;
 }
