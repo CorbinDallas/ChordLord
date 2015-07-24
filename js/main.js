@@ -655,7 +655,7 @@ function drawFretboard(pitchClass, parentNode, cellClick) {
                     td.className = 'fretboard-note';
                 }
                 var i = (interval + pitchClass + 12) % 12;
-                td.innerHTML = noteNames[i] + '<br>';
+                td.innerHTML = '<div>' + noteNames[i] + '</div>';
                 function click (e){
                     e.preventDefault();
                     if (cellClick) {

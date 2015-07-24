@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: arial, helvetica, sans-serif;
     background: black;
+    font-size: 90px;
 }
 .fretboard {
     color:white;
@@ -14,11 +15,14 @@ body {
     margin: auto;
 }
 .fretboard-note {
-    width: 40px;
     height: 5px;
     outline: solid 2px silver;
     text-align: center;
     transition: all 0.5s;
+}
+
+.fretboard-note div {
+    width: 200px;
 }
 
 .fretboard-note-selected, .fretboard-note-root {
