@@ -621,7 +621,10 @@ function drawIntervals(){
 }
 function drawFretboard(pitchClass, parentNode, cellClick) {
     var container = ce('div'),
-        table = ce('table');
+        table = ce('table'),
+        down = false;
+    document.body.addEventListener('mousedown', function () { down = true; });
+    document.body.addEventListener('mouseup', function () { down = false; });
     parentNode.className = 'fretboard';
     var notes = [];
     for(var y = -1; y < tunings.guitarStandard.length; y++){
@@ -658,6 +661,7 @@ function drawFretboard(pitchClass, parentNode, cellClick) {
                 td.innerHTML = '<div>' + noteNames[i] + '</div>';
                 function click (e){
                     e.preventDefault();
+                    if (!down) { return; }
                     if (cellClick) {
                         cellClick.apply(this, [i, x, y, e]);
                     } else {
@@ -666,7 +670,7 @@ function drawFretboard(pitchClass, parentNode, cellClick) {
                     return false;
                 }
                 td.addEventListener('contextmenu', click);
-                td.addEventListener('click', click);
+                td.addEventListener('mouseover', click);
                 td.ondblclick = function(){
                     drawPitchClass(x);
                 }

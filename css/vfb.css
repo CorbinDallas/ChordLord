@@ -3,7 +3,7 @@ body {
     padding: 0;
     font-family: arial, helvetica, sans-serif;
     background: black;
-    font-size: 90px;
+    font-size: 30px;
 }
 .fretboard {
     color:white;
@@ -22,7 +22,7 @@ body {
 }
 
 .fretboard-note div {
-    width: 200px;
+    width: 100px;
 }
 
 .fretboard-note-selected, .fretboard-note-root {
