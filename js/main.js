@@ -129,11 +129,13 @@ function search() {
 function drawPitchClass(pitchClass){
     var c,
         t,
-        title = ce('h1');
-        pitchCircle = ce('div');
-        fifthCircle = ce('div');
-        piano = ce('div');
-        fretBoard = ce('div');
+        title = ce('h1'),
+        pitchCircle = ce('div'),
+        fifthCircle = ce('div'),
+        piano = ce('div'),
+        fretBoard = ce('div'),
+        intervalMatrix = ce('div'),
+        xadMatrix = ce('div');
     content.innerHTML = '';
     pitchCircle.className = 'pitchCircle';
     fifthCircle.className = 'fifthCircle';
@@ -142,6 +144,8 @@ function drawPitchClass(pitchClass){
     content.appendChild(pitchCircle);
     content.appendChild(fifthCircle);
     content.appendChild(piano);
+    content.appendChild(xadMatrix);
+    content.appendChild(intervalMatrix);
     
     selectedPitchClass = pitchClass;
     c = getChordNames().map(function (c){
@@ -160,10 +164,10 @@ function drawPitchClass(pitchClass){
     fifthCircle.innerHTML = '';
     drawCircle(fifthCircle, cirlceOfFifths, pitchClass);
     drawCircle(pitchCircle, pitchClasses, pitchClass);
-    createPiano(piano, pitchClass);
+    createPiano(piano, pitchClass, 2);
     drawIntervals();
-    updateIntervalMatrix();
-    updateXadMatrix();
+    updateIntervalMatrix(intervalMatrix);
+    updateXadMatrix(xadMatrix);
     content.appendChild(fretBoard);
     drawFretboard(pitchClass, fretBoard);
     //aim.innerHTML = getAllVectorMatrices();
@@ -205,9 +209,8 @@ function getAllIntervals(){
     return intv;
 }
 function getAllChords(){
-    return;
     var matches = [];
-    Object.keys(chords).forEach(function(xAd){
+    Object.keys(setList).forEach(function(xAd){
         matches = matches.concat(getAllXadChords(xAd));
     });
     return matches;
@@ -243,14 +246,6 @@ function getXadIntervalMatrix(xAd){
             if(isSubsetOf(chordMap.chord, tInvers)){
                 matches.push(chordMap);
             }
-            /*
-            Eric says delete this, but you never know
-            chordMap.chord.inversions.map(function(invers){
-                if(isSubsetOf(invers, tInvers)){
-                    matches.push(chordMap);
-                }
-            });
-            */
         });
     }
     return matches;
@@ -342,7 +337,7 @@ function getIntervalValue(intervalValue){
         }
     }
 }
-function createPiano(parentNode, pitchClass){
+function createPiano(parentNode, pitchClass, octives){
     var keys = ['C', 'Db',
     'D', 'Eb', 'E','F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
     var p = parentNode;
@@ -389,7 +384,7 @@ function createPiano(parentNode, pitchClass){
     }
     p.appendChild(lower);
     p.appendChild(upper);
-    for(var x = 0; x < 9; x++){
+    for(var x = 0; x < octives; x++){
         createOctave(x);
     }
     noSelect([p, lower, upper]);
@@ -482,31 +477,67 @@ function getMatrixFromIntervals(intv){
     }
     return matrix;
 }
-function updateXadMatrix(){
-    return;
+function updateXadMatrix(parentNode){
     var m = getAllXadIntervalMatrices();
     var chords = getAllChords();
-    var t = ce('div');
-    t.style.overflowY = 'scroll';
-    t.style.height = '140px';
+    var t = ce('table');
+    var matches = {};
+    var r = ce('tr');
+    t.appendChild(r);
+    ['Name', 'Intervals', 'Notes', 'Inversions'].forEach(function (i) {
+        d = ce('td');
+        d.innerHTML = i;
+        r.appendChild(d);
+    })
     chords.forEach(function(chord){
         m.forEach(function(matrixItem){
             if(matrixItem.name === chord.name){
-                var hrc = ce('div');
-                hrc.className = 'xadMatrixChord';
-                hrc.innerHTML = chord.name;
-                t.appendChild(hrc);
-
+                matches[chord.family] = matches[chord.family] || [];
+                matches[chord.family].push(chord);
             }
         });
     });
-    var i = gi('chordMatrix');
-    i.innerHTML = '';
-    i.appendChild(t);
+// {
+//     ad: xAd,
+//     family: family,
+//     name: chord,
+//     chord: setList[xAd][family][chord]
+// };
+    Object.keys(matches).forEach(function (key) {
+        var r = ce('tr');
+        if (['nullSet', 'monad'].indexOf(matches[key].ad) !== -1) {
+            return;
+        }
+        var name = ce('td'),
+            n = matches[key][0].name;
+        name.innerHTML = matches[key][0].name;
+        var interval = ce('td');
+        interval.innerHTML = matches[key][0].chord.join(', ')
+        var notes = ce('td');
+        notes.innerHTML = matches[key][0].chord.map(function(i) {
+            return noteNames[(i + 12 - selectedPitchClass) % 12];
+        }).join(', ');
+        var inversions = ce('td');
+        inversions.innerHTML = matches[key].map(function (match) {
+            if (match.name === matches[key][0].name) { return; }
+            return '<i>' + match.name + '</i>';
+        });
+        r.appendChild(name);
+        r.appendChild(interval);
+        r.appendChild(notes);
+        r.appendChild(inversions);
+        t.appendChild(r);
+    });
+    parentNode.innerHTML = '';
+    parentNode.appendChild(t);
+    getCategoryName();
 }
-function updateIntervalMatrix(){
-    return;
-    var i = gi('intervalMatrix');
+function getCategoryName() {
+    var selectedIntervals = getSelectedIntervals();
+    console.log(selectedIntervals);
+}
+function updateIntervalMatrix(parentNode){
+    var i = parentNode;
     var intv = [];
     for(var x = 0; x < intervalKeys.length; x++){
         if(toggledIntervals[intervalKeys[x]] === true){
