@@ -170,8 +170,98 @@ function drawPitchClass(pitchClass){
     updateXadMatrix(xadMatrix);
     content.appendChild(fretBoard);
     drawFretboard(pitchClass, fretBoard);
-    //aim.innerHTML = getAllVectorMatrices();
 }
+
+function pascalRecursive(n, a) {
+
+  if (n < 2) return a; // We already have the top row
+
+  var prevTier = a[a.length-1];
+  var curTier = [1];
+
+  for (var i = 1; i < prevTier.length; i++) {
+    curTier[i] = prevTier[i] + prevTier[i-1];
+  }
+  curTier.push(1);
+  a.push(curTier);
+
+  return pascalRecursive(n-1, a);
+}
+
+function generateSetList() {
+    var l = {},
+        setList = {};
+    for(var x = 0; x < 12; x++){
+        cmb = Combinatorics.combination(pitchClasses, x + 1);
+        while(a = cmb.next()){
+            if(a.indexOf(0) !== -1){
+                l[a.length] = l[a.length] || [];
+                l[a.length].push({set: a.sort(numSort)});
+            }
+        }
+    }
+    var familyId = 0;
+    var siblingNames = 'abcdefghijkl';
+    for(var x = 1; x < 12; x++){
+        setList[x] = {};
+        setList[x].id = x;
+        setList[x].families = [];
+        for(var y = 0; y < l[x].length; y++){
+            if (!l[x][y].used) {
+                var family = {};
+                family.id = ++familyId;
+                l[x][y].used = true;
+                setList[x].families.push(family);
+                var siblings = getSiblings(l[x][y].set);
+                for(var z = 0; z < siblings.length; z++){
+                    family[siblingNames[z]] = siblings[z];
+                    for(var a = 0; a < l[x].length; a++){
+                        if (arraysEqual(l[x][a].set, siblings[z])){
+                            l[x][a].used = true;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    console.log('families', family.id);
+}
+function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+function numSort(a, b){
+    return a - b;
+}
+function getSiblings(set){
+    var siblings = [];
+    for(var x = 0; x < set.length; x++ ){
+        var sibling = [];
+        for(var y = 0; y < set.length; y++ ){
+            sibling.push((set[y] + 12 - set[x]) % 12);
+        }
+        sibling.sort(numSort);
+        var isInList = false;
+        for(var y = 0; y < siblings.length; y ++){
+            if(arraysEqual(siblings[y], sibling)){
+                isInList = true;
+                break;
+            }
+        }
+        if (!isInList){
+            siblings.push(sibling);
+        }
+    }
+    return siblings;
+}
+
+
 function getSelectedIntervalCount(){
     var c = 0;
     for(var z = 0; z < intervalKeys.length; z ++) {
@@ -431,33 +521,6 @@ function createSeptadsList(){
 }
 function invert(i){
     return i > 6 ? 11 - i + 1 : i;
-}
-function combinations(str) {
-    var fn = function(active, rest, a) {
-        if (!active && !rest)
-            return;
-        if (!rest) {
-            a.push(active);
-        } else {
-            fn(active + rest[0], rest.slice(1), a);
-            fn(active, rest.slice(1), a);
-        }
-        return a;
-    }
-    return fn("", str, []);
-}
-function getAllVectorMatrices(){
-    var c = combinations("0123456789AB");
-    var matrices = [];
-    for(var x = 0; x < c.length; x++){
-        var i = c[x];
-        var intervals = [];
-        for(var y = 0; y < i.length; y++){
-            intervals.push(parseInt(i[y],16));
-        }
-        matrices.push(getMatrixFromIntervals(intervals));
-    }
-    return matrices;
 }
 function getMatrixFromIntervals(intv){
     var matrix = [0, 0, 0, 0, 0, 0];
