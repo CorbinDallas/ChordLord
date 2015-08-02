@@ -233,10 +233,14 @@ function generateSetList() {
 
     }
 }
-function arraysEqual(a, b) {
+function arraysEqual(a, b, sort) {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length != b.length) return false;
+    if (sort) {
+        a.sort(numSort);
+        b.sort(numSort);
+    }
     for (var i = 0; i < a.length; ++i) {
         if (a[i] !== b[i]) return false;
     }
@@ -554,7 +558,8 @@ function getChordFromSet(chord) {
         for(var y = 0; y < familyKeys.length; y++){
             var chordKeys = Object.keys(setList[setKeys[x]][familyKeys[y]]);
             for(var z = 0; z < chordKeys.length; z++) {
-                if (arraysEqual(setList[setKeys[x]][familyKeys[y]][chordKeys[z]], chord)) {
+                if (arraysEqual(setList[setKeys[x]][familyKeys[y]][chordKeys[z]],
+                    chord, true)) {
                     return {
                         name: chordKeys[z],
                         chord: chord,
@@ -566,6 +571,7 @@ function getChordFromSet(chord) {
             }
         }
     }
+    throw new Error('cannot find ' + chord + ' in setList');
 }
 // change to getFamilyIndex later
 function getFamilyName(chord) {
@@ -615,12 +621,14 @@ function updateXadMatrix(parentNode){
             b.innerHTML = '';
             if (v) {
                 for(var y = 0; y < v.length; y ++) {
-                    var i = getChordFromSet(normalizeChord(v[y]));
-                    if (!i) {
-                        alert(v[y].join() + ' cannot be found in the set list');
+                    var normalizedChord = normalizeChord(v[y]);
+                    var i = getChordFromSet(normalizedChord);
+                    if (i === undefined) {
+                        throw new Error(normalizedChord.join() +
+                            ' cannot be found in the set list');
                     }
                     i.intervals = v[y];
-                    i.normalizeChord = normalizeChord(v[y]);
+                    i.normalizeChord = normalizedChord;
                     i.notes = v[y].map(function (n) { return noteNames[n]; });
                     m[i.family] = m[i.family] || [];
                     m[i.family].push(i);
