@@ -173,21 +173,28 @@ function drawPitchClass(pitchClass){
 }
 
 function pascalRecursive(n, a) {
-
   if (n < 2) return a; // We already have the top row
-
   var prevTier = a[a.length-1];
   var curTier = [1];
-
   for (var i = 1; i < prevTier.length; i++) {
     curTier[i] = prevTier[i] + prevTier[i-1];
   }
   curTier.push(1);
   a.push(curTier);
-
   return pascalRecursive(n-1, a);
 }
-
+function generateIntervalCombinations(intervals) {
+    var a,
+        l = {};
+    for(var x = 1; x <= intervals.length; x++){
+        cmb = Combinatorics.combination(intervals, x);
+        while(a = cmb.next()){
+            l[a.length] = l[a.length] || [];
+            l[a.length].push(a.sort(numSort));
+        }
+    }
+    return l;
+}
 function generateSetList() {
     var l = {},
         setList = {};
@@ -225,7 +232,6 @@ function generateSetList() {
         }
 
     }
-    console.log('families', family.id);
 }
 function arraysEqual(a, b) {
     if (a === b) return true;
@@ -334,6 +340,7 @@ function getXadIntervalMatrix(xAd){
         // loop thru every chord in the xad and see if any match
         allChords.map(function(chordMap){
             if(isSubsetOf(chordMap.chord, tInvers)){
+                chordMap.interval = intvs[x];
                 matches.push(chordMap);
             }
         });
@@ -540,13 +547,127 @@ function getMatrixFromIntervals(intv){
     }
     return matrix;
 }
+function getChordFromSet(chord) {
+    var setKeys = Object.keys(setList);
+    for (var x = 0; x < setKeys.length; x++){
+        var familyKeys = Object.keys(setList[setKeys[x]]);
+        for(var y = 0; y < familyKeys.length; y++){
+            var chordKeys = Object.keys(setList[setKeys[x]][familyKeys[y]]);
+            for(var z = 0; z < chordKeys.length; z++) {
+                if (arraysEqual(setList[setKeys[x]][familyKeys[y]][chordKeys[z]], chord)) {
+                    return {
+                        name: chordKeys[z],
+                        chord: chord,
+                        set: setKeys[x],
+                        family: familyKeys[y],
+                        siblings: setList[setKeys[x]][familyKeys[y]]
+                    };
+                };
+            }
+        }
+    }
+}
+// change to getFamilyIndex later
+function getFamilyName(chord) {
+    var setKeys = Object.keys(setList);
+    for (var x = 0; x < setKeys.length; x++){
+        var familyKeys = Object.keys(setList[setKeys[x]]);
+        for(var y = 0; y < familyKeys.length; y++){
+            if (arraysEqual(setList[setKeys[x]][familyKeys[y]], chord)) {
+                return familyKeys[y];
+            };
+        }
+    }
+}
 function updateXadMatrix(parentNode){
+    var content = ce('div'),
+        body = ce('div'),
+        tabs = [],
+        chords = getAllChords(),
+        selectedTab = null,
+        selectedIntervals = getSelectedIntervals(),
+        combos;
+    selectedIntervals.unshift(0);
+    combos = generateIntervalCombinations(selectedIntervals);
+    content.className = 'xad-tab-container';
+    for(var x = 1; x < 13; x++){
+        (function(x) {
+            var t = ce('div');
+            var b = ce('div');
+            t.onclick = function () {
+                if(selectedTab) {
+                    body.removeChild(body.firstChild);
+                }
+                selectedTab = t;
+                tabs.forEach(function (a) {
+                    a.className = 'xad-tab';
+                });
+                t.className = 'xad-tab xad-selected-tab';
+                body.appendChild(b);
+            };
+            t.innerHTML = x;
+            // select the first one by default
+            b.className = 'xad-body';
+            content.appendChild(t);
+            tabs.push(t);
+            var v = combos[x.toString()];
+                m = {};
+            b.innerHTML = '';
+            if (v) {
+                for(var y = 0; y < v.length; y ++) {
+                    var i = getChordFromSet(normalizeChord(v[y]));
+                    if (!i) {
+                        alert(v[y].join() + ' cannot be found in the set list');
+                    }
+                    i.intervals = v[y];
+                    i.normalizeChord = normalizeChord(v[y]);
+                    i.notes = v[y].map(function (n) { return noteNames[n]; });
+                    m[i.family] = m[i.family] || [];
+                    m[i.family].push(i);
+                }
+                b.innerHTML = Object.keys(m).map(function (i) {
+                    return '<h2>' + i + '</h2>' +
+                        m[i].map(function (n) {
+                            return n.notes.join(',') + '<br>';
+                        }).join('');
+                }).join('');
+                console.log(m);
+            }
+        }(x));
+    }
+    tabs[0].onclick();
+    content.appendChild(body);
+    parentNode.appendChild(content);
+}
+function normalizeChord(c) {
+    var chord = c.slice();
+    while(chord[0] !== 0) {
+        for(var x = 0; x < chord.length; x++) {
+            chord[x]--;
+        }
+    }
+    return chord;
+}
+function xupdateXadMatrix(parentNode){
     var m = getAllXadIntervalMatrices();
     var chords = getAllChords();
     var t = ce('table');
     var matches = {};
     var r = ce('tr');
     t.appendChild(r);
+    var a,
+        list = [],
+        cmb,
+        selectedIntervals = getSelectedIntervals();
+    selectedIntervals.unshift(0);
+    for(var x = 0; x < selectedIntervals.length; x++){
+        cmb = Combinatorics.combination(selectedIntervals, x);
+        while(a = cmb.next()){
+            if(list.indexOf(a) === -1){
+                list.push(a);
+            }
+        }
+    }
     ['Name', 'Intervals', 'Notes', 'Inversions'].forEach(function (i) {
         d = ce('td');
         d.innerHTML = i;
@@ -555,6 +676,7 @@ function updateXadMatrix(parentNode){
     chords.forEach(function(chord){
         m.forEach(function(matrixItem){
             if(matrixItem.name === chord.name){
+                chord.interval = matrixItem.interval;
                 matches[chord.family] = matches[chord.family] || [];
                 matches[chord.family].push(chord);
             }
@@ -575,11 +697,10 @@ function updateXadMatrix(parentNode){
             n = matches[key][0].name;
         name.innerHTML = matches[key][0].name;
         var interval = ce('td');
-        interval.innerHTML = matches[key][0].chord.join(', ')
+        interval.innerHTML = matches[key][0].chord.join(', ');
         var notes = ce('td');
-        notes.innerHTML = matches[key][0].chord.map(function(i) {
-            return noteNames[(i + 12 - selectedPitchClass) % 12];
-        }).join(', ');
+        //generateIntervalCombinations
+        notes.innerHTML = '';
         var inversions = ce('td');
         inversions.innerHTML = matches[key].map(function (match) {
             if (match.name === matches[key][0].name) { return; }

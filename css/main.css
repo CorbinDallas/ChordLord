@@ -72,3 +72,38 @@ button {
 	color: black;
 	transition: all 0.275s;
 }
+.xad-tab:hover {
+	cursor: pointer;
+	background: #EEE;
+}
+.xad-tab {
+	display: inline-block;
+	width: 25px;
+	padding: 2px;
+	background: #bbb;
+	border: solid 1px #BBB;
+	border-top-color: #BBB;
+}
+.xad-selected-tab {
+	background: #FFF;
+}
+.xad-body {
+	width: 100%;
+	display: block;
+	visibility: visible;
+	background: #FFF;
+	overflow: scroll;
+	height: 350px;
+	border: solid 1px #BBB;
+}
+.xad-tab-container {
+	width: 90%;
+	height: 350px;
+	margin: 5%;
+}
+.xad-tab-note {
+	background: #FFF;
+	color: #000;
+	border: solid 1px black;
+	display: inline-block;
+}
