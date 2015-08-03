@@ -107,3 +107,8 @@ button {
 	border: solid 1px black;
 	display: inline-block;
 }
+.xad-tab-container h2 {
+	font-size: 17px;
+	margin: 2px;
+	background: #EEE;
+}

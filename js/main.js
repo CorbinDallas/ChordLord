@@ -3,6 +3,7 @@
 Math.TAU = 2 * Math.PI;
 var ce = function (tag) { 'use strict'; return document.createElement(tag); },
     gi = function (id) { 'use strict'; return document.getElementById(id); },
+    generatedSetList = generateSetList(),
     useColors = false,
     content = ce('div'),
     selectedPitchClass = 0,
@@ -164,7 +165,7 @@ function drawPitchClass(pitchClass){
     fifthCircle.innerHTML = '';
     drawCircle(fifthCircle, cirlceOfFifths, pitchClass);
     drawCircle(pitchCircle, pitchClasses, pitchClass);
-    createPiano(piano, pitchClass, 2);
+    createPiano(piano, pitchClass, 1);
     drawIntervals();
     updateIntervalMatrix(intervalMatrix);
     updateXadMatrix(xadMatrix);
@@ -197,7 +198,7 @@ function generateIntervalCombinations(intervals) {
 }
 function generateSetList() {
     var l = {},
-        setList = {};
+        sl = {};
     for(var x = 0; x < 12; x++){
         cmb = Combinatorics.combination(pitchClasses, x + 1);
         while(a = cmb.next()){
@@ -210,28 +211,33 @@ function generateSetList() {
     var familyId = 0;
     var siblingNames = 'abcdefghijkl';
     for(var x = 1; x < 12; x++){
-        setList[x] = {};
-        setList[x].id = x;
-        setList[x].families = [];
+        sl[x] = {};
+        sl[x].id = x;
+        sl[x].families = [];
         for(var y = 0; y < l[x].length; y++){
             if (!l[x][y].used) {
                 var family = {};
                 family.id = ++familyId;
                 l[x][y].used = true;
-                setList[x].families.push(family);
+                sl[x].families.push(family);
                 var siblings = getSiblings(l[x][y].set);
                 for(var z = 0; z < siblings.length; z++){
                     family[siblingNames[z]] = siblings[z];
                     for(var a = 0; a < l[x].length; a++){
                         if (arraysEqual(l[x][a].set, siblings[z])){
                             l[x][a].used = true;
+                            l[x][a].setListInfo = getChordFromSet(l[x][a].set);
+                            if (!l[x][a].setListInfo) {
+                                console.log(l[x][a].set + 
+                                    ' is not defined in the curated set list ./setList.js.');
+                            }
                         }
                     }
                 }
             }
         }
-
     }
+    return sl;
 }
 function arraysEqual(a, b, sort) {
     if (a === b) return true;
@@ -464,16 +470,16 @@ function createPiano(parentNode, pitchClass, octives){
                 if(isAnInterval(pitchClass, x)){
                     className += ' selectedKey';
                 }
+                k.innerHTML = '<div>&#x25C9;</div>';
                 if(pitchClass === x){
                     className += ' selectedRootKey';
+                    k.innerHTML = '<div>&#x25C8;</div>';
                 }
                 k.className = className;
-                k.innerHTML = '<div>' + keys[x] + (octaveNumber-2) + '</div>' + 
-                '<div class="midiNoteNumber">' + midiNoteNumber++ + '</div>';
                 nlist.push(keys[x] + (octaveNumber-2));
                 (flat ? blackKeys : whiteKeys).appendChild(k);
                 k.onclick = function(){
-                    selectInterval(getIntervalValue(    (x + 12 - pitchClass) % 12));
+                    selectInterval(getIntervalValue((x + 12 - pitchClass) % 12));
                 }
                 k.ondblclick = function(){
                     drawPitchClass(x);
@@ -489,6 +495,8 @@ function createPiano(parentNode, pitchClass, octives){
         createOctave(x);
     }
     noSelect([p, lower, upper]);
+    parentNode.style.width = (parentNode.offsetWidth - 26) + 'px';
+    parentNode.style.overflow = 'hidden';
     //console.log(nlist.join(' '));
 }
 function createSeptadsList(){
@@ -571,7 +579,6 @@ function getChordFromSet(chord) {
             }
         }
     }
-    throw new Error('cannot find ' + chord + ' in setList');
 }
 // change to getFamilyIndex later
 function getFamilyName(chord) {
@@ -629,7 +636,7 @@ function updateXadMatrix(parentNode){
                     }
                     i.intervals = v[y];
                     i.normalizeChord = normalizedChord;
-                    i.notes = v[y].map(function (n) { return noteNames[n]; });
+                    i.notes = v[y].map(function (n) { return noteNames[(n + selectedPitchClass) % 12]; });
                     m[i.family] = m[i.family] || [];
                     m[i.family].push(i);
                 }
@@ -639,7 +646,6 @@ function updateXadMatrix(parentNode){
                             return n.notes.join(',') + '<br>';
                         }).join('');
                 }).join('');
-                console.log(m);
             }
         }(x));
     }
