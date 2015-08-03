@@ -228,8 +228,9 @@ function generateSetList() {
                             l[x][a].used = true;
                             l[x][a].setListInfo = getChordFromSet(l[x][a].set);
                             if (!l[x][a].setListInfo) {
-                                console.log(l[x][a].set + 
-                                    ' is not defined in the curated set list ./setList.js.');
+                                console.log(l[x][a].set.sort(numSort) + 
+                                    ' is not defined in the list. family name ' +
+                                    family.id);
                             }
                         }
                     }

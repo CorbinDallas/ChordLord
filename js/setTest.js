@@ -32,6 +32,6 @@ Object.keys(setList).forEach(function (set) {
 });
 if (dupes.length > 0) {
     setTimeout(function () {
-        console.log(dupes.join('\n'));
+        console.log(dupes.map(function (i) { return i.sort(numSort); }).join('\n'));
     }, 1000);
 }

@@ -1733,13 +1733,13 @@ var setList = {
             "Locrian nat3 bb6": [0, 1, 4, 5, 6, 7, 10]
         },
         "(7-19) Enigmatic Minor, Ionian #2 b5 b6": {
-            "Ionian #2 b5 b6": [0, 3, 4, 5, 6, 8, 11],
-            "Locrian bb3 bb4 bb5 bb7": [0, 1, 2, 3, 5, 8, 9],
-            "Phrygian bb3 b4 nat7": [0, 1, 2, 4, 7, 8, 11],
-            "Phrygian #4 #6 nat7": [0, 1, 3, 6, 7, 10, 11],
-            "Lydian #3 ##5 #6": [0, 2, 5, 6, 9, 10, 11],
-            "Mixolydian #2 ##4 #5": [0, 3, 4, 7, 8, 9, 10],
-            "Locrian nat3 bb6 bb7": [0, 1, 4, 5, 6, 7, 9]
+            "fixmeIonian #2 b5 b6": [0, 1, 2, 3, 6, 7, 9],
+            "fixmeLocrian bb3 bb4 bb5 bb7": [0, 1, 2, 5, 6, 8, 11],
+            "fixmePhrygian bb3 b4 nat7": [0, 1, 4, 5, 7, 10, 11],
+            "fixmePhrygian #4 #6 nat7": [0, 3, 4, 6, 9, 10, 11],
+            "fixmeLydian #3 ##5 #6": [0, 1, 3, 6, 7, 8, 9],
+            "fixmeMixolydian #2 ##4 #5": [0, 2, 5, 6, 7, 8, 11],
+            "fixmeLocrian nat3 bb6 bb7": [0, 3, 4, 5, 6, 9, 10]
         },
         "(7-Y18M) Locrian b4 bb6 bbb7": {
             "Locrian b4 bb6 bbb7": [0, 1, 3, 4, 6, 7, 8],
@@ -1886,13 +1886,13 @@ var setList = {
             "Dorian ##5 #6 nat7": [0, 2, 3, 5, 9, 10, 11]
         },
         "(7-11M) Phrygian b4 #5 #6 nat7": {
-            "Phrygian b4 #5 #6 nat7": [0, 1, 3, 4, 8, 10, 11],
-            "Dorian ##4 ##5 #6 nat7": [0, 2, 3, 7, 9, 10, 11],
-            "Lydian b2 ##3 ###4 ##5 #6": [0, 1, 6, 8, 9, 10, 11],
-            "Lydian ###2 ###3 ###4 ##5 #6": [0, 5, 7, 8, 9, 10, 11],
-            "Aeolian b4 bb5 bbb6 bbbb7": [0, 2, 3, 4, 5, 6, 7],
-            "Locrian bb3 bb4 bbb5 bbbb6": [0, 1, 2, 3, 4, 5, 10],
-            "Locrian bb3 bb4 bbb5 #6 nat7": [0, 1, 2, 3, 4, 9, 11]
+            "fixmePhrygian b4 #5 #6 nat7": [0, 2, 3, 4, 5, 7, 8],
+            "fixmeDorian ##4 ##5 #6 nat7": [0, 1, 2, 3, 5, 6, 10],
+            "fixmeLydian b2 ##3 ###4 ##5 #6": [0, 1, 2, 4, 5, 9, 11],
+            "fixmeLydian ###2 ###3 ###4 ##5 #6": [0, 1, 3, 4, 8, 10, 11],
+            "fixmeAeolian b4 bb5 bbb6 bbbb7": [0, 2, 3, 7, 9, 10, 11],
+            "fixmeLocrian bb3 bb4 bbb5 bbbb6": [0, 1, 5, 7, 8, 9, 10],
+            "fixmeLocrian bb3 bb4 bbb5 #6 nat7": [0, 4, 6, 7, 8, 9, 11]
         },
         "(7-11) Aeolian b4 bb5 bb6 nat7": {
             "Aeolian b4 bb5 bb6 nat7": [0, 2, 3, 4, 5, 7, 11],
@@ -2021,13 +2021,13 @@ var setList = {
             "Mixolydian b2 ##3 ##4 #5": [0, 1, 6, 7, 8, 9, 10]
         },
         "(7-3M) Mixolydian #2 b5 bb6 bbb7": {
-            "Mixolydian #2 b5 bb6 bbb7": [0, 3, 4, 5, 6, 7, 8],
-            "Locrian bb3 bb4 bbb5 bbbb6 bbb7": [0, 1, 2, 3, 4, 5, 8],
-            "Locrian bb3 bb4 bbb5 bb6 nat7": [0, 1, 2, 3, 4, 7, 11],
-            "Locrian bb3 bb4 #6 nat7": [0, 1, 2, 3, 6, 10, 11],
-            "Ionian b2 bb3 ##5 #6 nat7": [0, 1, 2, 5, 9, 10, 11],
-            "Lydian b2 ###4 ##5 #6": [0, 1, 4, 8, 9, 10, 11],
-            "Lydian #2 ###3 ###4 ##5 #6": [0, 3, 7, 8, 9, 10, 11]
+            "fixmeMixolydian #2 b5 bb6 bbb7": [0, 3, 4, 5, 6, 7, 8],
+            "fixmeLocrian bb3 bb4 bbb5 bbbb6 bbb7": [0, 1, 2, 3, 4, 5, 9],
+            "fixmeLocrian bb3 bb4 bbb5 bb6 nat7": [0, 1, 2, 3, 4, 8, 11],
+            "fixmeLocrian bb3 bb4 #6 nat7": [0, 1, 2, 3, 7, 10, 11],
+            "fixmeIonian b2 bb3 ##5 #6 nat7": [0, 1, 2, 6, 9, 10, 11],
+            "fixmeLydian b2 ###4 ##5 #6": [0, 1, 5, 8, 9, 10, 11],
+            "fixmeLydian #2 ###3 ###4 ##5 #6": [0, 4, 7, 8, 9, 10, 11]
         },
         "(7-3) Locrian bb3 bb4 bbb5 bbbb6 bbb7": {
             "Locrian bb3 bb4 bbb5 bbbb6 bbb7": [0, 1, 2, 3, 4, 5, 8],
@@ -2353,15 +2353,15 @@ var setList = {
             "Chromatic no(2 b3 b6 7)": [0, 1, 4, 5, 6, 7, 9, 10],
             "Chromatic no(b2 2 5 b7": [0, 3, 4, 5, 6, 8, 9, 11]
         },
-        "(8-18M) Complementary Minor (b9)": {
-            "Chromatic no(2 4 b7 7)": [0, 1, 3, 4, 6, 7, 8, 9],
-            "Chromatic no(b2 3 6 b7)": [0, 2, 3, 5, 6, 7, 8, 11],
-            "Chromatic no(2 5 b6 7)": [0, 1, 3, 4, 5, 6, 9, 10],
-            "Chromatic no(b2 b5 5 b7)": [0, 2, 3, 4, 5, 8, 9, 11],
-            "Chromatic no(3 4 6 7)": [0, 1, 2, 3, 6, 7, 8, 10],
-            "Chromatic no(b3 3 b6 b7)": [0, 1, 2, 5, 6, 7, 9, 11],
-            "Chromatic no(2 b3 5 6)": [0, 1, 4, 5, 6, 8, 10, 11],
-            "Chromatic no(b2 2 b5 b6)": [0, 3, 4, 5, 7, 9, 10, 11]
+        "(8-18M) Complementary to Minor (b9)": {
+            "fixmeChromatic no(2 4 b7 7)": [0, 1, 3, 4, 6, 7, 8, 9],
+            "fixmeChromatic no(b2 3 6 b7)": [0, 2, 3, 5, 6, 7, 8, 11],
+            "fixmeChromatic no(2 5 b6 7)": [0, 1, 3, 4, 5, 6, 9, 10],
+            "fixmeChromatic no(b2 b5 5 b7)": [0, 2, 3, 4, 5, 8, 9, 11],
+            "fixmeChromatic no(3 4 6 7)": [0, 1, 2, 3, 6, 7, 9, 10],
+            "fixmeChromatic no(b3 3 b6 b7)": [0, 1, 2, 5, 6, 8, 9, 11],
+            "fixmeChromatic no(2 b3 5 6)": [0, 1, 4, 5, 7, 8, 10, 11],
+            "fixmeChromatic no(b2 2 b5 b6)": [0, 3, 4, 6, 7, 9, 10, 11]
         },
         "(8-19) Complementary to Major (b13)": {
             "Chromatic no(b3 5 b7 7)": [0, 1, 2, 4, 5, 6, 8, 9],
