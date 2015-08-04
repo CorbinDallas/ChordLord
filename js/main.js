@@ -209,7 +209,6 @@ function generateSetList() {
         }
     }
     var familyId = 0;
-    var siblingNames = 'abcdefghijkl';
     for(var x = 1; x < 12; x++){
         sl[x] = {};
         sl[x].id = x;
@@ -244,12 +243,14 @@ function arraysEqual(a, b, sort) {
     if (a === b) return true;
     if (a == null || b == null) return false;
     if (a.length != b.length) return false;
+    var aa = a.slice();
+    var bb = b.slice();
     if (sort) {
-        a.sort(numSort);
-        b.sort(numSort);
+        bb.sort(numSort);
+        aa.sort(numSort);
     }
-    for (var i = 0; i < a.length; ++i) {
-        if (a[i] !== b[i]) return false;
+    for (var i = 0; i < aa.length; ++i) {
+        if (aa[i] !== bb[i]) return false;
     }
     return true;
 }
@@ -569,12 +570,18 @@ function getChordFromSet(chord) {
             for(var z = 0; z < chordKeys.length; z++) {
                 if (arraysEqual(setList[setKeys[x]][familyKeys[y]][chordKeys[z]],
                     chord, true)) {
+                    var siblings = {},
+                        s = setList[setKeys[x]][familyKeys[y]],
+                        sKeys = Object.keys(s);
+                    for(var i = 0; i < sKeys.length; i++) {
+                        siblings[siblingNames[i]] = s[sKeys[i]];
+                    }
                     return {
                         name: chordKeys[z],
                         chord: chord,
                         set: setKeys[x],
                         family: familyKeys[y],
-                        siblings: setList[setKeys[x]][familyKeys[y]]
+                        siblings: siblings
                     };
                 };
             }
@@ -637,22 +644,39 @@ function updateXadMatrix(parentNode){
                     }
                     i.intervals = v[y];
                     i.normalizeChord = normalizedChord;
-                    i.notes = v[y].map(function (n) { return noteNames[(n + selectedPitchClass) % 12]; });
+                    i.notes = denormalizeChord(i.siblings.a, v[y][0]).map(function (n) {
+                        return noteNames[(n + selectedPitchClass) % 12]
+                            + '<sup>' + n + '</sup>';
+                    });
                     m[i.family] = m[i.family] || [];
                     m[i.family].push(i);
                 }
-                b.innerHTML = Object.keys(m).map(function (i) {
-                    return '<h2>' + i + '</h2>' +
+                var stripe = 0;
+                b.innerHTML = '<table>' + Object.keys(m).map(function (i) {
+                    stripe++;
+                    return '<tr ' + (stripe % 2 === 0 ? 'class="even-row" ' : '') +
+                        '><th rowspan="' + (m[i].length + 1) +
+                        '">' + i + '</th></tr>' +
                         m[i].map(function (n) {
-                            return n.notes.join(',') + '<br>';
+                            return '<tr><td>' +
+                                n.notes.join('&nbsp;&nbsp;') + '</td></tr>';
                         }).join('');
-                }).join('');
+                }).join('') + '</table>';
             }
         }(x));
     }
     tabs[0].onclick();
     content.appendChild(body);
     parentNode.appendChild(content);
+}
+function denormalizeChord(c, targetIndex) {
+    var chord = c.slice();
+    while(chord[0] !== targetIndex) {
+        for(var x = 0; x < chord.length; x++) {
+            chord[x]++;
+        }
+    }
+    return chord;
 }
 function normalizeChord(c) {
     var chord = c.slice();

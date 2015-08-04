@@ -92,7 +92,7 @@ button {
 	display: block;
 	visibility: visible;
 	background: #FFF;
-	overflow: scroll;
+	overflow-y: scroll;
 	height: 350px;
 	border: solid 1px #BBB;
 }
@@ -111,4 +111,24 @@ button {
 	font-size: 17px;
 	margin: 2px;
 	background: #EEE;
+}
+.xad-body table {
+	border-collapse: collapse;
+	width: 100%;
+	border-top: none;
+	border-left: none;
+}
+.xad-body td, .xad-body th {
+	border: solid 1px #ccc;
+	border-top: none;
+	border-left: none;
+	padding: 2px 5px;
+}
+.xad-body th {
+	width: 200px;
+	background: #EEE;
+}
+.xad-body sup {
+	color: #666;
+	padding-left: 2px;
 }

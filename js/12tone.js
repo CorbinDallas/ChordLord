@@ -1,6 +1,7 @@
 var pitchClasses = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 var noteNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 var cirlceOfFifths = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5];
+var siblingNames = 'abcdefghijkl';
 var intervals = {
     "Minor 2": 1,
     "Major 2": 2,
