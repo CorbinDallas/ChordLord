@@ -132,3 +132,6 @@ button {
 	color: #666;
 	padding-left: 2px;
 }
+.intervalMatrix {
+	display: inline-block;
+}

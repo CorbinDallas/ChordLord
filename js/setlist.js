@@ -2779,3 +2779,4 @@ var setList = {
         }
     }
 };
+Object.freeze(setList);

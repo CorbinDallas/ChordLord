@@ -141,12 +141,14 @@ function drawPitchClass(pitchClass){
     pitchCircle.className = 'pitchCircle';
     fifthCircle.className = 'fifthCircle';
     title.className = 'title';
+    intervalMatrix.className = 'intervalMatrix';
     content.appendChild(title);
     content.appendChild(pitchCircle);
     content.appendChild(fifthCircle);
     content.appendChild(piano);
-    content.appendChild(xadMatrix);
     content.appendChild(intervalMatrix);
+    content.appendChild(xadMatrix);
+    
     
     selectedPitchClass = pitchClass;
     c = getChordNames().map(function (c){
@@ -191,7 +193,7 @@ function generateIntervalCombinations(intervals) {
         cmb = Combinatorics.combination(intervals, x);
         while(a = cmb.next()){
             l[a.length] = l[a.length] || [];
-            l[a.length].push(a.sort(numSort));
+            l[a.length].push(a);
         }
     }
     return l;
@@ -574,7 +576,7 @@ function getChordFromSet(chord) {
                         s = setList[setKeys[x]][familyKeys[y]],
                         sKeys = Object.keys(s);
                     for(var i = 0; i < sKeys.length; i++) {
-                        siblings[siblingNames[i]] = s[sKeys[i]];
+                        siblings[siblingNames[i]] = s[sKeys[i]].sort(numSort);
                     }
                     return {
                         name: chordKeys[z],
@@ -599,6 +601,22 @@ function getFamilyName(chord) {
             };
         }
     }
+}
+function getTransposedSiblingA(invs, siblings) {
+    var cmb = Combinatorics.permutation(invs, invs.length),
+        a,
+        combos = [];
+    while(a = cmb.next()){
+        combos.push(a);
+    };
+    for(var x = 0; x < combos.length; x++){
+        var c = normalizeChord(combos[x]);
+        if (arraysEqual(c, siblings.a)) {
+            return combos[x];
+        }
+    }
+    
+    throw new Error('cant find sibling' + invs.join(','));
 }
 function updateXadMatrix(parentNode){
     var content = ce('div'),
@@ -644,9 +662,9 @@ function updateXadMatrix(parentNode){
                     }
                     i.intervals = v[y];
                     i.normalizeChord = normalizedChord;
-                    i.notes = denormalizeChord(i.siblings.a, v[y][0]).map(function (n) {
-                        return noteNames[(n + selectedPitchClass) % 12]
-                            + '<sup>' + n + '</sup>';
+                    i.notes = getTransposedSiblingA(i.intervals, i.siblings).map(function (n) {
+                        var p = (n + selectedPitchClass) % 12;
+                        return noteNames[p] + '<sup>' + p + '</sup>';
                     });
                     m[i.family] = m[i.family] || [];
                     m[i.family].push(i);
@@ -680,12 +698,14 @@ function denormalizeChord(c, targetIndex) {
 }
 function normalizeChord(c) {
     var chord = c.slice();
-    while(chord[0] !== 0) {
+    while(chord[0] % 12 !== 0) {
         for(var x = 0; x < chord.length; x++) {
-            chord[x]--;
+            chord[x]++;
         }
     }
-    return chord;
+    return chord.map(function (i) { 
+        return i % 12;
+    });
 }
 function xupdateXadMatrix(parentNode){
     var m = getAllXadIntervalMatrices();
