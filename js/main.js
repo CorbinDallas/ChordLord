@@ -603,20 +603,18 @@ function getFamilyName(chord) {
     }
 }
 function getTransposedSiblingA(invs, siblings) {
-    var cmb = Combinatorics.permutation(invs, invs.length),
-        a,
-        combos = [];
-    while(a = cmb.next()){
-        combos.push(a);
-    };
-    for(var x = 0; x < combos.length; x++){
-        var c = normalizeChord(combos[x]);
-        if (arraysEqual(c, siblings.a)) {
-            return combos[x];
+    var c = invs.slice(),
+        count = 0;
+    while(true){
+        var n = normalizeChord(c);
+        if (arraysEqual(n, siblings.a)) {
+            return c;
+        }
+        c.unshift(c.pop());
+        if (count++ > 15) {
+            throw new Error('cant find sibling' + invs.join(','));
         }
     }
-    
-    throw new Error('cant find sibling' + invs.join(','));
 }
 function updateXadMatrix(parentNode){
     var content = ce('div'),
@@ -633,6 +631,9 @@ function updateXadMatrix(parentNode){
         (function(x) {
             var t = ce('div');
             var b = ce('div');
+            tabs.push(t);
+            t.innerHTML = x;
+            content.appendChild(t);
             t.onclick = function () {
                 if(selectedTab) {
                     body.removeChild(body.firstChild);
@@ -643,44 +644,44 @@ function updateXadMatrix(parentNode){
                 });
                 t.className = 'xad-tab xad-selected-tab';
                 body.appendChild(b);
-            };
-            t.innerHTML = x;
-            // select the first one by default
-            b.className = 'xad-body';
-            content.appendChild(t);
-            tabs.push(t);
-            var v = combos[x.toString()];
-                m = {};
-            b.innerHTML = '';
-            if (v) {
-                for(var y = 0; y < v.length; y ++) {
-                    var normalizedChord = normalizeChord(v[y]);
-                    var i = getChordFromSet(normalizedChord);
-                    if (i === undefined) {
-                        throw new Error(normalizedChord.join() +
-                            ' cannot be found in the set list');
+                
+                // select the first one by default
+                b.className = 'xad-body';
+                var v = combos[x.toString()];
+                    m = {};
+                b.innerHTML = '';
+                if (v) {
+                    for(var y = 0; y < v.length; y ++) {
+                        var normalizedChord = normalizeChord(v[y]);
+                        var i = getChordFromSet(normalizedChord);
+                        if (i === undefined) {
+                            throw new Error(normalizedChord.join() +
+                                ' cannot be found in the set list');
+                        }
+                        i.intervals = v[y];
+                        i.normalizeChord = normalizedChord;
+
+                        i.notes = getTransposedSiblingA(i.intervals, i.siblings).map(function (n) {
+                            var p = (n + selectedPitchClass) % 12;
+                            return noteNames[p] + '<sup>' + p + '</sup>';
+                        });
+
+                        m[i.family] = m[i.family] || [];
+                        m[i.family].push(i);
                     }
-                    i.intervals = v[y];
-                    i.normalizeChord = normalizedChord;
-                    i.notes = getTransposedSiblingA(i.intervals, i.siblings).map(function (n) {
-                        var p = (n + selectedPitchClass) % 12;
-                        return noteNames[p] + '<sup>' + p + '</sup>';
-                    });
-                    m[i.family] = m[i.family] || [];
-                    m[i.family].push(i);
+                    var stripe = 0;
+                    b.innerHTML = '<table>' + Object.keys(m).map(function (i) {
+                        stripe++;
+                        return '<tr ' + (stripe % 2 === 0 ? 'class="even-row" ' : '') +
+                            '><th rowspan="' + (m[i].length + 1) +
+                            '">' + i + '</th></tr>' +
+                            m[i].map(function (n) {
+                                return '<tr><td>' +
+                                    n.notes.join('&nbsp;&nbsp;') + '</td></tr>';
+                            }).join('');
+                    }).join('') + '</table>';
                 }
-                var stripe = 0;
-                b.innerHTML = '<table>' + Object.keys(m).map(function (i) {
-                    stripe++;
-                    return '<tr ' + (stripe % 2 === 0 ? 'class="even-row" ' : '') +
-                        '><th rowspan="' + (m[i].length + 1) +
-                        '">' + i + '</th></tr>' +
-                        m[i].map(function (n) {
-                            return '<tr><td>' +
-                                n.notes.join('&nbsp;&nbsp;') + '</td></tr>';
-                        }).join('');
-                }).join('') + '</table>';
-            }
+            };
         }(x));
     }
     tabs[0].onclick();
