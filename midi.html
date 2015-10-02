@@ -10,6 +10,7 @@
 		<script src="js/main.js"></script>
 		<script src="js/arp.js"></script>
 		<script src="js/setTest.js"></script>
+		<link href='css/piano.css' rel='stylesheet' type='text/css' />
 		<style>
 			.rangeInput {
 				width: 25px;
@@ -23,9 +24,15 @@
 			.arp {
 				background: #CCC;
 				margin: 4px;
+				overflow: hidden;
+				width: 100%;
 			}
-			.arp div, .master div {
+			.arpItem {
 				display: inline-block;
+			}
+			.pianoControl {
+				overflow-x: scroll;
+				width: 100%;
 			}
 		</style>
 	</head>

@@ -1,9 +1,15 @@
-var midiWorker = new Worker("js/midi.js"),
+var metronomeCounter = 0,
 	midi,
-	timingEvents = {},
+	styles = {},
+	metronome,
+	timingEvents = [],
 	midiKeyStates = {},
 	inputEvents = {},
     midiMiddleC = 60,
+    arpAllMethods = {
+    	play: [],
+    	stop: []
+    },
     pipes = {
         outputs: {},
         inputs: {}      
@@ -15,33 +21,53 @@ var midiWorker = new Worker("js/midi.js"),
         programChange: 0xC0,
         volume: 0xB0
     },
+    arpCss = {
+		container: 'arp',
+		item: 'arpItem',
+		title: 'arpTitle',
+		input: 'arpInput'
+	},
 	methods = {},
 	timeSignature = [4, 4],
 	tempo = 120,
-	timings = [
-		["1/128", 1],
-		["1/64", 2],
-		["1/48", 3],
-		["1/32", 4],
-		["1/24", 6],
-		["1/16", 8],
-		["1/12", 12],
-		["1/8", 16],
-		["1/6", 24],
-		["1/4", 32],
-		["1/3", 48],
-		["1/2", 64],
-		["1/1", 128],
-		["1 measures", 0],
-		["2 measures", 0],
-		["3 measures", 0],
-		["4 measures", 0],
-		["5 measures", 0],
-		["6 measures", 0],
-		["7 measures", 0],
-		["8 measures", 0]
-	],
+	timings = {
+		"1/128": 128,
+		"1/64": 64,
+		"1/48": 48,
+		"1/32": 32,
+		"1/24": 24,
+		"1/16": 16,
+		"1/12": 12,
+		"1/8": 16,
+		"1/6": 6,
+		"1/4": 4,
+		"1/3": 3,
+		"1/2": 2,
+		"1/1": 1,
+		"1 measures": 0,
+		"2 measures": 0,
+		"3 measures": 0,
+		"4 measures": 0,
+		"5 measures": 0,
+		"6 measures": 0,
+		"7 measures": 0,
+		"8 measures": 0
+	},
 	masterControls = {
+		sigMeasure: {
+			title: '',
+			type: 'select',
+			options: [1, 2, 3, 4, 5, 6, 7, 8,
+				9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+				21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+			defaultIndex: 3
+		},
+		sigBeat: {
+			title: '/',
+			type: 'select',
+			options: [2, 4, 8, 16, 32],
+			defaultIndex: 1
+		},
 		tempo: {
 			title: 'Tempo',
 			type: 'range',
@@ -114,6 +140,17 @@ var midiWorker = new Worker("js/midi.js"),
 			type: 'select',
 			options: ['Note On/Off', 'Controller']
 		},
+		key: {
+			title: 'Key',
+			type: 'select',
+			options: noteNames
+		},
+		transpose: {
+			title: 'Transpose',
+			type: 'select',
+			defaultIndex: 44,
+			options: []
+		},
 		scale: {
 			title: 'Scale',
 			type: 'select',
@@ -124,16 +161,15 @@ var midiWorker = new Worker("js/midi.js"),
 			title: 'Intervals',
 			type: 'checkboxrange'
 		},
+		style: {
+			title: 'Style',
+			type: 'select'
+		},
 		rate: {
 			title: 'Rate',
 			type: 'select',
-			options: timings,
+			options: Object.keys(timings),
 			defaultIndex: 9
-		},
-		cycle: {
-			title: 'Cycle',
-			type: 'select',
-			options: []
 		},
 		step: {
 			title: 'Step',
@@ -152,7 +188,7 @@ var midiWorker = new Worker("js/midi.js"),
 		offset: {
 			title: 'Offset',
 			type: 'range',
-			min: 0,
+			min: -12,
 			max: 12,
 			defaultValue: 0
 		},
@@ -192,20 +228,21 @@ var midiWorker = new Worker("js/midi.js"),
 		duplicate: {
 			title: 'Duplicate',
 			type: 'button'
+		},
+		piano: {
+			title: 'Piano',
+			type: 'piano'
 		}
 	};
-midiWorker.onmessage = function (e) {
-	methods[e.data.method].apply(null, e.data.arguments);
+function removeTimingEvent(callback){
+	timingEvents.splice(timingEvents.indexOf(callback), 1);
 }
-function removeTimingEvent(timing, callback){
-	timingEvents[timing].splice(timingEvents[timing].indexOf(callback), 1);
+function addTimingEvent(callback){
+	timingEvents.push(callback);
 }
-function addTimingEvent(timing, callback){
-	timingEvents[timing].push(callback);
-}
-function fireTimingEvent(timing) {
-	timingEvents[timing].forEach(function (p) {
-		p(timing);
+function fireTimingEvent(drift, microseconds) {
+	timingEvents.forEach(function (p) {
+		p(drift, microseconds);
 	});
 }
 function midiKeysToSet() {
@@ -233,23 +270,15 @@ function readMessage(e) {
         //midiKeysToSet();
     }
 }
-function setTimeSignature() {
-	timings.forEach(function (timingKey){
-		if (/measure/.test(timingKey)){
-			
-		}
-	});
-}
-function sendMessage(message, deviceId, channel, note, velocity, duration) {
+function sendMessage(message, deviceId, channel, note, velocity, time) {
     var o = pipes.outputs[deviceId];
     o.value.open();
-    o.value.send([msg[message] + channel, note, velocity], 0);
+    o.value.send([msg[message] + channel, note, velocity], time);
 }
-function playNote(note, duration, deviceId, channel){
-    sendMessage('on', deviceId, channel, note, 64, 0);
-    setTimeout(function (x) {
-        sendMessage('off', deviceId, channel, note, 64, 0);
-    }, duration);
+function playNote(note, duration, deviceId, channel, time){
+	if (note > 128) { note = 128; }
+    sendMessage('on', deviceId, channel, note, 64, time);
+    sendMessage('off', deviceId, channel, note, 64, time + duration);
 }
 function init() {
 	// prepare form schema with dynamic values
@@ -260,23 +289,292 @@ function init() {
 	generatedSets.forEach(function (set) {
 		arpControls.scale.options.push([set.set + ' - ' + set.family + ' - ' + set.name, set.chord]);
 	});
+	for(var x = -44; x < 44; x++){
+		arpControls.transpose.options.push(x);
+	}
+	arpControls.style.options = Object.keys(styles);
 	// create master tempo
-	pe(createForm({}, masterControls, 'master'), document.body);
+	pe(createForm({}, masterControls, { container: 'master' }), document.body);
 	// create the first arp
-	pe(createForm({}, arpControls, 'arp'), document.body);
-	// setup timings event array
-	timings.forEach(function(item){
-		timingEvents[item[0]] = [];
-	});
-	inputEvents.playAll[0].method();
+	pe(createForm({}, arpControls, arpCss), document.body);
+
 }
-function pe(tag, parentNode, innerHTML, value){
+function createOffsetArray(n, max){
+	var ca = 0, cb = n, a = [];
+	for(var x = 0; x < max; x++){
+		a.push(ca++);
+		a.push(cb++);
+	}
+	return a;
+}
+
+function arp(args) {
+	// TEMPO
+	// TIME [0, 1]
+	// RATE 1/4
+	// START TIME MS
+	var notes = [],
+		noteCounter = 0,
+		stepCounter = 0,
+		queueLength = 500,
+		timerLength = 100,
+		rateKey = args.rate,
+		rate = timings[rateKey],
+		offset = args.offset,
+		intervals = args.intervals,
+		style = styles[args.style](intervals, offset),
+		key = args.key,
+		transpose = args.transpose,
+		step = args.step,
+		distance = args.distance,
+		retrigger = args.retrigger,
+		retriggerOn = args.retriggerOn,
+		repeat = args.repeat,
+		timer,
+		x,
+		base = args.base || midiMiddleC,
+		atom = ((60000 / tempo) / 32) * (4 / timeSignature[1]),
+		beat = (atom * 128) / (4 / timeSignature[1]),
+		bar = beat * timeSignature[0],
+		rateNoteLength = beat / rate,
+		counter = performance.now() + queueLength;
+	// get in sync
+	counter = counter + (counter % beat);
+	function play(note, t) {
+		playNote(
+			note,
+			rateNoteLength * args.sustainPct,
+			args.device,
+			args.channel,
+			t
+		);
+	};
+	function checkQueue() {
+		var noteNumber,
+			n,
+			r,
+			x,
+			s;
+		while(counter < performance.now() + queueLength) {
+			s = style(args);
+			if (s.end){
+				if (stepCounter === step) {
+					intervals = args.intervals;
+					stepCounter = 0;
+				} else if (step > 0) {
+					stepCounter++;
+					for(x = 0; x < distance; x++){
+						r = intervals.shift();
+						r.note += 12;
+						intervals.push(r);
+					}
+				}
+			}
+			n = toCommand(intervals[s.number % intervals.length]);
+			noteCounter++;
+			if (n.type === 'normal') {
+				play(base + key + transpose + n.note, counter);
+			} else if (n.command === 't') {
+				for(x = 0; x < 3; x++) {
+					play(base + key + transpose + n.note, counter + ((rateNoteLength / 3) * x));
+				}
+			}
+			counter += rateNoteLength;
+		}
+	}
+	function toCommand(arg) {
+		var note = parseInt(arg[0], 10),
+			command = arg[1];
+		if (command === 't') {
+			return {
+				command: 't',
+				note: note
+			}
+		}
+		return {
+			note: parseInt(arg, 10),
+			type: 'normal'
+		}
+	}
+	timer = setInterval(checkQueue, timerLength);
+	return function (){
+		clearTimeout(timer);
+	}
+}
+
+
+styles["Up"] = function (intervals, offset) {
+	var count = -1 + offset;
+	return function (args) {
+		count++;
+		return {
+			number: count,
+			end: count % intervals.length === 0 && count > 0
+		}
+	}
+}
+styles["Down"] = function (intervals, offset) {
+	var count = 0 + offset;
+	return function (args) {
+		if (count === 0) {
+			count = intervals.length - 1;
+			return {
+				number: count,
+				end: true
+			};
+		}
+		count += (intervals.length - 1);
+		return {
+			number: count,
+			end: false
+		}
+	}
+}
+styles['Up Down'] = function (intervals, offset) {
+	var up = true,
+		end,
+		count = 0 + offset;
+	return function (args) {
+		end = false;
+		if (count === intervals.length -1) {
+			end = true;
+			up = false;
+		}
+		if (count === 0) {
+			up = true;
+		}
+		if (up) {
+			return {
+				number: ++count,
+				end: end
+			};
+		}
+		return {
+			number: --count,
+			end: end
+		};
+	}
+}
+styles['Down Up'] = function (intervals, offset) {
+	var up,
+		end,
+		count = intervals.length + offset;
+	return function (args) {
+		if (count === intervals.length -1) {
+			end = true
+			up = false;
+		}
+		if (count === 0) {
+			up = true;
+		}
+		if (up) {
+			return {
+				number: ++count,
+				end: end
+			};
+		}
+		return {
+			number: --count,
+			end: end
+		};
+	}
+}
+styles["3rds Cycle"] = function (intervals, offset) {
+	var count = 0 + offset;
+	return function (args) {
+		count += 2;
+		return {
+			number: count,
+			end: count % intervals.length
+		};
+	}
+}
+styles["3rds Sequence"] = function (intervals, offset) {
+	var count = 0 + offset,
+		a = createOffsetArray(2, intervals.length * 2);
+	return function (args) {
+		var i = a[count++ % a.length];
+		if (count === Math.floor(intervals.length + (intervals.length * .5))) {
+			count = 0;
+		}
+		return {
+			number: i,
+			end: i % (intervals.length * 2)
+		};
+	}
+}
+styles["4ths"] = function (intervals, offset) {
+	var count = 0 + offset,
+		a = createOffsetArray(3, intervals.length * 3);
+	return function (args) {
+		var i = a[count++ % a.length];
+		if (count === Math.floor(intervals.length + (intervals.length * .33333333))) {
+			count = 0;
+		}
+		return {
+			number: i,
+			end: i % (intervals.length * 3)
+		};;
+	}
+}
+styles["5ths"] = function (intervals, offset) {
+	var count = 0 + offset,
+		a = createOffsetArray(4, intervals.length * 4);
+	return function (args) {
+		var i = a[count++ % a.length];
+		if (count === Math.floor(intervals.length + (intervals.length * .25))) {
+			count = 0;
+		}
+		return {
+			number: i,
+			end: i % (intervals.length * 4)
+		};
+	}
+}
+styles["6ths"] = function (intervals, offset) {
+	var count = 0 + offset,
+		a = createOffsetArray(5, intervals.length * 5);
+	return function (args) {
+		var i = a[count++ % a.length];
+		if (count === Math.floor(intervals.length + (intervals.length * .1725))) {
+			count = 0;
+		}
+		return {
+			number: i,
+			end: i % (intervals.length * 5)
+		};
+	}
+}
+function restartMetronome() {
+	stopMetronome();
+	startMetronome();
+}
+function metronomeQuarterEvent() {
+	metronome.className = 'metronome ' +
+		(metronomeCounter % 2 === 0 ? 'tick' : 'tock');
+	metronomeCounter++;
+}
+function metronomeBeatEvent() {
+	metronome.className = 'metronome beat';
+}
+function startMetronome() {
+	addTimingEvent(metronomeQuarterEvent);
+	addTimingEvent(metronomeBeatEvent);
+}
+function stopMetronome() {
+	removeTimingEvent(metronomeQuarterEvent);
+	removeTimingEvent(metronomeBeatEvent);
+}
+function pe(tag, parentNode, innerHTML, value, className){
 	var i;
 	if (typeof tag === 'string') {
 		i = document.createElement(tag);
 	} else {
 		i = tag;
 	}
+	if (className) {
+		i.className = className;
+	}	
 	if (parentNode) {
 		parentNode.appendChild(i);
 	}
@@ -289,22 +587,39 @@ function pe(tag, parentNode, innerHTML, value){
 	return i;
 }
 function playAll(){
-	midiWorker.postMessage({
-		method: 'play'
+	arpAllMethods.play.forEach(function (i) {
+		i();
 	});
 }
 function stopAll(){
-	midiWorker.postMessage({
-		method: 'stop'
+	arpAllMethods.stop.forEach(function (i) {
+		i();
 	});
 }
 inputEvents.stopAll = [{ event: 'click', method: stopAll }];
 inputEvents.playAll = [{ event: 'click', method: playAll }];
 function toIntervals(s) {
 	return s.split(',').map(function (i) {
-		return midiMiddleC + parseInt(i, 10);
+		if (i.length > 1) {
+			return parseInt(i, 10);
+		} else {
+			return i;
+		}
 	});
 }
+
+inputEvents.sigMeasure = [{
+	event: 'change',
+	method: function (e, inputs, methods) {
+		timeSignature[0] = parseInt(e.value, 10);
+	}
+}];
+inputEvents.sigBeat = [{
+	event: 'change',
+	method: function (e, inputs, methods) {
+		timeSignature[1] = parseInt(e.value, 10);	
+	}
+}];
 inputEvents.stop = [{
 	event: 'click',
 	method: function (e, inputs, methods) {
@@ -318,42 +633,49 @@ inputEvents.scale = [{
 		}, 0);
 	},
 	event: 'change',
-	method: function (e, inputs) {
+	method: function (e, inputs, methods) {
 		if (inputs.stopEvent) {
 			inputs.stopEvent();
 		}
-		inputEvents.play[0].method(e, inputs);
+		inputEvents.play[0].method(e, inputs, methods);
 		inputs.intervals.value = toIntervals(inputs.scale.value);
 		console.log(inputs.scale.selectedIndex);
 	}
 }];
 inputEvents.play = [{
 	event: 'click',
+	init: function () {
+
+	},
 	method: function (e, inputs, methods) {
-		if (methods.stopEvent) {
+		function stop () {
 			methods.stopEvent();
 		}
-		var rateKey = inputs.rate.selectedOptions[0].label,
-			rate = parseInt(inputs.rate.value, 10),
-			counter = parseInt(inputs.offset.value, 10),
-			intervals = toIntervals(inputs.scale.value),
-			atom = ((60000 / tempo) / 32) * (4 / timeSignature[1]);
-		function p() {
-			var sustainPct = (parseInt(inputs.sustain.value, 10) / 100),
-				duration = atom * rate * sustainPct,
-				last = 
-			playNote(
-				intervals[counter % intervals.length],
-				duration,
-				inputs.device.value,
-				parseInt(inputs.channel.value, 10)
-			);
-			counter++;
+		function play () {
+			if (methods.stopEvent) {
+				methods.stopEvent();
+				arpAllMethods.play.splice(play, 1);
+				arpAllMethods.stop.push(methods.stopEvent);
+			}
+			methods.playEvent = play;
+			methods.stopEvent = arp({
+				device: inputs.device.value,
+				channel: parseInt(inputs.channel.value, 10),
+				style: inputs.style.value,
+				rate: inputs.rate.value,
+				key: inputs.key.selectedIndex,
+				transpose: parseInt(inputs.transpose.value, 10),
+				offset: parseInt(inputs.offset.value, 10),
+				intervals: inputs.intervals.value.split(','),
+				sustainPct: parseInt(inputs.sustain.value, 10) / 100,
+				distance: parseInt(inputs.distance.value, 10),
+				step: parseInt(inputs.step.value, 10),
+				repeat: parseInt(inputs.repeat.value, 10)
+			});		
 		}
-		methods.stopEvent = function () {
-			removeTimingEvent(rateKey, p);
-		}
-		addTimingEvent(rateKey, p);
+		play();
+		arpAllMethods.play.push(play);
+		arpAllMethods.stop.push(stop);
 	}
 }];
 inputEvents.addArp = [{
@@ -367,16 +689,18 @@ inputEvents.duplicate = [{
 	method: function (e, inputs) {
 		var args = seralizeInputs(inputs);
 		console.log(args);
-		pe(createForm(args, arpControls, 'arp'), document.body);
+		pe(createForm(args, arpControls, arpCss), document.body);
+	}
+}];
+inputEvents.piano = [{
+	init: function (i, inputs, methods) {
+
 	}
 }];
 inputEvents.tempo = [{
-	event: 'click',
+	event: 'change',
 	method: function () {
-		midiWorker.postMessage({
-			method: 'setTempo',
-			arguments: [tempo]
-		});
+		console.log("tempo change " + this.value);
 	}
 }];
 methods.fireTimingEvent = fireTimingEvent;
@@ -392,17 +716,17 @@ function seralizeInputs(inputs) {
 	});
 	return o;
 }
-function createForm(args, controls, className) {
+function createForm(args, controls, classNames) {
 	var container = pe('div'),
 		methods = {},
 		inputs = {};
-	container.className = className;
+	container.className = classNames.container;
 	Object.keys(controls).forEach(function (f){
 		var ctrl = controls[f],
 			arg = args[f],
-			r = pe('div', container),
-			c1 = pe('div', r),
-			c2 = pe('div', r),
+			r = pe('div', container, undefined, undefined, classNames.item),
+			c1 = pe('div', r, undefined, undefined, classNames.title),
+			c2 = pe('div', r, undefined, undefined, classNames.input),
 			h = pe('span', c1, ctrl.title),
 			i = pe(/select|button/.test(ctrl.type) ? ctrl.type : 'input', c2),
 			v,
@@ -441,6 +765,13 @@ function createForm(args, controls, className) {
 			for(x = 0; x < 12; x++){
 				var c = pe('input');
 			}
+		} else if (ctrl.type === 'piano') {
+			c2.removeChild(i);
+			r.removeChild(c1);
+			c2.setAttribute('colspan', 2);
+			var pianoControl = pe('div', c2);
+			r.className = 'pianoControl';
+			i = createPiano(pianoControl, 0, 7);
 		} else if (ctrl.type === 'button') {
 			r.removeChild(c1);
 			c2.setAttribute('colspan', 2);
@@ -454,17 +785,11 @@ function createForm(args, controls, className) {
 		if (inputEvents[f]) {
 			inputEvents[f].forEach(function (ev) {
 				if (ev.init) {
-					ev.init(i, inputs);
+					return ev.init(i, inputs, methods);
 				}
 				i.addEventListener(ev.event, function (e) {
 					ev.method.apply(this, [e, inputs, methods]);
 				});
-			});
-		}
-		// don't restart on some control changes
-		if (['sustain'].indexOf(f) === -1){
-			i.addEventListener('change', function () {
-				inputEvents.play[0].method(null, inputs, methods);
 			});
 		}
 		inputs[f] = i;
@@ -475,7 +800,7 @@ function createForm(args, controls, className) {
 }
 document.addEventListener('DOMContentLoaded', function () {
 	navigator.requestMIDIAccess({
-	    sysex: false
+	    sysex: true
 	}).then(function (e){
 	    midi = e;
 	    function getPipes(pipe) {

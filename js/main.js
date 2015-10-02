@@ -517,7 +517,6 @@ function createPiano(parentNode, pitchClass, octives){
     }
     noSelect([p, lower, upper]);
     parentNode.style.width = (parentNode.offsetWidth - 26) + 'px';
-    parentNode.style.overflow = 'hidden';
     //console.log(nlist.join(' '));
 }
 function createSeptadsList(){
