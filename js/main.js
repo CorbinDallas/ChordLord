@@ -3,9 +3,12 @@
 Math.TAU = 2 * Math.PI;
 var ce = function (tag) { 'use strict'; return document.createElement(tag); },
     gi = function (id) { 'use strict'; return document.getElementById(id); },
+    generatedSets = [],
     generatedSetList = generateSetList(),
     useColors = false,
     content = ce('div'),
+    midiKeyStates = {},
+    midiMiddleC = 60,
     selectedPitchClass = 0,
     supressInMenus = [],
     startingZinded = 10000,
@@ -35,7 +38,20 @@ var ce = function (tag) { 'use strict'; return document.createElement(tag); },
     menu = ce('div'),
     content,
     searchButton = ce('button'),
-    tuningsButton = ce('button');
+    tuningsButton = ce('button'),
+    playMidiButton = ce('button'),
+    midi,
+    pipes = {
+        outputs: {},
+        inputs: {}      
+    },
+    msg = {
+        on: 0x90,
+        off: 0x80,
+        pitchBend: 0xE0,
+        programChange: 0xC0,
+        volume: 0xB0
+    };
 document.addEventListener('DOMContentLoaded', init);
 function init() {
     
@@ -73,9 +89,9 @@ function search() {
         var searchMenu = document.createElement('div'),
             children = [],
             offset = (parentNode === document.body ?
-            0 : parentNode.offsetLeft + parentNode.offsetWidth);
+            0 : parentNode.offsetLeft + 50);
         searchMenu.className = 'rootMenu';
-        searchMenu.style.zIndex = startingZinded--;
+        searchMenu.style.zIndex = startingZinded++;
         searchMenu.style.left = (offset - 250) + 'px';
         setTimeout(function () {
             searchMenu.style.left = offset + 'px';
@@ -228,6 +244,7 @@ function generateSetList() {
                         if (arraysEqual(l[x][a].set, siblings[z])){
                             l[x][a].used = true;
                             l[x][a].setListInfo = getChordFromSet(l[x][a].set);
+                            generatedSets.push(l[x][a].setListInfo);
                             if (!l[x][a].setListInfo) {
                                 console.log(l[x][a].set.sort(numSort) + 
                                     ' is not defined in the list. family name ' +
@@ -500,7 +517,6 @@ function createPiano(parentNode, pitchClass, octives){
     }
     noSelect([p, lower, upper]);
     parentNode.style.width = (parentNode.offsetWidth - 26) + 'px';
-    parentNode.style.overflow = 'hidden';
     //console.log(nlist.join(' '));
 }
 function createSeptadsList(){
