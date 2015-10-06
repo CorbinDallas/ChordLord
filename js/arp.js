@@ -136,6 +136,10 @@ var queueTimer,
 		exportArps: {
 			type: 'button',
 			title: 'Export'
+		},
+		help: {
+			type: 'button',
+			title: 'Help'
 		}
 	},
 	arpControls = {
@@ -201,15 +205,15 @@ var queueTimer,
 			title: 'Scale',
 			type: 'select',
 			options: [],
-			//defaultIndex: 1389
-			defaultValueByTitle: 'bilawal'
+			defaultIndex: 1389
+			//defaultValueByTitle: 'bilawal'
 		},
 		intervals: {
 			title: 'Intervals[]',
 			type: 'text'
 		},
-		rythm: {
-			title: 'Rythm[]',
+		rhythm: {
+			title: 'Rhythm[]',
 			type: 'text',
 			defaultValue: 'q'
 		},
@@ -270,7 +274,7 @@ var queueTimer,
 			title: 'Pedal Gate',
 			type: 'range',
 			min: 1,
-			max: 400,
+			max: 99,
 			defaultValue: 50
 		},
 		play: {
@@ -399,7 +403,7 @@ function createOffsetArray(n, max){
 	}
 	return a;
 }
-function toRythm(r) {
+function toRhythm(r) {
 	r = r.replace('!', '');
 	var x, timingKey = Object.keys(timings);
 	for(x = 0; x < timingKey.length; x++){
@@ -429,7 +433,7 @@ function arp(args) {
 		rate = timings[rateKey],
 		offset = args.offset,
 		intervals = args.intervals.slice(),
-		rythm = args.rythm.slice(),
+		rhythm = args.rhythm.slice(),
 		style = styles[args.style](intervals, offset),
 		key = args.key,
 		pedal = args.pedal,
@@ -482,7 +486,7 @@ function arp(args) {
 			x,
 			s;
 		while(sustainRateCounter < performance.now() + queueLength) {
-			p = toRythm(pedal[sustainGateCounter % pedal.length]);
+			p = toRhythm(pedal[sustainGateCounter % pedal.length]);
 			if (p !== undefined) {
 				p = beat / p;
 				sendMessage(msg['controllerChange'], deviceId, args.channel, 64, 127, sustainRateCounter);
@@ -513,9 +517,9 @@ function arp(args) {
 				}
 			}
 			n = intervals[s.number % intervals.length];
-			ry = rythm[s.number % rythm.length].trim()
+			ry = rhythm[s.number % rhythm.length].trim()
 			ca = ry.indexOf('!') !== -1;
-			r = toRythm(ry);
+			r = toRhythm(ry);
 			v = velocity[noteCounter % velocity.length];
 			c = chord[noteCounter % chord.length].map(numMap);
 			if (r === undefined) {
@@ -810,13 +814,17 @@ inputEvents.rate = [{
 	event: 'change',
 	method: function (i, inputs) {
 		return function () {
-			inputs.rythm.value = this.value.split(':')[0];
+			inputs.rhythm.value = this.value.split(':')[0];
 		}
 	},
 }];
 inputEvents.scale = [{
 	event: 'change',
 	method: function (e, inputs, methods) {
+		setTimeout(function () {
+			inputs.intervals.value = inputs.intervals.value === 'undefined' ?
+				toIntervals(inputs.scale.value) : inputs.intervals.value;
+		}, 0);
 		return function () {
 			if (inputs.stopEvent) {
 				inputs.stopEvent();
@@ -847,7 +855,7 @@ inputEvents.play = [{
 				pedal: inputs.pedal.value.split(','),
 				style: inputs.style.value,
 				rate: inputs.rate.value,
-				rythm: inputs.rythm.value.split(','),
+				rhythm: inputs.rhythm.value.split(','),
 				key: inputs.key.selectedIndex,
 				transpose: parseInt(inputs.transpose.value, 10),
 				offset: parseInt(inputs.offset.value, 10),
@@ -932,6 +940,14 @@ inputEvents.device = [{
 		setTimeout(function () { deviceId = masterForm.inputs.device.value; }, 0);
 		return function () {
 			deviceId = this.value;
+		}
+	}
+}];
+inputEvents.help = [{
+	event: 'click',
+	method: function () {
+		return function () {
+			window.open('/arphelp.html', '_blank');
 		}
 	}
 }];

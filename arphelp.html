@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+	<head>
+		<title>arpeggiator help</title>
+		<style>
+		body {
+			font-size: 1.5em;
+			background: #222;
+			color: orange;
+			font-family: sans-serif;
+			margin: 20px 15%;
+		}
+		</style>
+	</head>
+	<div>
+		<h2>Help</h2>
+		<p>
+		This program is super alpha mode.  Don't expect everything to work perfectly.
+		</p>
+		<h3>Installation</h3>
+		<p>
+			This file is probably <a href="http://corbindallas.github.io/ChordLord/arp.html">hosted here</a>
+			This only works in chrome as of now.  The list will surely grow as more adopt the web midi api.
+			If you want to run this locally you can only serve up this file from a web server, file:// protocol will not work for security reasons.  Don't let the terrorists win on this one, run the provided node server by
+			installing node and running <pre>npm install node-static
+node server &ltport number&gt</pre> to start a basic http server
+			to serve the html files from.  Or serve the files from your apache or IIS server.  Or whatever
+			http server you use.  Just know it won't work on file:// protocol.
+		<p>
+			If you want to play straight to a DAW you should install a program like 
+			<a href="http://www.tobias-erichsen.de/software/loopmidi.html">Loop Midi</a>
+			to output to.  Otherwide you can output to an external synth.  This program
+			itself does not produce any noise, it only sends MIDI messages.
+		</p>
+		<p>
+			Select the device to output to from the device menu.  Click play to play with the defaults set.
+		</p>
+		<h3>Very rough walkthoguh</h3>
+		<p>
+			  You can create more than one arpeggiator.  You can have more than one instance of this web page.
+			  You can press space bar to start/stop all arpeggiators.
+		</p>
+		<h4>Master Buttons</h4>
+		<p>
+			Darker black control is the "master" section.  Here you can alter tempo, time signature, output device.  You can name your entire arpeggiator group for purposes of saving and you can save the entire group here.   You can create new arpeggiators here and globally start and stop all arpeggiators.
+		</p>
+		<h4>Arpeggiator Buttons</h4>
+		<p>
+			Lighter black are the arpeggiators.  You can have more than one by adding or duplicating.  You can start and stop the individual arpeggiator.  Save the arpeggiator individually.  Delete this instance and delete this arpeggiator from the arpeggiator store.  You can also make a duplicate of this arpeggiator.
+		</p>
+		<h4>Channel</h4>
+		<p>
+			The midi channel this arpeggiator sends data to.
+		</p>
+		<h4>Type and CC#</h4>
+		<p>
+			If you select `note on/off` from the `type` menu then normal note messages will be sent.  If you select `controller change` from the `type` menu then controller change messages will be sent instead of notes. The `CC#` field will be the controller the values will be sent to.  For example, you can use a chromatic scale to
+			send pitch bend data to creates some really fun effects.
+		</p>
+		<h4>Transpose and Key</h4>
+		<p>
+			Transpose transposes the notes by shifting everything by the amount specified.
+		</p>
+		<h4>Scales and intervals</h4>
+		<p>
+			Fill the intervals box by selecting from the scales drop down menu, or type your semitones into the intervals box separated by commas.  You can enter positive or negative values as well as values beyond a single octave range. By default you should see the major scale.
+		</p>
+		<h4>Rhythm</h4>
+		<p>
+			Here you can enter a comma separated list of rhythms the arpeggiator will loop through.  You can see a
+			list of what letter means what by clicking on the rate menu.
+				e.g.: q = quarter note, h = half note, et = eighth note triplet.  You can also add modifies like ! or *.
+				What those do is not clear at this point and might change in the future, but hey have fun.  E.g.: w!
+		</p>
+		<h4>Chord</h4>
+		<p>
+			As the arpeggiator loops through your scale, it can play a chord based on the current note in the scale
+			instead of just one note.  There are two ways to define a chord.  The easy way is as a comma separated
+			list of scale indexes offset from the current note.  For example, "1, 3, 5" would play a major triad for
+			every note in your scale.  The second more complex (awesome) way is to define a list of chords.  For example "[1, 3, 5], [1, 3, 5, 7]" would cause the arpeggiator to loop between these two chords while looping through
+			your scale.  The modifiers in the rhythm box (!, * etc.) are usually greatly impacted by the presence of a value other than "1" here.
+		</p>
+		<h4>Velocity</h4>
+		<p>
+			A comma separated list of velocities to loop through.
+		</p>
+		<h4>Sus. Pedal</h4>
+		<p>
+			A list of sustain pedal rhythms using the same rhythm syntax as the rhythm box.  e.g.: w is a whole note sustain pedal press.  This note has a gate setting called the `Pedal gate`.  The gate dictates what % of the time
+			of the specified note time value the pedal is held down vs. not held down.  So if the value is "q" or quarter note and the gate is at 50%, the the pedal is held down for a eighth note and left up for an eighth note before repeating this pattern.
+		</p>
+		<h4>Style</h4>
+		<p>
+			How the arpeggiator traverses the scale indexes.  There are only a few styles now.  There will be more.
+		</p>
+		<h4>Rate</h4>
+		<p>
+			When you select a value from the rate box, that value will replace the contents of the `Rythm` box as a simple way to set simple arpeggiation rhythms.  This box is for little bitches that don't want to play cool complex things.  OR PEOPLE JUST LEARNING!  Also you can see the letters used to represent notes in the `Rythm` box here.
+		</p>
+		<h4>Step</h4>
+		<p>
+			Used in conjunction with the `distance` slider.  Step sets how many times beyond the standard pattern to play the pattern again.  Distance determines the scale index shift from the starting point.
+		</p>
+		<h4>Distance</h4>
+		<p>
+			See step above.
+		</p>
+		<h4>Offset</h4>
+		<p>
+			If you want this pattern to begin offset from the scale index where it would normally being, this slider
+			is for you.  Man I really need to write better documentation.
+		</p>
+		<h4>Gate</h4>
+		<p>
+			The gate dictates what % of the time of the specified note time value the note is held down vs. not held down.  So if the value is "q" or quarter note and the gate is at 50%, the the note is held down for a eighth note and left up for an eighth note before repeating this pattern.
+		</p>
+		<h4>Pedal Gate</h4>
+		<p>
+			See Sus. Pedal
+		</p>
+	</div>
+	<body></body>
+</html>
