@@ -1184,7 +1184,7 @@ function createForm(args, controls, classNames) {
 }
 document.addEventListener('DOMContentLoaded', function () {
 	navigator.requestMIDIAccess({
-	    sysex: true
+	    sysex: false
 	}).then(function (e){
 	    midi = e;
 	    function getPipes(pipe) {
