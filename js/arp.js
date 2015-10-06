@@ -947,7 +947,7 @@ inputEvents.help = [{
 	event: 'click',
 	method: function () {
 		return function () {
-			window.open('/arphelp.html', '_blank');
+			window.open('arphelp.html', '_blank');
 		}
 	}
 }];
