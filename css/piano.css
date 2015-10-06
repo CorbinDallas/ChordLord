@@ -20,7 +20,6 @@
 	display: inline-block;
 	color: black;
 	text-shadow: 0px 0px 14px rgba(255, 255, 255, 1);
-	transition: all 0.5s;
 	font-size: 1.5em;
 }
 .key_Bb {
@@ -61,7 +60,7 @@
 }
 .blackOctave, .whiteOctave {
 	display: inline-block;
-	width: 154px;
+	width: 160px;
 }
 .upper {
 	display: block;
@@ -95,7 +94,6 @@
 .key:hover {
 	color: black;
 	background: #666;
-	transition: all 0.275s;
 }
 .midiNoteNumber {
 	display: none;
@@ -103,4 +101,7 @@
 }
 .blackKeys, .whiteKeys {
 	line-height: 10px;
+}
+.highlightKey {
+	background: blue;
 }

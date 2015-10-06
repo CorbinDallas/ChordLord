@@ -1,5 +1,10 @@
 /*jslint browser: true*/
 /*globals intervals: true, cirlceOfFifths: true, noteNames: true */
+
+
+
+
+
 Math.TAU = 2 * Math.PI;
 var ce = function (tag) { 'use strict'; return document.createElement(tag); },
     gi = function (id) { 'use strict'; return document.getElementById(id); },
@@ -183,7 +188,17 @@ function drawPitchClass(pitchClass){
     fifthCircle.innerHTML = '';
     drawCircle(fifthCircle, cirlceOfFifths, pitchClass);
     drawCircle(pitchCircle, pitchClasses, pitchClass);
-    createPiano(piano, pitchClass, 1);
+    createPiano({
+        parentNode: piano,
+        key: pitchClass,
+        range: 1,
+        keyClick: function (x, key) {
+            selectInterval(getIntervalValue((x + 12 - key) % 12));
+        },
+        keyDblClick: function (x) {
+            drawPitchClass(x);
+        }
+    });
     drawIntervals();
     updateIntervalMatrix(intervalMatrix);
     updateXadMatrix(xadMatrix);
@@ -465,34 +480,44 @@ function getIntervalValue(intervalValue){
         }
     }
 }
-function createPiano(parentNode, pitchClass, octives){
+/*
+
+    createPiano({
+        parentNode: piano,
+        key: pitchClass,
+        range: 1
+    });
+
+*/
+function createPiano(args){
     var keys = ['C', 'Db',
     'D', 'Eb', 'E','F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-    var p = parentNode;
-    p.innerHTML = '';
+    var instance = {};
+    var p = document.createElement('div');
     p.className = 'piano';
+    args.parentNode.appendChild(p);
     var upper = ce('div');
     var lower = ce('div');
     upper.className = 'upper';
     lower.className = 'lower';
-    var midiNoteNumber = 0;
-    var nlist = [];
+    var midiNoteNumber = 24;
+    var nlist = [],
+        keyControls = [];
     function createOctave(octaveNumber){
         var blackKeys = ce('div');
         blackKeys.className = 'blackOctave';
         var whiteKeys = ce('div');
         whiteKeys.className = 'whiteOctave';
-        
         for(var x = 0; x < 12; x++){
-            (function(x){
+            (function(x, midiNoteNumber){
                 var k = ce('div');
                 var flat = keys[x].length > 1;
                 var className = 'key key_' + keys[x] + (flat ? ' blackKeys' : ' whiteKeys');
-                if(isAnInterval(pitchClass, x)){
+                if(isAnInterval(args.key, x)){
                     className += ' selectedKey';
                 }
                 k.innerHTML = '<div>&#x25C9;</div>';
-                if(pitchClass === x){
+                if(args.key === x){
                     className += ' selectedRootKey';
                     k.innerHTML = '<div>&#x25C8;</div>';
                 }
@@ -500,24 +525,82 @@ function createPiano(parentNode, pitchClass, octives){
                 nlist.push(keys[x] + (octaveNumber-2));
                 (flat ? blackKeys : whiteKeys).appendChild(k);
                 k.onclick = function(){
-                    selectInterval(getIntervalValue((x + 12 - pitchClass) % 12));
-                }
+                    if (!args.keyClick) { return ;}
+                    args.keyClick.apply(this, [midiNoteNumber, instance]);
+                };
+                k.onmousedown = function(){
+                    if (!args.keyMouseDown) { return ;}
+                    args.keyMouseDown.apply(this, [midiNoteNumber, instance]);
+                };
+                k.onmouseover = function(){
+                    if (!args.keyMouseOver) { return ;}
+                    args.keyMouseOver.apply(this, [midiNoteNumber, instance]);
+                };
+                k.onmouseoff = function(){
+                    if (!args.keyMouseOff) { return ;}
+                    args.keyMouseOff.apply(this, [midiNoteNumber, instance]);
+                };
                 k.ondblclick = function(){
-                    drawPitchClass(x);
-                }
-            }(x));
+                    if (!args.keyDblClick) { return ;}
+                    args.keyDblClick.apply(this, [midiNoteNumber, instance]);
+                };
+                keyControls.push({
+                    highlight: function (i) {
+                        k.classList.add('highlightKey');
+                        if (i === undefined) { return; }
+                        k.style.opacity = i;
+                    },
+                    unhighlight: function (i) {
+                        k.classList.remove('highlightKey');
+                        if (i === undefined) { return; }
+                        k.style.opacity = 1;
+                    },
+                    select: function (i) {
+                        k.classList.add('selectedKey');
+                    },
+                    deselect: function (i) {
+                        k.classList.remove('selectedKey');
+                    }
+                })
+            }(x, midiNoteNumber));
+            midiNoteNumber++;
         }
         lower.appendChild(whiteKeys);
         upper.appendChild(blackKeys);
     }
     p.appendChild(lower);
     p.appendChild(upper);
-    for(var x = 0; x < octives; x++){
+    for(var x = 0; x < args.range; x++){
         createOctave(x);
     }
     noSelect([p, lower, upper]);
-    parentNode.style.width = (parentNode.offsetWidth - 26) + 'px';
-    //console.log(nlist.join(' '));
+    return {
+        keys: keyControls,
+        parentNode: args.parentNode,
+        select: function (selection) {
+            keyControls.forEach(function (s){ 
+                s.deselect();
+            })
+            selection.forEach(function (s){ 
+                keyControls[s].select();
+            });
+        },
+        deselect: function (selection) {
+            selection.forEach(function (s){ 
+                keyControls[s].deselect();
+            });
+        },
+        unhighlight: function (selection) {
+            selection.forEach(function (s){ 
+                keyControls[s].unhighlight();
+            });
+        },
+        highlight: function (selection) {
+            selection.forEach(function (s){ 
+                keyControls[s].highlight();
+            });
+        }
+    };
 }
 function createSeptadsList(){
     var ele = ce('div');

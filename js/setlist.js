@@ -2779,6 +2779,10 @@ var setList = {
         } 
     }
 };
+
+
+
+/*
 Object.freeze(setList);
 var diatonicSubsets = { monad: [1] 
                         secundal: [2, 3, 9, 10, 17, 39, 40, 41, 58, 90, 108, 109, 110, 111]
@@ -2791,36 +2795,5 @@ var diatonicSubsets = { monad: [1]
                         hexads: [176, 177, 178, 187, 188, 189], 
                         septads: [276] 
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ]
+*/
