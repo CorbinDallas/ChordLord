@@ -277,6 +277,20 @@ var queueTimer,
 			max: 99,
 			defaultValue: 50
 		},
+		feelingSpeed: {
+			title: 'Feeling Speed',
+			type: 'range',
+			min: 0,
+			max: 99,
+			defaultValue: 0
+		},
+		feelingMagnitude: {
+			title: 'Feeling Magnitude',
+			type: 'range',
+			min: 0,
+			max: 1000,
+			defaultValue: 0
+		},
 		play: {
 			title: 'Play',
 			type: 'button'
@@ -404,7 +418,7 @@ function createOffsetArray(n, max){
 	return a;
 }
 function toRhythm(r) {
-	r = r.replace('!', '');
+	r = r.replace(/\!\*/, '');
 	var x, timingKey = Object.keys(timings);
 	for(x = 0; x < timingKey.length; x++){
 		if (timingKey[x].split(':')[0] === r) {
@@ -434,6 +448,8 @@ function arp(args) {
 		offset = args.offset,
 		intervals = args.intervals.slice(),
 		rhythm = args.rhythm.slice(),
+		feelingMagnitude = args.feelingMagnitude,
+		feelingSpeed = args.feelingSpeed,
 		style = styles[args.style](intervals, offset),
 		key = args.key,
 		pedal = args.pedal,
@@ -479,6 +495,7 @@ function arp(args) {
 		var noteNumber,
 			addTime = 0,
 			ca,
+			ni,
 			ry,
 			n,
 			c,
@@ -517,8 +534,9 @@ function arp(args) {
 				}
 			}
 			n = intervals[s.number % intervals.length];
-			ry = rhythm[s.number % rhythm.length].trim()
+			ry = rhythm[noteCounter % rhythm.length].trim()
 			ca = ry.indexOf('!') !== -1;
+			ni = ry.indexOf('*') !== -1;
 			r = toRhythm(ry);
 			v = velocity[noteCounter % velocity.length];
 			c = chord[noteCounter % chord.length].map(numMap);
@@ -536,12 +554,15 @@ function arp(args) {
 						var baseNote = intervals[(s.number + c[x] - 1) % intervals.length],
 							octive = Math.ceil(c[x] / intervals.length),
 							targetNote = baseNote + ((octive - 1) * 12);
+						addTime = 0;
 						if (ca){
-							addTime = (r / (x + 1));
-						} else {
-							addTime = 0;
+							addTime += (r / (x + 1));
 						}
-						play(base + key + transpose + targetNote, v, counter + addTime, r);
+						if (feelingSpeed > 0 && feelingMagnitude > 0) {
+							addTime += (Math.sin(counter / feelingSpeed) + 1) * feelingMagnitude;
+						}
+						console.log('adding', addTime);
+						play(base + key + transpose + targetNote, v, counter + addTime, r + addTime);
 					}
 				}
 			}
@@ -569,7 +590,7 @@ styles["Up"] = function (intervals, offset) {
 styles["Down"] = function (intervals, offset) {
 	var count = 0 + offset;
 	return function (args) {
-		if (count === 0) {
+		if (count % intervals.length === 0) {
 			count = intervals.length - 1;
 			return {
 				number: count,
@@ -642,6 +663,36 @@ styles["3rds Cycle"] = function (intervals, offset) {
 		};
 	}
 }
+styles["4ths Cycle"] = function (intervals, offset) {
+	var count = 0 + offset;
+	return function (args) {
+		count += 3;
+		return {
+			number: count,
+			end: count % intervals.length
+		};
+	}
+}
+styles["5ths Cycle"] = function (intervals, offset) {
+	var count = 0 + offset;
+	return function (args) {
+		count += 4;
+		return {
+			number: count,
+			end: count % intervals.length
+		};
+	}
+}
+styles["6ths Cycle"] = function (intervals, offset) {
+	var count = 0 + offset;
+	return function (args) {
+		count += 5;
+		return {
+			number: count,
+			end: count % intervals.length
+		};
+	}
+}
 styles["3rds Sequence"] = function (intervals, offset) {
 	var count = 0 + offset,
 		a = createOffsetArray(2, intervals.length * 2);
@@ -656,7 +707,7 @@ styles["3rds Sequence"] = function (intervals, offset) {
 		};
 	}
 }
-styles["4ths"] = function (intervals, offset) {
+styles["4ths Sequence"] = function (intervals, offset) {
 	var count = 0 + offset,
 		a = createOffsetArray(3, intervals.length * 3);
 	return function (args) {
@@ -670,7 +721,7 @@ styles["4ths"] = function (intervals, offset) {
 		};;
 	}
 }
-styles["5ths"] = function (intervals, offset) {
+styles["5ths Sequence"] = function (intervals, offset) {
 	var count = 0 + offset,
 		a = createOffsetArray(4, intervals.length * 4);
 	return function (args) {
@@ -859,6 +910,8 @@ inputEvents.play = [{
 				key: inputs.key.selectedIndex,
 				transpose: parseInt(inputs.transpose.value, 10),
 				offset: parseInt(inputs.offset.value, 10),
+				feelingMagnitude: parseInt(inputs.feelingMagnitude.value, 10),
+				feelingSpeed: parseInt(inputs.feelingSpeed.value, 10),
 				velocity: inputs.velocity.value.split(',').map(numMap),
 				messageType: inputs.messageType.value,
 				controllerNumber: inputs.controllerNumber.value,
@@ -1037,6 +1090,7 @@ inputEvents.save = [{
 			masters = JSON.parse(masters);
 			masters[fs[0].title] = fs;
 			localStorage.setItem('masters', JSON.stringify(masters));
+			refreshSaveMenus(inputs.list, 'masters');
 		}
 	}
 }];
@@ -1194,6 +1248,7 @@ function createForm(args, controls, classNames) {
 		if (methods.stopEvent) {
 			methods.stopEvent();
 		}
+		forms.slice(1, forms.indexOf(container));
 		container.parentNode.removeChild(container);
 	};
 	return container;
