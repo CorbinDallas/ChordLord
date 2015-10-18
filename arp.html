@@ -1,88 +1,88 @@
 <!doctype html>
 <html>
-	<head>
-		<script src="js/12tone.js"></script>
-		<script src="js/setlist.js"></script>
-		<script src="js/raphael-min.js"></script>
-		<script src="js/vexflow-min.js"></script>
-		<script src="js/combinatorics.js"></script>
-		<script src="js/main.js"></script>
-		<script src="js/arp.js"></script>
-		<link href='css/piano.css' rel='stylesheet' type='text/css' />
-		<title>Chord Lord Arpeggiator</title>
-		<style>
-			body, html {
-				height: 100%;
-				min-height: 100%;
-				padding: 4px;
-				margin: 0;
-				font-family: sans-serif;
-				background: #333;
-			}
-			input[type=range] {
+    <head>
+        <script src="js/12tone.js"></script>
+        <script src="js/setlist.js"></script>
+        <script src="js/raphael-min.js"></script>
+        <script src="js/vexflow-min.js"></script>
+        <script src="js/combinatorics.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/arp.js"></script>
+        <link href='css/piano.css' rel='stylesheet' type='text/css' />
+        <title>Chord Lord Arpeggiator</title>
+        <style>
+            body, html {
+                height: 100%;
+                min-height: 100%;
+                padding: 4px;
+                margin: 0;
+                font-family: sans-serif;
+                background: #333;
+            }
+            input[type=range] {
 
-			}
-			select {
-				max-width: 150px;
-			}
-			.arp span, .master span {
-				color: orange;
-				padding: 4px;
-				margin: 4px;
+            }
+            select {
+                max-width: 150px;
+            }
+            .arp span, .master span {
+                color: orange;
+                padding: 4px;
+                margin: 4px;
 
-			}
-			.arp, .master {
-				border-radius: 1px;
-				background: #111;
-				margin: 4px;
-				overflow: hidden;
-				max-width: 1132px;
-				box-shadow: 2px 2px 4px #000;
-				margin: 10px auto;
-			}
-			.master {
-				background: #000;
-			}
-			.arpItem, .masterItem {
-				display: inline-block;
-				margin: 2px;
-			}
-			.pianoControl {
-				overflow-x: auto;
-				width: 100%;
-			}
-			.arp button, .master button {
-				background: #333;
-				color: orange;
-				border: solid 1px orange;
-			}
-			.arp input, .master input {
-			}
-			.arp select, .master select, .arp input, .master input {
-				background: #171727;
-				text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em dodgerblue;
-				color: lightblue;
-				padding: 0;
-				border: 0;
-				border: solid 1px #101010;
-				-webkit-appearance: none;
-			}
-			.arpSelect {
-				width: 240px;
-				height: 34px;
-				overflow: hidden;
-				border: 1px solid #ccc;
-			}
-			.rangeInput {
-				width: 50px;
-			}
-			.rangeInput {
-				width: 25px;
-			}
-			.help {
-				background: #DDD;
-				color: white;
-			}
-		</style>
-	</head>
+            }
+            .arp, .master {
+                border-radius: 1px;
+                background: #111;
+                margin: 4px;
+                overflow: hidden;
+                max-width: 1132px;
+                box-shadow: 2px 2px 4px #000;
+                margin: 10px auto;
+            }
+            .master {
+                background: #000;
+            }
+            .arpItem, .masterItem {
+                display: inline-block;
+                margin: 2px;
+            }
+            .pianoControl {
+                overflow-x: auto;
+                width: 100%;
+            }
+            .arp button, .master button {
+                background: #333;
+                color: orange;
+                border: solid 1px orange;
+            }
+            .arp input, .master input {
+            }
+            .arp select, .master select, .arp input, .master input {
+                background: #171727;
+                text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em dodgerblue;
+                color: lightblue;
+                padding: 0;
+                border: 0;
+                border: solid 1px #101010;
+                -webkit-appearance: none;
+            }
+            .arpSelect {
+                width: 240px;
+                height: 34px;
+                overflow: hidden;
+                border: 1px solid #ccc;
+            }
+            .rangeInput {
+                width: 50px;
+            }
+            .rangeInput {
+                width: 25px;
+            }
+            .help {
+                background: #DDD;
+                color: white;
+            }
+        </style>
+    </head>
 </html>

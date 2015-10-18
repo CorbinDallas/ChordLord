@@ -9,7 +9,7 @@ Math.TAU = 2 * Math.PI;
 var ce = function (tag) { 'use strict'; return document.createElement(tag); },
     gi = function (id) { 'use strict'; return document.getElementById(id); },
     generatedSets = [],
-    generatedSetList = generateSetList(),
+    //generatedSetList = generateSetList(),
     useColors = false,
     content = ce('div'),
     midiKeyStates = {},
@@ -60,33 +60,6 @@ var ce = function (tag) { 'use strict'; return document.createElement(tag); },
 document.addEventListener('DOMContentLoaded', init);
 function init() {
     
-}
-function d3FormatSetList() {
-    var o = {
-        name: 'Set List',
-        children: []
-    };
-    Object.keys(setList).forEach(function(set){
-        var s = {
-            name: set,
-            children: []
-        }
-        o.children.push(s);
-        Object.keys(setList[set]).forEach(function(family){
-            var f = {
-                name: family,
-                children: []
-            }
-            s.children.push(f);
-            Object.keys(setList[set][family]).forEach(function(scale){
-                var a = {
-                    name: scale
-                }
-                f.children.push(a);
-            });
-        });
-    });
-    return o;
 }
 function search() {
     var allMenus = [];
@@ -260,11 +233,6 @@ function generateSetList() {
                             l[x][a].used = true;
                             l[x][a].setListInfo = getChordFromSet(l[x][a].set);
                             generatedSets.push(l[x][a].setListInfo);
-                            if (!l[x][a].setListInfo) {
-                                console.log(l[x][a].set.sort(numSort) + 
-                                    ' is not defined in the list. family name ' +
-                                    family.id);
-                            }
                         }
                     }
                 }

@@ -16,12 +16,27 @@
 				Object.keys(setList[adKey]).forEach(function (familyKey){
 					var fam = pe('div', ad, '<h3>' + familyKey + '</h3>');
 					Object.keys(setList[adKey][familyKey]).forEach(function (setKey){
-						var set = pe('div', fam, '<h4>' + setKey + '</h4>' +
-							setList[adKey][familyKey][setKey]);
+						var newSet = {},
+							set = pe('div', fam, '<h4>' + setKey + '</h4>' +
+							setList[adKey][familyKey][setKey]),
+							r = /([^\|]+)\|([^\|]*[^\(]+)\|([^<]+)(< ?\D ?>)/g,
+							matches = r.exec(setKey);
+						if (matches === null) {
+							console.log(setKey);
+							return;
+						}
+						newSet.name = matches[1].trim();
+						newSet.chordSymbol = matches[2].trim();
+						newSet.scaleFormula = matches[3].replace(/\{|\}/g, '').trim().split(' ');
+						newSet.set = setList[adKey][familyKey][setKey];
+						setList[adKey][familyKey][matches[4].replace(/<|>| /g, '')] = newSet;
+						delete setList[adKey][familyKey][setKey];
 					});
+					
 				});
 			})
 		});
+		console.log(setList);
 		function pe(tag, parentNode, innerHTML, value, className){
 			var i;
 			if (typeof tag === 'string') {
