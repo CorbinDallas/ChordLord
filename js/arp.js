@@ -916,8 +916,6 @@ inputEvents.play = [{
                 key: inputs.key.selectedIndex,
                 transpose: parseInt(inputs.transpose.value, 10),
                 offset: parseInt(inputs.offset.value, 10),
-                feelingMagnitude: parseInt(inputs.feelingMagnitude.value, 10),
-                feelingSpeed: parseInt(inputs.feelingSpeed.value, 10),
                 velocity: inputs.velocity.value.split(',').map(numMap),
                 messageType: inputs.messageType.value,
                 controllerNumber: inputs.controllerNumber.value,
