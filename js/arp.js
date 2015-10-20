@@ -1,7 +1,8 @@
-/* jslint browser: true */
-/* gobals setList: false */
+/*jslint browser: true */
+/*gobals setList: false, window, document, performance */
 // use something like http://www.tobias-erichsen.de/software/loopmidi.html if you don't have
 // the required hardware
+'use strict';
 var queueTimer,
     metronomeCounter = 0,
     midi,
@@ -282,20 +283,6 @@ var queueTimer,
             max: 99,
             defaultValue: 50
         },
-        feelingSpeed: {
-            title: 'Feeling Speed',
-            type: 'range',
-            min: 0,
-            max: 99,
-            defaultValue: 0
-        },
-        feelingMagnitude: {
-            title: 'Feeling Magnitude',
-            type: 'range',
-            min: 0,
-            max: 1000,
-            defaultValue: 0
-        },
         play: {
             title: 'Play',
             type: 'button'
@@ -325,10 +312,10 @@ var queueTimer,
             type: 'piano'
         }
     };
-function removeTimingEvent(callback){
+function removeTimingEvent(callback) {
     timingEvents.splice(timingEvents.indexOf(callback), 1);
 }
-function addTimingEvent(callback){
+function addTimingEvent(callback) {
     timingEvents.push(callback);
 }
 function fireTimingEvent(drift, microseconds) {
@@ -337,7 +324,6 @@ function fireTimingEvent(drift, microseconds) {
     });
 }
 function midiKeysToSet() {
-    return;
     var intervals = {},
         output = [];
     Object.keys(midiKeyStates).forEach(function (i) {
@@ -345,11 +331,11 @@ function midiKeysToSet() {
         i = parseInt(i, 10);
         intervals[i % 12] = true;
     });
-    output = Object.keys(intervals).map(function(i) {
+    output = Object.keys(intervals).map(function (i) {
         return parseInt(i, 10);
-    }).filter(function(i) { return i !== 0; });
+    }).filter(function (i) { return i !== 0; });
     output.unshift(0);
-    document.body.innerHTML = '<h2>' + JSON.stringify(getChordFromSet(output)) + '</h2>';
+    //document.body.innerHTML = '<h2>' + JSON.stringify(getChordFromSet(output)) + '</h2>';
 }
 function readMessage(e) {
     if (e.data[0] === 254) { return; }
@@ -363,7 +349,7 @@ function readMessage(e) {
 }
 function sendMessage(message, deviceId, channel, value, value2, time) {
     if (value > 127) {
-        console.error('message over limit on channel', channel)
+        console.error('message over limit on channel', channel);
         value = 127;
     }
     var msg = [parseInt(message + channel.toString(16), 16), value, value2],
@@ -371,13 +357,14 @@ function sendMessage(message, deviceId, channel, value, value2, time) {
     o.value.open();
     o.value.send(msg, time);
 }
-function playNote(note, velocity, duration, deviceId, channel, time){
-    sendMessage(msg['on'], deviceId, channel, note, velocity, time);
-    sendMessage(msg['off'], deviceId, channel, note, velocity, time + duration);
+function playNote(note, velocity, duration, deviceId, channel, time) {
+    sendMessage(msg.on, deviceId, channel, note, velocity, time);
+    sendMessage(msg.off, deviceId, channel, note, velocity, time + duration);
 }
 function init() {
     // prepare form schema with dynamic values
-    Object.keys(pipes.outputs).forEach(function (key){
+    var x;
+    Object.keys(pipes.outputs).forEach(function (key) {
         var o = pipes.outputs[key];
         masterControls.device.options.push([o.value.name, o.value.id]);
     });
@@ -388,10 +375,10 @@ function init() {
             });
         });
     });
-    for(var x = -36; x <= 36; x++){
+    for (x = -36; x <= 36; x += 1) {
         arpControls.transpose.options.push(x);
     }
-    for(var x = 0; x < 128; x++){
+    for (x = 0; x < 128; x += 1) {
         arpControls.controllerNumber.options.push(x);
     }
     arpControls.style.options = Object.keys(styles);
@@ -400,36 +387,38 @@ function init() {
     pe(masterForm, document.body);
     // create the first arp
     pe(createForm({}, arpControls, arpCss), document.body);
-    document.addEventListener('keydown', function (e){
-        if(e.keyCode === 32) {
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode === 32) {
             e.preventDefault();
             var playing = false;
-            for(var x = 1; x < forms.length; x++){
-                if(forms[x].methods.playing){
+            for (x = 1; x < forms.length; x += 1) {
+                if (forms[x].methods.playing) {
                     playing = true;
                     break;
                 }
             }
-            if(!playing) {
-                return playAll();   
+            if (!playing) {
+                return playAll();
             }
             stopAll();
             return false;
         }
     });
 }
-function createOffsetArray(n, max){
-    var ca = 0, cb = n, a = [];
-    for(var x = 0; x < max; x++){
-        a.push(ca++);
-        a.push(cb++);
+function createOffsetArray(n, max) {
+    var x, ca = 0, cb = n, a = [];
+    for (x = 0; x < max; x += 1) {
+        ca += 1;
+        cb += 1;
+        a.push(ca);
+        a.push(cb);
     }
     return a;
 }
 function toRhythm(r) {
     r = r.replace(/\!\*/, '');
     var x, timingKey = Object.keys(timings);
-    for(x = 0; x < timingKey.length; x++){
+    for (x = 0; x < timingKey.length; x += 1) {
         if (timingKey[x].split(':')[0] === r) {
             return timings[timingKey[x]];
         }
@@ -458,8 +447,6 @@ function arp(args) {
         offset = args.offset,
         intervals = getIntervals(),
         rhythm = args.rhythm.slice(),
-        feelingMagnitude = args.feelingMagnitude,
-        feelingSpeed = args.feelingSpeed,
         style = styles[args.style](intervals, offset),
         key = args.key,
         pedal = args.pedal,
@@ -480,8 +467,8 @@ function arp(args) {
         counter = now + queueLength;
         sustainRateCounter = now + queueLength;
     // reset cutoff notes etc.
-    sendMessage(msg['controllerChange'], deviceId, args.channel, 64, 127, 0);
-    sendMessage(msg['controllerChange'], deviceId, args.channel, 64, 0, counter);
+    sendMessage(msg.controllerChange, deviceId, args.channel, 64, 127, 0);
+    sendMessage(msg.controllerChange, deviceId, args.channel, 64, 0, counter);
     function play(note, v, t, r) {
         if (args.onplay) {
             args.onplay(note, t, r * args.gatePct, v, args.device, args.channel);
@@ -499,7 +486,7 @@ function arp(args) {
         if (args.oncc) {
             args.oncc(value, t, deviceId, args.channel);
         }
-        sendMessage(args.controllerNumber, deviceId, args.channel, value, v, t);
+        sendMessage(controllerNumber, deviceId, args.channel, value, v, t);
     }
     function getIntervals() {
         if (inputFrom !== undefined) {
@@ -509,13 +496,18 @@ function arp(args) {
     }
     function checkQueue() {
         var noteNumber,
+            baseNote,
+            octive,
+            targetNote,
             addTime = 0,
             addV = 0,
             ca,
             ni,
             ry,
             n,
+            p,
             c,
+            v,
             r,
             x,
             s;
@@ -530,28 +522,28 @@ function arp(args) {
             sustainRateCounter += p;
             sustainGateCounter++;
         }
-        while(counter < performance.now() + queueLength) {
+        while (counter < performance.now() + queueLength) {
             s = style(args);
-            if (s.end){
+            if (s.end) {
                 if (stepCounter >= step) {
                     intervals = getIntervals();
                     console.log('end', intervals);
                     stepCounter = 0;
                 } else if (step > 0) {
-                    stepCounter++;
+                    stepCounter += 1;
                     if (distance > 0) {
-                        for(x = 0; x < distance; x++){
+                        for (x = 0; x < distance; x += 1) {
                             intervals.push(intervals.shift() + 12);
                         }
                     } else {
-                        for(x = 0; x < Math.abs(distance); x++){
+                        for (x = 0; x < Math.abs(distance); x += 1) {
                             intervals.unshift(intervals.pop() - 12);
                         }
                     }
                 }
             }
             n = intervals[s.number % intervals.length];
-            ry = rhythm[noteCounter % rhythm.length].trim()
+            ry = rhythm[noteCounter % rhythm.length].trim();
             ca = ry.indexOf('!') !== -1;
             ni = ry.indexOf('*') !== -1;
             r = toRhythm(ry);
@@ -562,35 +554,31 @@ function arp(args) {
             }
             r = beat / r;
             if (!isNaN(c[0])) {
-                for(x = 0; x < c.length; x++) {
+                for (x = 0; x < c.length; x += 1) {
                     if (messageType === 'Controller Change') {
-                        sendMessage(msg['controllerChange'], deviceId, args.channel,
+                        sendMessage(msg.controllerChange, deviceId, args.channel,
                             parseInt(args.controllerNumber, 10), intervals[(s.number +
                             (c[x] % intervals.length) - 1) % intervals.length], r);
                     } else {
-                        var baseNote = intervals[(s.number + c[x] - 1) % intervals.length],
-                            octive = Math.ceil(c[x] / intervals.length),
-                            targetNote = baseNote + ((octive - 1) * 12);
+                        baseNote = intervals[(s.number + c[x] - 1) % intervals.length];
+                        octive = Math.ceil(c[x] / intervals.length);
+                        targetNote = baseNote + ((octive - 1) * 12);
                         addTime = 0;
-                        if (ca){
+                        if (ca) {
                             addTime += (r / (x + 1));
-                        }
-                        if (feelingSpeed > 0 && feelingMagnitude > 0) {
-                            //addTime += (Math.sin(counter / feelingSpeed) + 1) * feelingMagnitude;
-                            addV += (Math.sin(counter / feelingSpeed) + 1) * feelingMagnitude;
                         }
                         play(base + key + transpose + targetNote, addV + v, counter + addTime, r + addTime);
                     }
                 }
             }
-            noteCounter++;
+            noteCounter += 1;
             counter += r;
         }
     }
     timer = setInterval(checkQueue, timerLength);
-    return function (){
+    return function () {
         clearTimeout(timer);
-    }
+    };
 }
 
 
@@ -1184,7 +1172,9 @@ function createForm(args, controls, classNames) {
             v,
             x,
             c;
-        i.type = ctrl.type;
+        if(!/select/.test(ctrl.type)) {
+            i.type = ctrl.type;    
+        }
         if (ctrl.type === 'select') {
             c2.className = args.select;
             ctrl.options.forEach(function (o) {
