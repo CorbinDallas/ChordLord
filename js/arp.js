@@ -4,6 +4,7 @@
 // the required hardware
 'use strict';
 var queueTimer,
+    timeLineItemId = 0,
     metronomeCounter = 0,
     midi,
     masterForm,
@@ -307,6 +308,10 @@ var queueTimer,
             title: 'Reset',
             type: 'button'
         },
+        timeline: {
+            title: 'Timeline',
+            type: 'timeline'
+        },
         piano: {
             title: 'Piano',
             type: 'piano'
@@ -414,6 +419,48 @@ function createOffsetArray(n, max) {
         a.push(cb);
     }
     return a;
+}
+function createTimeline(args) {
+    var container = pe('div', args.parentNode),
+        self = {
+            items = {}
+        };
+    function createTimeLineItem(intervals, rhythm) {
+        var s = {
+            intervals: intervals,
+            rhythm: rhythm,
+            id: timeLineItemId++
+        };
+        self.items[s.id] = s;
+        return s;
+    }
+    function redrawTimeline() {
+        container.innerHTML = '';
+        Object.keys(self.items).forEach(function (key){
+            var i = self.items[key],
+                d = pe('div', container, null, null, 'timeLineItem'),
+                scalesSelect = pe('select', d),
+                intervalsText = pe('input', d),
+                rhythm = pe('input', d),
+                deleteButton = pe('button', d, 'Delete');
+            deleteButton.onclick = function () {
+                delete self.items[i.id];
+                redrawTimeline();
+            };
+            intervalsText.value = i.intervals.join(',');
+            rhythm.value = i.rhythm.join(',');
+        });
+        var add = pe('div', container, null, null, 'timeLineItem');
+        add.innerHTML = 'Add';
+        add.onclick = function () {
+            createTimeLineItem([0,1,3,4,6,8,9], ['q']);
+            redrawTimeline();
+        };
+    }
+    createTimeLineItem([0,1,3,4,6,8,9], ['q']);
+    redrawTimeline();
+    container.className = 'timeLine';
+    return self;
 }
 function toRhythm(r) {
     r = r.replace(/\!\*/, '');
@@ -1215,6 +1262,15 @@ function createForm(args, controls, classNames) {
             for(x = 0; x < 12; x++){
                 var c = pe('input');
             }
+        } else if (ctrl.type === 'timeline') {
+            var timeline;
+            c2.removeChild(i);
+            r.removeChild(c1);
+            c2.setAttribute('colspan', 2);
+            timeline = pe('div', c2);
+            i = createTimeline({
+                parentNode: timeline
+            });
         } else if (ctrl.type === 'piano') {
             function noteon(midiNoteNumber, instance) {
                 if(!instance.mousedown) { return; }
