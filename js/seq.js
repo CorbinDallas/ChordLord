@@ -52,23 +52,27 @@ function sequencer(mainArgs) {
             activeSensing: "0xfe",
             systemReset: "0xff"
         },
+        trackParams = {
+            name: '',
+            channel: '1',
+            messageType: '0',
+            deviceId: '1'
+        },
         itemParams = {
             name: '',
-            index: 0,
-            channel: 1,
-            messageType: 0,
-            controllerNumber: 0,
-            key: 0,
-            transpose: 0,
-            intervals: [0,1,3,4,6,8,9],
+            controllerNumber: '0',
+            key: '0',
+            index: '0',
+            transpose: '0',
+            intervals: '0,1,3,4,6,8,9',
             rhythm: 'q',
-            chord: [1],
-            velocity: [64],
+            chords: '1',
+            velocities: '64',
             style: 'Up',
-            step: 0,
+            step: '0',
             stepStyle: 'Up',
-            offset: 0,
-            gate: 50
+            offset: '0',
+            gate: '50'
         },
         queueLength = 100,
         timeLines = {},
@@ -109,10 +113,10 @@ function sequencer(mainArgs) {
     }
     function createTimeLine() {
         var self = {
-                channel: 0,
-                type: 0,
-                controllerNumber: 0,
+                channel: '0',
+                messageType: '0',
                 items: {},
+                deviceId: '1',
                 id: cid()
             },
             atom = ((60000 / tempo) / 32) * (4 / timeSignature[1]),
@@ -128,9 +132,15 @@ function sequencer(mainArgs) {
             time = quuantizedStart();
             // create time array from rhythm for use later
             Object.keys(self.items).forEach(function (itemKey){
-                var item = self.items[itemKey];
+                var item = self.items[itemKey],
+                    time = 0;
                 item.rhythmTimes = item.rhythm.split(',').map(function (i) {
-                    return beat / toRhythm(i);
+                    var l = beat / toRhythm(i);
+                    time += l;
+                    return {
+                        time: time,
+                        length: l
+                    };
                 });
             });
         };
@@ -139,20 +149,27 @@ function sequencer(mainArgs) {
             seqItem.id = self.id + '_' + cid();
             self.items[seqItem.id] = seqItem;
             Object.keys(itemParams).forEach(function (itemPramKeys) {
-                seqItem[itemPramKeys] = itemParams[itemParams];
+                seqItem[itemPramKeys] = itemParams[itemPramKeys];
             });
+            seqItem.updateInfo = function (msg) {
+                seqItem.info = msg;
+                ui.redraw();
+            };
+            seqItem.remove = function () {
+                delete self.items[seqItem.id];
+            };
             return seqItem;
         };
         self.pause = function () {
             playing = false;
         };
-        function scheduleNote(note, v, t, r) {
+        function scheduleNote(note, v, t, r, gatePct) {
             playNote(
                 note,
                 v,
-                r * args.gatePct,
-                deviceId,
-                args.channel,
+                r * gatePct,
+                self.deviceId,
+                self.channel,
                 t
             );
         }
@@ -168,76 +185,113 @@ function sequencer(mainArgs) {
         function getTimeLineLength() {
             var i = 0;
             Object.keys(self.items).forEach(function (item){
-                i += getSeqLength(item);
+                i += getSeqLength(self.items[item]);
             });
             return i;
         }
         function getSeqLength(item) {
-            return item.rhythmTimes.reduce(function (previousValue, currentValue, index) {
-                return previousValue + currentValue;
-            }, 0);
+            return item.rhythmTimes[item.rhythmTimes.length - 1].time;
         }
-
-        function getNotesAt(t){
-
+        function getParams(seq, pos) {
+            return {
+                sequence: s,
+                interval: s.rhythm.split(',')[s.index % s.rhythm.length],
+                rhythm: s.rhythmTimes[s.index % s.rhythmTimes.length].index,
+                chords: s.chords.split(',')[s.index % s.rhythm.length]
+            }
         }
-        function getSeq(t){
+        function getParamsAt(t){
             var timeLineLength = getTimeLineLength(),
                 pos = t % timeLineLength,
-                r = getRhythmAt(pos, timeLineLength)
-            return {
-
+                lx, ly, y, x, s, keys = Object.keys(self.items);
+            for(y = 0, ly = keys.length; y < ly; y += 1) {
+                s = self.items[keys[y]];
+                for(x = 0, lx = s.rhythmTimes.length; x < lx; x += 1){
+                    if(s.rhythmTimes[x].time === pos){ 
+                        s.index ++;
+                        return getParams(s, x);
+                    }
+                }
             }
         }
         self.schedule = function (e) {
             while(time < performance.now() + queueLength && playing) {
-                var seq = getSeq(time);
-                time 
-                scheduleNote();
+                var seq = getParamsAt(time);
+                if (seq) {
+                    seq.sequence.updateInfo(time);
+                    //scheduleNote();
+                }
                 time += atom;
             }
         };
         return self;
     }
-    function createSeqInputs(e, args) {
+    function createInputs(e, args, ctrlType) {
         Object.keys(args).forEach(function (key) {
-            var c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key),
-                label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key),
-                input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
-            label.setAttribute('for',  args.id + 'input' + key);
-            input.value = itemParams[key];
+            if (!/remove|items|id|play|createSequence|pause|schedule/.test(key)) {
+                var c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key),
+                    label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key),
+                    input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
+                label.setAttribute('for',  args.id + 'input' + key);
+                if (ctrlType === 'seq') {
+                    input.value = args[key] || itemParams[key];
+                } else if (ctrlType === 'track') {
+                    input.value = args[key] || trackParams[key];
+                }
+            }
         });
     }
     function createUI() {
         var self = {},
-            container = ce('div', parentNode, 'seq-list', undefined, 'seqList'),
-            items = {};
+            container = ce('div', parentNode, 'seq-list', undefined, 'seqList');
         self.redraw = function () {
             var trackAdd;
             Object.keys(timeLines).forEach(function (timeLinesKey) {
                 var t = timeLines[timeLinesKey],
+                    seqAdd,
+                    trackPlay,
+                    trackPause,
+                    trackInfo,
+                    trackRemove,
                     track = ce('div', container, 'seq-track', undefined, t.id + 'timeline'),
-                    seqAdd;
+                    trackControl = ce('div', track, 'seq-track-control', null, t.id + 'trackcontrol');
+                createInputs(trackControl, t, 'track');
                 Object.keys(t.items).forEach(function (seqKey) {
                     var s = t.items[seqKey],
-                        seq = ce('div', track, 'seq-seq-item', s.id, s.id + 'seqitem');
-                    createSeqInputs(seq, s);
+                        seq = ce('div', track, 'seq-seq-item', s.id, s.id + 'seqitem'),
+                        seqRemove;
+                    createInputs(seq, s, 'seq');
+                    seqRemove = ce('button', seq, 'seq-item-delete', 'Delete', s.id + 'seqDelete');
+                    seqRemove.onclick = function () {
+                        s.remove();
+                        self.redraw();
+                    };
                 });
-                seqAdd = ce('div', track, 'seq-seq-item-add', 'Add Seq', t.id + 'seqadd');
-                track.insertBefore(seqAdd, track.firstChild);
+                seqAdd = ce('button', trackControl, 'seq-track-item-add', 'Add Sequence', t.id + 'seqadd');
+                trackPlay = ce('button', trackControl, 'seq-track-play', 'Play', t.id + 'seqplay');
+                trackPause = ce('button', trackControl, 'seq-seq-item-pause', 'Pause', t.id + 'seqpause');
+                trackInfo = ce('div', trackControl, 'seq-seq-item-info', t.info, t.id + 'seqinfo');
+                track.insertBefore(trackControl, track.firstChild);
+                trackPause.onclick = function () {
+                    t.pause();
+                    setInterval(self.redraw, 500);
+                }
+                trackPlay.onclick = function () {
+                    t.play();
+                }
                 seqAdd.onclick = function () {
                     t.createSequence();
                     self.redraw();
                 }
             });
-            trackAdd = ce('div', container, 'seq-track-add', 'Add Track', 'addTrack');
+            trackAdd = ce('button', container, 'seq-track-add', 'Add Track', 'addTrack');
             trackAdd.onclick = function () {
                 var timeLine = createTimeLine();
                 timeLines[timeLine.id] = timeLine;
                 timeLine.createSequence();
                 self.redraw();
             }
-            container.insertBefore(container.firstChild, trackAdd);
+            container.insertBefore(trackAdd, container.firstChild);
         }
         return self;
     }
@@ -252,7 +306,7 @@ function sequencer(mainArgs) {
         value = Math.max(value, 0);
         value2 = Math.max(value2, 0);
         var msg = [parseInt(message + channel.toString(16), 16), value, value2],
-            o = window.pipes.outputs[deviceId];
+            o = pipes.outputs[deviceId];
         o.value.open();
         o.value.send(msg, time);
     }
@@ -284,6 +338,7 @@ function sequencer(mainArgs) {
             }
         }
         ['inputs', 'outputs'].forEach(getPipes);
+        console.log(pipes);
         init();
     });
 }
