@@ -1,7 +1,10 @@
 /*jslint browser: true*/
 function sequencer(mainArgs) {
    'use strict';
-    var tempo = 120,
+    var mag = 1000,
+        res = .01,
+        tempo = 120,
+        midiMiddleC = 60,
         timeSignature = [4, 4],
         timings = {
             "a: 1/128": 128,
@@ -72,12 +75,13 @@ function sequencer(mainArgs) {
             step: '0',
             stepStyle: 'Up',
             offset: '0',
-            gate: '50'
+            gate: '50',
+            length: 'q'
         },
-        queueLength = 100,
+        queueLength = 500,
         timeLines = {},
         timer = new Worker("js/seqTimer.js");
-    timer.postMessage(2000);
+    timer.postMessage(250);
     timer.onmessage = function (e) {
         Object.keys(timeLines).forEach(function (timeLinesKey) {
             timeLines[timeLinesKey].schedule(e);
@@ -123,26 +127,17 @@ function sequencer(mainArgs) {
             beat = (atom * 128) / (4 / timeSignature[1]),
             bar = beat * timeSignature[0],
             playing = false,
+            startTime,
             time;
-        function quuantizedStart () {
-            return Math.floor((performance.now() * atom) / atom);
+        console.log('beat:', beat, '-atom:', atom, '-bar:', bar);
+        function quantizedStart () {
+            startTime = performance.now();
+            return startTime;
         }
         self.play = function () {
+            time = quantizedStart();
+            updateRhythmTimes();
             playing = true;
-            time = quuantizedStart();
-            // create time array from rhythm for use later
-            Object.keys(self.items).forEach(function (itemKey){
-                var item = self.items[itemKey],
-                    time = 0;
-                item.rhythmTimes = item.rhythm.split(',').map(function (i) {
-                    var l = beat / toRhythm(i);
-                    time += l;
-                    return {
-                        time: time,
-                        length: l
-                    };
-                });
-            });
         };
         self.createSequence = function (args) {
             var seqItem = {};
@@ -163,15 +158,40 @@ function sequencer(mainArgs) {
         self.pause = function () {
             playing = false;
         };
-        function scheduleNote(note, v, t, r, gatePct) {
+        function scheduleNote(note, v, t, r) {
             playNote(
                 note,
                 v,
-                r * gatePct,
+                r,
                 self.deviceId,
                 self.channel,
                 t
             );
+        }
+        function updateRhythmTimes() {
+            // create time array from rhythm for use later
+            var scheduledTime = 0;
+            Object.keys(self.items).forEach(function (itemKey){
+                var l,
+                    x,
+                    xl,
+                    seq = self.items[itemKey],
+                    intervals = seq.intervals.split(',')
+                        .map(function (i) { return parseInt(i, 10);}),
+                    rhythm = seq.rhythm.split(','),
+                    seq = self.items[itemKey];
+                seq.rhythmTimes = [];
+                for(x = 0, xl = intervals.length; x < xl; x += 1) {
+                    l = beat / toRhythm(rhythm[x % rhythm.length]);
+                    seq.rhythmTimes.push({
+                        time: scheduledTime,
+                        length: l
+                    });
+                    scheduledTime += l;
+                }
+            });
+            console.log('updated rhythmTimes');
+            console.log(JSON.stringify(self.items));
         }
         function toRhythm(r) {
             r = r.replace(/\!\*/, '');
@@ -185,41 +205,60 @@ function sequencer(mainArgs) {
         function getTimeLineLength() {
             var i = 0;
             Object.keys(self.items).forEach(function (item){
-                i += getSeqLength(self.items[item]);
+                i += (beat / toRhythm(self.items[item].length));
             });
             return i;
         }
-        function getSeqLength(item) {
-            return item.rhythmTimes[item.rhythmTimes.length - 1].time;
-        }
         function getParams(seq, pos) {
+            var intervals = seq.intervals.split(',')
+                    .map(function (i) { return parseInt(i, 10);}),
+                velocities = seq.velocities.split(',')
+                    .map(function (i) { return parseInt(i, 10);}),
+                chords = seq.chords.split(',')
+                    .map(function (i) { return parseInt(i, 10);});
             return {
-                sequence: s,
-                interval: s.rhythm.split(',')[s.index % s.rhythm.length],
-                rhythm: s.rhythmTimes[s.index % s.rhythmTimes.length].index,
-                chords: s.chords.split(',')[s.index % s.rhythm.length]
+                sequence: seq,
+                interval: intervals[seq.index % intervals.length],
+                rhythm: seq.rhythmTimes[seq.index % seq.rhythmTimes.length],
+                velocity: velocities[seq.index % velocities.length],
+                chords: chords[seq.index % chords.length]
             }
         }
-        function getParamsAt(t){
-            var timeLineLength = getTimeLineLength(),
-                pos = t % timeLineLength,
-                lx, ly, y, x, s, keys = Object.keys(self.items);
+        function getParamsAt(pos){
+            var r, lx, ly, y, x, seq, keys = Object.keys(self.items);
             for(y = 0, ly = keys.length; y < ly; y += 1) {
-                s = self.items[keys[y]];
-                for(x = 0, lx = s.rhythmTimes.length; x < lx; x += 1){
-                    if(s.rhythmTimes[x].time === pos){ 
-                        s.index ++;
-                        return getParams(s, x);
+                seq = self.items[keys[y]];
+                //console.log('checking for', pos, 'in', JSON.stringify(seq.rhythmTimes));
+                for(x = 0, lx = seq.rhythmTimes.length; x < lx; x += 1){
+                    var r = seq.rhythmTimes[x];
+                    if(r.time + res > pos
+                        && r.time - res < pos){ 
+                        seq.index ++;
+                        console.log('got pram from ' + seq.id);
+                        return getParams(seq, x);
                     }
                 }
             }
         }
         self.schedule = function (e) {
             while(time < performance.now() + queueLength && playing) {
-                var seq = getParamsAt(time);
+                var offsetTime = time - startTime,
+                    timeLineLength = getTimeLineLength(),
+                    pos = offsetTime % timeLineLength,
+                    seq = getParamsAt(pos);
                 if (seq) {
-                    seq.sequence.updateInfo(time);
-                    //scheduleNote();
+                    scheduleNote(
+                        midiMiddleC + seq.interval,
+                        seq.velocity,
+                        time,
+                        seq.rhythm.length
+                    );
+                    setTimeout(function (seq) {
+                        seq.sequence.updateInfo("playing note:" + seq.interval +
+                            " time:" + time);
+                    }, performance.now() - time, seq);
+                } else {
+                    console.log('t', pos);
                 }
                 time += atom;
             }
@@ -228,10 +267,17 @@ function sequencer(mainArgs) {
     }
     function createInputs(e, args, ctrlType) {
         Object.keys(args).forEach(function (key) {
-            if (!/remove|items|id|play|createSequence|pause|schedule/.test(key)) {
+            if (!/remove|items|id|play|createSequence|pause|schedule|rhythmTimes|updateInfo/.test(key)) {
                 var c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key),
                     label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key),
                     input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
+                function update(value) {
+                    args[key] = value === undefined ? input.value: value;
+                }
+                input.update = update;
+                input.onchange = function () {
+                    update();
+                };
                 label.setAttribute('for',  args.id + 'input' + key);
                 if (ctrlType === 'seq') {
                     input.value = args[key] || itemParams[key];
@@ -274,7 +320,6 @@ function sequencer(mainArgs) {
                 track.insertBefore(trackControl, track.firstChild);
                 trackPause.onclick = function () {
                     t.pause();
-                    setInterval(self.redraw, 500);
                 }
                 trackPlay.onclick = function () {
                     t.play();
@@ -338,7 +383,6 @@ function sequencer(mainArgs) {
             }
         }
         ['inputs', 'outputs'].forEach(getPipes);
-        console.log(pipes);
         init();
     });
 }
