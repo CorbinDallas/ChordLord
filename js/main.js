@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', init);
 function init() {
     
 }
-function search() {
+function search(mArgs) {
     var allMenus = [];
     function createXadMenu(parentNode, parentSet) {
         var searchMenu = document.createElement('div'),
@@ -117,9 +117,7 @@ function search() {
             searchMenu: searchMenu
         };
     }
-
-    allMenus.push(createXadMenu(document.body, setList));
-
+    allMenus.push(createXadMenu(mArgs.parentNode || document.body, setList));
 }
 function drawPitchClass(pitchClass){
     var c,

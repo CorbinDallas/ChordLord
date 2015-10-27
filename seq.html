@@ -19,29 +19,50 @@
                 font-family: sans-serif;
                 background: #333;
             }
+            .seq-input-continer {
+                margin: 7px;
+            }
+            .seq-input-label {
+                padding-right: 4px;
+            }
             .seq-list {
                 margin: 10px;
                 background: #111;
                 color: white;
                 overflow-x: scroll;
                 white-space: nowrap;
-
+                min-height: 90%;
             }
-            .seq-track {
-                background: navy;
+            .seq-label {
+                float: right;
+                clear: both;
             }
-            .seq-input-label {
-                padding-right: 10px;
+            .seq-phrase select {
+                width: 250px;
             }
-            .seq-seq-item, .seq-track-control {
+            .seq-phrase, .seq-track-control {
                 text-align: right;
-                width: 350px;
+                width: 275px;
                 background: #222;
                 color: orange;
                 border: solid 1px #555;
                 display: inline-block;
-                height: 400px;
                 padding: 3px;
+                overflow: hidden;
+                height: 20px;
+                transition: height 0.25s ease-in-out, width 0.25s ease-in-out;
+                margin-bottom: auto;
+                vertical-align: top;
+            }
+            .seq-track {
+                
+            }
+            .seq-track-control {
+                
+            }
+            .seq-phrase:hover, .seq-track-control:hover {
+                height: 430px;
+                transition: height 0.25s ease-in-out, width 0.25s ease-in-out;
             }
             .seq-track-add {
 
@@ -50,8 +71,9 @@
                 clear: top;
                 display: inline-block;
             }
-            .seq-track-control {
-                float: left;
+
+            .seq-phrase-highlight {
+                background: #225;
             }
         </style>
     </head>
