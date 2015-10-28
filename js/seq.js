@@ -1,9 +1,10 @@
+/*jslint browser: true */
+/*globals Worker: false, setList: false, performance: false*/
 function sequencer(mainArgs) {
-   'use strict';
+    'use strict';
     var mag = 10000,
         tempo = 120,
         midiMiddleC = 60,
-        timeLineLength,
         timeLineLength,
         timeSignature = [4, 4],
         styles = {},
@@ -30,7 +31,7 @@ function sequencer(mainArgs) {
             "7: measures": 0.1428571428571429,
             "8: measures": 0.125
         },
-        noEditInputs = /^(index.*|stop|remove|items|id|play|createPhrase|pause|schedule|rhythmTimes|unhighlight|highlight|msTime|msLength)$/,
+        noEditInputs = /^(index\S*|timeMismatch|stop|remove|items|id|play|createPhrase|pause|schedule|rhythmTimes|unhighlight|highlight|msTime|msLength)$/,
         //noEditInputs = /blah/,
         scalesSelect,
         ui,
@@ -86,14 +87,22 @@ function sequencer(mainArgs) {
         },
         queueLength = 500,
         timeLines = {},
-        timer = new Worker("js/seqTimer.js");
-    timer.postMessage(250);
-    createScaleSelectArray();
-    timer.onmessage = function (e) {
-        Object.keys(timeLines).forEach(function (timeLinesKey) {
-            timeLines[timeLinesKey].schedule(e);
-        });
-    };
+        timer;
+    function sendMessage(message, deviceId, channel, value, value2, time) {
+        var m, o;
+        value = Math.min(value, 127);
+        value2 = Math.min(value2, 127);
+        value = Math.max(value, 0);
+        value2 = Math.max(value2, 0);
+        m = [parseInt(message + channel.toString(16), 16), value, value2];
+        o = pipes.outputs[deviceId];
+        o.value.open();
+        o.value.send(m, time);
+    }
+    function playNote(note, velocity, duration, deviceId, channel, time) {
+        sendMessage(msg.on, deviceId, channel, note, velocity, time);
+        sendMessage(msg.off, deviceId, channel, note, velocity, time + duration);
+    }
     function createScaleSelectArray() {
         scalesSelect = document.createElement('select');
         Object.keys(setList).forEach(function (xad) {
@@ -109,10 +118,10 @@ function sequencer(mainArgs) {
     }
     function ce(tag, parentNode, className, html, cacheId, title) {
         var e;
-        if (elements[cacheId]){ 
+        if (elements[cacheId]) {
             e = elements[cacheId];
         } else {
-            if (typeof tag !== 'string'){
+            if (typeof tag !== 'string') {
                 e = tag;
             } else {
                 e = document.createElement(tag);
@@ -121,7 +130,7 @@ function sequencer(mainArgs) {
         }
         e.id = cacheId;
         if (e.parentNode === undefined
-            || e.parentNode !== parentNode) {
+                || e.parentNode !== parentNode) {
             parentNode.appendChild(e);
         }
         if (className) {
@@ -138,11 +147,11 @@ function sequencer(mainArgs) {
     function cid() {
         return Math.floor(performance.now() * 1000);
     }
-    function add(a, b){
-        return (Math.ceil(a * mag) + Math.ceil(b * mag)) / mag;
+    function numMap(i) {
+        return parseInt(i, 10);
     }
-    function subtract(a, b){
-        return (Math.ceil(a * mag) - Math.ceil(b * mag)) / mag;
+    function add(a, b) {
+        return (Math.ceil(a * mag) + Math.ceil(b * mag)) / mag;
     }
     function playAll() {
         Object.keys(timeLines).forEach(function (timeLinesKey) {
@@ -173,10 +182,194 @@ function sequencer(mainArgs) {
             startTime,
             time;
         console.log('beat:', beat, '-atom:', atom, '-bar:', bar);
-        function quantizedStart () {
+        function quantizedStart() {
             startTime = performance.now();
             return startTime - (startTime % beat);
         }
+        function toRhythm(r) {
+            r = r.replace(/\!/, '')
+                .replace(/r/, '');
+            var x, timingKey = Object.keys(timings);
+            for (x = 0; x < timingKey.length; x += 1) {
+                if (timingKey[x].split(':')[0] === r) {
+                    return timings[timingKey[x]];
+                }
+            }
+        }
+        function getIntervals(phrase) {
+            return phrase.intervals.split(',').map(numMap);
+        }
+        function updateRhythmTimes() {
+            // create time array from rhythm for use later
+            var scheduledTime = 0;
+            Object.keys(self.items).forEach(function (itemKey) {
+                var l = 0,
+                    x = 0,
+                    phraseTime = 0,
+                    phrase = self.items[itemKey],
+                    intervals = getIntervals(phrase),
+                    offset = parseInt(phrase.offset, 10),
+                    rhythm = phrase.rhythm.split(',');
+                phrase.rhythmTimes = [];
+                phrase.msTime = scheduledTime;
+                phrase.msLength = beat / toRhythm(phrase.length);
+                phrase.timeMismatch = 'no-mismatch';
+                phrase.track = self;
+                phrase.styleFn = styles[phrase.style](intervals, offset);
+                phrase.stepStyleFn = styles[phrase.stepStyle](intervals, offset);
+                phrase.index = parseInt(phrase.index, 10);
+                while (phraseTime < phrase.msLength) {
+                    x += 1;
+                    l = beat / toRhythm(rhythm[x % rhythm.length]);
+                    if (phraseTime + l > phrase.msLength) {
+                        phrase.timeMismatch = 'mismatch';
+                    }
+                    phrase.rhythmTimes.push({
+                        time: scheduledTime,
+                        length: l * (phrase.gate / 100)
+                    });
+                    phraseTime += l;
+                    scheduledTime += l;
+                }
+            });
+        }
+        function getTimeLineLength() {
+            var i = 0;
+            Object.keys(self.items).forEach(function (item) {
+                i = add(i, self.items[item].msLength);
+            });
+            return i;
+        }
+        function unhighlightAll() {
+            Object.keys(self.items).forEach(function (item) {
+                self.items[item].unhighlight();
+            });
+        }
+        function scheduleNote(note, v, t, r) {
+            playNote(
+                note,
+                v,
+                r,
+                self.deviceId,
+                self.channel,
+                t
+            );
+        }
+        function getParamsAt(pos) {
+            var r, lx, ly, y, x, phrase, keys = Object.keys(self.items);
+            for (y = 0, ly = keys.length; y < ly; y += 1) {
+                phrase = self.items[keys[y]];
+                if (phrase.msTime <= pos
+                        && phrase.msTime + phrase.msLength >= pos) {
+                    for (x = 0, lx = phrase.rhythmTimes.length; x < lx; x += 1) {
+                        r = phrase.rhythmTimes[x];
+                        if (r.time === pos) {
+                            return phrase;
+                        }
+                    }
+                }
+            }
+        }
+        function updatePlaybackUI(phrase, pos, timeLineLength, intervals, intervalIndex) {
+            var i = document.getElementById(phrase.track.id + 'info'),
+                pi = document.getElementById(phrase.id + 'info'),
+                phrasePct = (pos / timeLineLength) * 100,
+                trackPct = ((pos - phrase.msTime) / phrase.msLength) * 100;
+            pi.innerHTML = '';
+            i.innerHTML = intervals.map(function (v, i) {
+                if (i === intervalIndex) {
+                    return '<b>' + v + '</b>';
+                }
+                return v;
+            }).join(', ');
+            unhighlightAll();
+            phrase.highlight();
+        }
+        function resetIndexes() {
+            Object.keys(self.items).forEach(function (item) {
+                self.items[item].index = 0;
+                self.items[item].indexRest = 0;
+                self.items[item].indexNote = 0;
+                self.items[item].indexStep = 0;
+            });
+        }
+
+        self.schedule = function () {
+            var rhythm, trill, pos, phrase, rest, rMod, vMod, ly, y, x, lx, style, interval,
+                stepStyle, intervals, rhythmStrings, rhythmString, velocities, chord, intervalIndex,
+                key, transpose, step;
+            while (time < performance.now() + queueLength && playing) {
+                pos = time % timeLineLength;
+                phrase = getParamsAt(pos);
+                if (phrase) {
+                    key = parseInt(phrase.key, 10);
+                    step = parseInt(phrase.step, 10);
+                    transpose = parseInt(phrase.transpose, 10);
+                    chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
+                    intervals = getIntervals(phrase);
+                    rhythmStrings = phrase.rhythm.split(',');
+                    velocities = phrase.velocities.split(',').map(numMap);
+                    rMod = phrase.index % phrase.rhythmTimes.length;
+                    vMod = phrase.index % velocities.length;
+                    rhythmString = rhythmStrings[phrase.indexRest % rhythmStrings.length];
+                    rhythm = rhythmStrings.map(numMap);
+                    x = phrase.index % chord.length;
+                    rest = /r/.test(rhythmString);
+                    trill = /!/.test(rhythmString);
+                    style = phrase.styleFn(phrase);
+                    console.log(style);
+                    if (style.end) {
+                        console.log('end');
+                        if (step === 0) {
+                            intervals = getIntervals(phrase);
+                            phrase.indexStep = 0;
+                        } else {
+                            stepStyle = phrase.stepStyleFn(phrase);
+                            if (stepStyle.end) {
+                                for (x = 0; x < stepStyle.number; x += 1) {
+                                    intervals.push(intervals.shift() + 12);
+                                }
+                            } else {
+                                for (x = 0; x < Math.abs(stepStyle.number); x += 1) {
+                                    intervals.unshift(intervals.pop() - 12);
+                                }
+                            }
+                        }
+                    }
+                    if (rest) {
+                        phrase.index -= 1;
+                        phrase.indexNote  -= 1;
+                        phrase.indexStep  -= 1;
+                    } else {
+                        for (x = 0, lx = chord.length; x < lx; x += 1) {
+                            for (y = 0, ly = chord[x].length; y < ly; y += 1) {
+                                intervalIndex = (style.number + chord[x][y] - 1) % intervals.length;
+                                interval = intervals[intervalIndex];
+                                scheduleNote(
+                                    transpose + key + interval,
+                                    phrase.velocities[vMod],
+                                    time,
+                                    phrase.rhythmTimes[rMod].length
+                                );
+                            }
+                        }
+                        setTimeout(
+                            updatePlaybackUI,
+                            time - performance.now(),
+                            phrase,
+                            pos,
+                            timeLineLength,
+                            intervals,
+                            intervalIndex
+                        );
+                    }
+                    phrase.index += 1;
+                    phrase.indexRest += 1;
+                    phrase.indexNote += 1;
+                }
+                time = add(time, atom);
+            }
+        };
         self.play = function () {
             time = quantizedStart();
             updateRhythmTimes();
@@ -203,187 +396,28 @@ function sequencer(mainArgs) {
         self.pause = function () {
             playing = false;
         };
-        function resetIndexes() {
-            Object.keys(self.items).forEach(function (item){
-                self.items[item].index = 0;
-                self.items[item].indexRest = 0;
-                self.items[item].indexNote = 0;
-                self.items[item].indexStep = 0;
-            });
-        }
-        function unhighlightAll() {
-            Object.keys(self.items).forEach(function (item){
-                self.items[item].unhighlight();
-            });
-        }
-        function scheduleNote(note, v, t, r) {
-            playNote(
-                note,
-                v,
-                r,
-                self.deviceId,
-                self.channel,
-                t
-            );
-        }
-        function updateRhythmTimes() {
-            // create time array from rhythm for use later
-            var scheduledTime = 0;
-            Object.keys(self.items).forEach(function (itemKey){
-                var l = 0,
-                    x = 0,
-                    phraseTime = 0,
-                    phrase = self.items[itemKey],
-                    intervals = phrase.intervals.split(',')
-                        .map(function (i) { return parseInt(i, 10);}),
-                    rhythm = phrase.rhythm.split(','),
-                    phrase = self.items[itemKey];
-                phrase.rhythmTimes = [];
-                phrase.msTime = scheduledTime;
-                phrase.msLength = beat / toRhythm(phrase.length);
-                phrase.timeMismatch = 'no-mismatch';
-                phrase.track = self;
-                while(phraseTime < phrase.msLength) {
-                    l = beat / toRhythm(rhythm[x++ % rhythm.length]);
-                    if (phraseTime + l > phrase.msLength) {
-                        phrase.timeMismatch = 'mismatch';
-                    }
-                    phrase.rhythmTimes.push({
-                        time: scheduledTime,
-                        length: l * (phrase.gate / 100)
-                    });
-                    phraseTime += l;[]
-                    scheduledTime += l;
-                }
-            });
-        }
-        function toRhythm(r) {
-            r = r.replace(/\!/, '')
-                .replace(/r/, '');
-            var x, timingKey = Object.keys(timings);
-            for (x = 0; x < timingKey.length; x += 1) {
-                if (timingKey[x].split(':')[0] === r) {
-                    return timings[timingKey[x]];
-                }
-            }
-        }
-        function getTimeLineLength() {
-            var i = 0;
-            Object.keys(self.items).forEach(function (item){
-                i = add(i, self.items[item].msLength);
-            });
-            return i;
-        }
-        function getParamsAt(pos){
-            var r, lx, ly, y, x, phrase, keys = Object.keys(self.items);
-            for(y = 0, ly = keys.length; y < ly; y += 1) {
-                phrase = self.items[keys[y]];
-                if (phrase.msTime <= pos
-                        && phrase.msTime + phrase.msLength >= pos) {
-                    for(x = 0, lx = phrase.rhythmTimes.length; x < lx; x += 1) {
-                        r = phrase.rhythmTimes[x];
-                        if(r.time === pos){ 
-                            return phrase;
-                        }
-                    }
-                }
-            }
-        }
-        function getStyle() {
-
-        }
-        function updatePlaybackUI(phrase, pos, timeLineLength) {
-            var i = document.getElementById(phrase.track.id + 'info'),
-                pi = document.getElementById(phrase.id + 'info'),
-                phrasePct = ((pos) / timeLineLength) * 100,
-                trackPct = ((pos - phrase.msTime) / phrase.msLength) * 100;
-            pi.innerHTML = '<progress max=90 value=' + trackPct + '>'
-                + trackPct.toFixed(2) + '</progress>';
-            i.innerHTML = '<progress max=90 value=' + phrasePct + '>'
-                + phrasePct.toFixed(2) + '</progress>';
-            unhighlightAll();
-            phrase.highlight();
-        }
-        self.schedule = function (e) {
-            while(time < performance.now() + queueLength && playing) {
-                var pos, phrase, rest, rMod, vMod, trill, ly, y, x, style, stepStyle,
-                    intervals, rhythmStrings, rhythmString, velocities, chord, rhythm;
-                pos = time % timeLineLength;
-                phrase = getParamsAt(pos);
-                if (phrase) {
-                    chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
-                    intervals = phrase.intervals.split(',').map(function (i) { return parseInt(i, 10);});
-                    style = styles[phrase.style](intervals, phrase.offset);
-                    rhythmStrings = phrase.rhythm.split(',');
-                    velocities = phrase.velocities.split(',').map(function (i) { return parseInt(i, 10);});
-                    rMod = phrase.index % phrase.rhythmTimes.length;
-                    vMod = phrase.index % velocities.length;
-                    rhythmString = rhythmStrings[phrase.indexRest % rhythmStrings.length];
-                    rhythm = rhythmStrings.map(function (i) { return parseInt(i, 10);});
-                    x = phrase.index % chord.length;
-                    rest = /r/.test(rhythmString);
-                    trill = /!/.test(rhythmString);
-                    if (style.end) {
-                        if (phrase.step === 0) {
-                            intervals = getIntervals();
-                            phrase.indexStep = 0;
-                        } else {
-                            stepStyle = styles[phrase.stepStyle](intervals, phrase.offset);
-                            if (stepStyle.end) {
-                                for (x = 0; x < phrase.distance; x += 1) {
-                                    intervals.push(intervals.shift() + 12);
-                                }
-                            } else {
-                                for (x = 0; x < Math.abs(phrase.distance); x += 1) {
-                                    intervals.unshift(intervals.pop() - 12);
-                                }
-                            }
-                        }
-                    }
-                    if (rest) {
-                        phrase.index --;
-                        phrase.indexNote --;
-                        phrase.indexStep --;
-                    } else {
-                        for(y = 0, ly = chord[x].length; y < ly; y += 1) {
-                            scheduleNote(
-                                parseInt(phrase.transpose, 10) +
-                                parseInt(phrase.key, 10) +
-                                intervals[(phrase.index + chord[x][y] - 1) % intervals.length],
-                                phrase.velocities[vMod],
-                                time,
-                                phrase.rhythmTimes[rMod].length
-                            );
-                        }
-                        setTimeout(
-                            updatePlaybackUI,
-                            performance.now() - time - phrase.rhythm.length,
-                            phrase,
-                            pos,
-                            timeLineLength
-                        );
-                    }
-                    phrase.index ++;
-                    phrase.indexRest ++;
-                    phrase.indexNote ++;
-                }
-                time = add(time, atom);
-            }
-        };
         return self;
     }
     function createInputs(e, args, ctrlType) {
         Object.keys(args).forEach(function (key) {
+            var v, c, label, input;
+            function bindData() {
+                input.innerHTML = scalesSelect.innerHTML;
+                input.removeEventListener('mousedown', bindData);
+            }
+            function update(value) {
+                args[key] = value === undefined ? input.value : value;
+                pauseAll();
+                playAll();
+            }
             if (!noEditInputs.test(key)) {
-                var v, c, label, sSelect, input;
                 v = ctrlType === 'phrase' ? itemParams[key] : trackParams[key];
                 c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key);
+                if (key === 'deviceId') {
+                    args[key] = Object.keys(pipes.outputs)[0];
+                }
                 if (key === 'scales') {
                     input = ce('select', c, 'seq-input', key, args.id + 'input' + key);
-                    function bindData() {
-                        input.innerHTML = scalesSelect.innerHTML;
-                        input.removeEventListener('mousedown', bindData);
-                    }
                     input.addEventListener('mousedown', bindData);
                     input.addEventListener('change', function () {
                         args.intervals = this.value;
@@ -398,28 +432,18 @@ function sequencer(mainArgs) {
                     input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
                     label.setAttribute('for',  args.id + 'input' + key);
                 }
-                function update(value) {
-                    args[key] = value === undefined ? input.value: value;
-                    pauseAll();
-                    playAll();
-                }
                 input.update = update;
                 input.onchange = function () {
                     update();
                 };
-                if (ctrlType === 'phrase') {
-                    input.value = args[key] || v;
-                } else if (ctrlType === 'track') {
-                    input.value = args[key] || v;
-                }
+                input.value = args[key] || v;
             }
         });
     }
     function createUI() {
-        var self = {},
-            container = ce('div', parentNode, 'seq-list', undefined, 'phraseList');
-        self.redraw = function () {
-            var trackAdd, play, pause, stop, trackDelete, tempoInput, timesigTop, timesigBottom;
+        var container = ce('div', parentNode, 'seq-list', undefined, 'phraseList');
+        function redraw() {
+            var trackAdd, play, pause, stop, tempoInput, timesigTop, timesigBottom;
             trackAdd = ce('button', container, 'seq-track-add', '+', 'addTrack', 'Add Track');
             play = ce('button', container, 'seq-track-play', '►', 'playTrack', 'Play');
             pause = ce('button', container, 'seq-track-pause', '||', 'pauseTrack', 'Pause');
@@ -434,35 +458,40 @@ function sequencer(mainArgs) {
                 var t = timeLines[timeLinesKey],
                     track = ce('div', container, 'seq-track', undefined, t.id + 'timeline'),
                     trackControl = ce('div', track, 'seq-track-control', null, t.id + 'trackcontrol'),
-                    trackRemove,
-                    trackDelete = ce('button', trackControl, 'seq-track-delete', 'X', 'trackDelete', 'Delete'),
-                    phraseAdd = ce('button', trackControl, 'seq-phrase-add', '+', t.id + 'phraseadd', 'Add Phrase'),
-                    trackInfo = ce('div', trackControl, 'seq-track-info', t.info, t.id + 'info');
+                    trackRemove = ce('button', trackControl, 'seq-track-delete', 'X',  t.id + 'trackRemove', 'Remove'),
+                    phraseAdd = ce('button', trackControl, 'seq-phrase-add', '+', t.id + 'phraseadd', 'Add Phrase');
+                ce('div', trackControl, 'seq-track-info', t.info, t.id + 'info');
                 phraseAdd.onclick = function () {
                     t.createPhrase();
-                    self.redraw();
-                }
-                trackDelete.onclick = function () {
-                    alert('no workey');
-                }
+                    redraw();
+                };
+                trackRemove.onclick = function () {
+                    console.log('no workey');
+                };
                 createInputs(trackControl, t, 'track');
                 Object.keys(t.items).forEach(function (phraseKey) {
-                    var s, phrase, phraseDuplicate, phraseMoveUp, phraseMoveDown, phraseRemove, phraseInfo;
+                    var s, phrase, phraseDuplicate, phraseMoveUp, phraseMoveDown, phraseRemove;
                     s = t.items[phraseKey];
-                    phrase = ce('div', track, 'seq-phrase', undefined, s.id + 'phraseitem'),
-                    phraseInfo = ce('div', phrase, 'seq-phrase-info', undefined, s.id + 'info');
-                    phraseRemove = ce('button', phrase, 'seq-phrase-remove', 'X', s.id + 'phraseDelete', 'Delete Phrase');
+                    phrase = ce('div', track, 'seq-phrase', undefined, s.id + 'phraseitem');
+                    phraseRemove = ce('button', phrase, 'seq-phrase-remove', 'X', s.id + 'phraseRemove', 'Remove Phrase');
                     phraseDuplicate = ce('button', phrase, 'seq-phrase-duplicate', '⇉', s.id + 'phraseDuplicate', 'Duplicate Phrase');
                     phraseMoveUp = ce('button', phrase, 'seq-phrase-moveup', '→', s.id + 'phraseUp', 'Move Up');
                     phraseMoveDown = ce('button', phrase, 'seq-phrase-movedown', '←', s.id + 'phraseDown', 'Move Down');
+                    ce('div', phrase, 'seq-phrase-info', undefined, s.id + 'info');
                     createInputs(phrase, s, 'phrase');
+                    phraseMoveDown.onclick = function () {
+                        console.log('no workey');
+                    };
+                    phraseMoveUp.onclick = function () {
+                        console.log('no workey');
+                    };
                     phraseRemove.onclick = function () {
                         s.remove();
                         phrase.parentNode.removeChild(phrase);
                     };
                     phraseDuplicate.onclick = function () {
                         t.createPhrase(s);
-                        self.redraw();
+                        redraw();
                     };
                     s.highlight = function () {
                         phrase.classList.add('seq-phrase-highlight');
@@ -476,59 +505,45 @@ function sequencer(mainArgs) {
                 var timeLine = createTimeLine();
                 timeLines[timeLine.id] = timeLine;
                 timeLine.createPhrase();
-                self.redraw();
-            }
+                redraw();
+            };
             play.onclick = function () {
                 playAll();
-            }
+            };
             pause.onclick = function () {
                 pauseAll();
-            }
+            };
             stop.onclick = function () {
                 stopAll();
-            }
+            };
         }
-        return self;
-    }
-    function readMidiMessage(i, pipe) {
-        return function () {
-
+        return {
+            redraw: redraw
         };
     }
-    function sendMessage(message, deviceId, channel, value, value2, time) {
-        value = Math.min(value, 127);
-        value2 = Math.min(value2, 127);
-        value = Math.max(value, 0);
-        value2 = Math.max(value2, 0);
-        var msg = [parseInt(message + channel.toString(16), 16), value, value2],
-            o = pipes.outputs[deviceId];
-        o.value.open();
-        o.value.send(msg, time);
+    function createOffsetArray(n, max) {
+        var x, ca = 0, cb = n, a = [];
+        for (x = 0; x < max; x += 1) {
+            ca += 1;
+            cb += 1;
+            a.push(ca);
+            a.push(cb);
+        }
+        return a;
     }
-    function playNote(note, velocity, duration, deviceId, channel, time) {
-        sendMessage(msg['on'], deviceId, channel, note, velocity, time);
-        sendMessage(msg['off'], deviceId, channel, note, velocity, time + duration);
-    }
-    function init(){
-        var timeLine = createTimeLine();
-        timeLines[timeLine.id] = timeLine;
-        timeLine.createPhrase();
-        ui = createUI(),
-        ui.redraw();
-    }
-    styles["Up"] = function (intervals, offset) {
+    styles.Up = function (intervals, offset) {
         var count = -1 + offset;
-        return function (args) {
-            count++;
+        return function () {
+            count += 1;
             return {
                 number: count,
                 end: count % intervals.length === 0 && count > 0
-            }
-        }
-    }
-    styles["Down"] = function (intervals, offset) {
-        var count = 0 + offset;
-        return function (args) {
+            };
+        };
+    };
+    styles.Down = function (intervals, offset) {
+        var count = offset;
+        return function () {
             if (count % intervals.length === 0) {
                 count = intervals.length - 1;
                 return {
@@ -540,16 +555,16 @@ function sequencer(mainArgs) {
             return {
                 number: count,
                 end: false
-            }
-        }
-    }
+            };
+        };
+    };
     styles['Up Down'] = function (intervals, offset) {
         var up = true,
             end,
-            count = 0 + offset;
-        return function (args) {
+            count = offset;
+        return function () {
             end = false;
-            if (count === intervals.length -1) {
+            if (count === intervals.length - 1) {
                 end = true;
                 up = false;
             }
@@ -557,136 +572,156 @@ function sequencer(mainArgs) {
                 up = true;
             }
             if (up) {
+                count += 1;
                 return {
-                    number: ++count,
+                    number: count,
                     end: end
                 };
             }
+            count -= 1;
             return {
-                number: --count,
+                number: count,
                 end: end
             };
-        }
-    }
+        };
+    };
     styles['Down Up'] = function (intervals, offset) {
         var up,
             end,
             count = intervals.length + offset;
-        return function (args) {
-            if (count === intervals.length -1) {
-                end = true
+        return function () {
+            if (count === intervals.length - 1) {
+                end = true;
                 up = false;
             }
             if (count === 0) {
                 up = true;
             }
             if (up) {
+                count += 1;
                 return {
-                    number: ++count,
+                    number: count,
                     end: end
                 };
             }
+            count -= 1;
             return {
-                number: --count,
+                number: count,
                 end: end
             };
-        }
-    }
+        };
+    };
     styles["3rds Cycle"] = function (intervals, offset) {
-        var count = 0 + offset;
-        return function (args) {
+        var count = offset;
+        return function () {
             count += 2;
             return {
                 number: count,
                 end: count % intervals.length
             };
-        }
-    }
+        };
+    };
     styles["4ths Cycle"] = function (intervals, offset) {
-        var count = 0 + offset;
-        return function (args) {
+        var count = offset;
+        return function () {
             count += 3;
             return {
                 number: count,
                 end: count % intervals.length
             };
-        }
-    }
+        };
+    };
     styles["5ths Cycle"] = function (intervals, offset) {
-        var count = 0 + offset;
-        return function (args) {
+        var count = offset;
+        return function () {
             count += 4;
             return {
                 number: count,
                 end: count % intervals.length
             };
-        }
-    }
+        };
+    };
     styles["6ths Cycle"] = function (intervals, offset) {
-        var count = 0 + offset;
-        return function (args) {
+        var count = offset;
+        return function () {
             count += 5;
             return {
                 number: count,
                 end: count % intervals.length
             };
-        }
-    }
+        };
+    };
     styles["3rds Sequence"] = function (intervals, offset) {
-        var count = 0 + offset,
+        var count = offset,
             a = createOffsetArray(2, intervals.length * 2);
-        return function (args) {
-            var i = a[count++ % a.length];
-            if (count === Math.floor(intervals.length + (intervals.length * .5))) {
+        return function () {
+            count += 1;
+            var i = a[count % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * 0.5))) {
                 count = 0;
             }
             return {
                 number: i,
                 end: i % (intervals.length * 2)
             };
-        }
-    }
+        };
+    };
     styles["4ths Sequence"] = function (intervals, offset) {
-        var count = 0 + offset,
+        var count = offset,
             a = createOffsetArray(3, intervals.length * 3);
-        return function (args) {
-            var i = a[count++ % a.length];
-            if (count === Math.floor(intervals.length + (intervals.length * .33333333))) {
+        return function () {
+            count += 1;
+            var i = a[count % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * 0.33333333))) {
                 count = 0;
             }
             return {
                 number: i,
                 end: i % (intervals.length * 3)
-            };;
-        }
-    }
+            };
+        };
+    };
     styles["5ths Sequence"] = function (intervals, offset) {
-        var count = 0 + offset,
+        var count = offset,
             a = createOffsetArray(4, intervals.length * 4);
-        return function (args) {
-            var i = a[count++ % a.length];
-            if (count === Math.floor(intervals.length + (intervals.length * .25))) {
+        return function () {
+            count += 1;
+            var i = a[count % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * 0.25))) {
                 count = 0;
             }
             return {
                 number: i,
                 end: i % (intervals.length * 4)
             };
-        }
-    }
+        };
+    };
     styles["6ths"] = function (intervals, offset) {
-        var count = 0 + offset,
+        var count = offset,
             a = createOffsetArray(5, intervals.length * 5);
-        return function (args) {
-            var i = a[count++ % a.length];
-            if (count === Math.floor(intervals.length + (intervals.length * .1725))) {
+        return function () {
+            count += 1;
+            var i = a[count % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * 0.1725))) {
                 count = 0;
             }
             return {
                 number: i,
                 end: i % (intervals.length * 5)
             };
-        }
+        };
+    };
+    function init() {
+        timer = new Worker("js/seqTimer.js");
+        timer.postMessage(250);
+        timer.onmessage = function (e) {
+            Object.keys(timeLines).forEach(function (timeLinesKey) {
+                timeLines[timeLinesKey].schedule(e);
+            });
+        };
+        createScaleSelectArray();
+        ui = createUI();
+        ui.redraw();
     }
     window.navigator.requestMIDIAccess({
         sysex: false
@@ -698,9 +733,9 @@ function sequencer(mainArgs) {
             for (i = s.next(); i && !i.done; i = s.next()) {
                 if (i && i.value) {
                     pipes[pipe][i.value.id] = i;
-                    if (pipe === 'inputs') {
-                        i.value.onmidimessage = readMidiMessage(i, pipe);
-                    }
+                    // if (pipe === 'inputs') {
+                    //     i.value.onmidimessage = readMidiMessage(i, pipe);
+                    // }
                 }
             }
         }
@@ -709,6 +744,7 @@ function sequencer(mainArgs) {
     });
 }
 document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
     sequencer({
         parentNode: document.body
     });
