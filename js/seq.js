@@ -1,11 +1,12 @@
-/*jslint browser: true*/
 function sequencer(mainArgs) {
    'use strict';
     var mag = 10000,
         tempo = 120,
         midiMiddleC = 60,
         timeLineLength,
+        timeLineLength,
         timeSignature = [4, 4],
+        styles = {},
         timings = {
             "a: 1/128": 128,
             "ft: 1/96": 96,
@@ -106,7 +107,7 @@ function sequencer(mainArgs) {
             });
         });
     }
-    function ce(tag, parentNode, className, html, cacheId) {
+    function ce(tag, parentNode, className, html, cacheId, title) {
         var e;
         if (elements[cacheId]){ 
             e = elements[cacheId];
@@ -125,6 +126,9 @@ function sequencer(mainArgs) {
         }
         if (className) {
             e.className = className;
+        }
+        if (title) {
+            e.title = title;
         }
         if (html) {
             e.innerHTML = html;
@@ -170,7 +174,7 @@ function sequencer(mainArgs) {
             time;
         console.log('beat:', beat, '-atom:', atom, '-bar:', bar);
         function quantizedStart () {
-            startTime = (performance.now() + queueLength);
+            startTime = performance.now();
             return startTime - (startTime % beat);
         }
         self.play = function () {
@@ -238,6 +242,7 @@ function sequencer(mainArgs) {
                 phrase.msTime = scheduledTime;
                 phrase.msLength = beat / toRhythm(phrase.length);
                 phrase.timeMismatch = 'no-mismatch';
+                phrase.track = self;
                 while(phraseTime < phrase.msLength) {
                     l = beat / toRhythm(rhythm[x++ % rhythm.length]);
                     if (phraseTime + l > phrase.msLength) {
@@ -247,12 +252,10 @@ function sequencer(mainArgs) {
                         time: scheduledTime,
                         length: l * (phrase.gate / 100)
                     });
-                    phraseTime += l;
+                    phraseTime += l;[]
                     scheduledTime += l;
                 }
             });
-            console.log('updated rhythmTimes');
-            console.log(JSON.stringify(self.items));
         }
         function toRhythm(r) {
             r = r.replace(/\!/, '')
@@ -286,31 +289,31 @@ function sequencer(mainArgs) {
                 }
             }
         }
+        function getStyle() {
+
+        }
+        function updatePlaybackUI(phrase, pos, timeLineLength) {
+            var i = document.getElementById(phrase.track.id + 'info'),
+                pi = document.getElementById(phrase.id + 'info'),
+                phrasePct = ((pos) / timeLineLength) * 100,
+                trackPct = ((pos - phrase.msTime) / phrase.msLength) * 100;
+            pi.innerHTML = '<progress max=90 value=' + trackPct + '>'
+                + trackPct.toFixed(2) + '</progress>';
+            i.innerHTML = '<progress max=90 value=' + phrasePct + '>'
+                + phrasePct.toFixed(2) + '</progress>';
+            unhighlightAll();
+            phrase.highlight();
+        }
         self.schedule = function (e) {
             while(time < performance.now() + queueLength && playing) {
-                var pos = time % timeLineLength,
-                    rest,
-                    rMod,
-                    vMod,
-                    trill,
-                    lx,
-                    ly,
-                    y,
-                    x,
-                    intervals,
-                    rhythmStrings,
-                    rhythmString,
-                    velocities,
-                    chord,
-                    rhythm,
-                    phrase = getParamsAt(pos);
+                var pos, phrase, rest, rMod, vMod, trill, ly, y, x, style, stepStyle,
+                    intervals, rhythmStrings, rhythmString, velocities, chord, rhythm;
+                pos = time % timeLineLength;
+                phrase = getParamsAt(pos);
                 if (phrase) {
-                    phrase.index ++;
-                    phrase.indexRest ++;
-                    phrase.indexNote ++;
-                    phrase.indexStep ++;
-                    chord = JSON.parse('{"chord":[' + phrase.chords + ']}').chord;
+                    chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
                     intervals = phrase.intervals.split(',').map(function (i) { return parseInt(i, 10);});
+                    style = styles[phrase.style](intervals, phrase.offset);
                     rhythmStrings = phrase.rhythm.split(',');
                     velocities = phrase.velocities.split(',').map(function (i) { return parseInt(i, 10);});
                     rMod = phrase.index % phrase.rhythmTimes.length;
@@ -320,11 +323,27 @@ function sequencer(mainArgs) {
                     x = phrase.index % chord.length;
                     rest = /r/.test(rhythmString);
                     trill = /!/.test(rhythmString);
+                    if (style.end) {
+                        if (phrase.step === 0) {
+                            intervals = getIntervals();
+                            phrase.indexStep = 0;
+                        } else {
+                            stepStyle = styles[phrase.stepStyle](intervals, phrase.offset);
+                            if (stepStyle.end) {
+                                for (x = 0; x < phrase.distance; x += 1) {
+                                    intervals.push(intervals.shift() + 12);
+                                }
+                            } else {
+                                for (x = 0; x < Math.abs(phrase.distance); x += 1) {
+                                    intervals.unshift(intervals.pop() - 12);
+                                }
+                            }
+                        }
+                    }
                     if (rest) {
                         phrase.index --;
                         phrase.indexNote --;
                         phrase.indexStep --;
-                        console.log('rest', phrase.rhythmTimes[rMod].length);
                     } else {
                         for(y = 0, ly = chord[x].length; y < ly; y += 1) {
                             scheduleNote(
@@ -335,12 +354,18 @@ function sequencer(mainArgs) {
                                 time,
                                 phrase.rhythmTimes[rMod].length
                             );
-                            setTimeout(function (phrase) {
-                                unhighlightAll();
-                                phrase.highlight();
-                            }, performance.now() - time - phrase.rhythm.length, phrase);
                         }
+                        setTimeout(
+                            updatePlaybackUI,
+                            performance.now() - time - phrase.rhythm.length,
+                            phrase,
+                            pos,
+                            timeLineLength
+                        );
                     }
+                    phrase.index ++;
+                    phrase.indexRest ++;
+                    phrase.indexNote ++;
                 }
                 time = add(time, atom);
             }
@@ -350,15 +375,16 @@ function sequencer(mainArgs) {
     function createInputs(e, args, ctrlType) {
         Object.keys(args).forEach(function (key) {
             if (!noEditInputs.test(key)) {
-                var v = ctrlType === 'phrase' ? itemParams[key] : trackParams[key],
-                    c,
-                    label,
-                    sSelect,
-                    input;
+                var v, c, label, sSelect, input;
+                v = ctrlType === 'phrase' ? itemParams[key] : trackParams[key];
                 c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key);
                 if (key === 'scales') {
-                    sSelect = document.getElementById(args.id + 'scaleSelect');
-                    input = sSelect || scalesSelect.cloneNode(true);
+                    input = ce('select', c, 'seq-input', key, args.id + 'input' + key);
+                    function bindData() {
+                        input.innerHTML = scalesSelect.innerHTML;
+                        input.removeEventListener('mousedown', bindData);
+                    }
+                    input.addEventListener('mousedown', bindData);
                     input.addEventListener('change', function () {
                         args.intervals = this.value;
                         document.getElementById(args.id + 'inputintervals').value = this.value;
@@ -367,8 +393,6 @@ function sequencer(mainArgs) {
                     if (!input.parentNode) {
                         c.appendChild(input);
                     }
-                } else if (key === 'info') {
-                    input = ce('div', c, 'seq-info', '<br>', args.id + 'info');
                 } else {
                     label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key);
                     input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
@@ -376,6 +400,7 @@ function sequencer(mainArgs) {
                 }
                 function update(value) {
                     args[key] = value === undefined ? input.value: value;
+                    pauseAll();
                     playAll();
                 }
                 input.update = update;
@@ -394,64 +419,59 @@ function sequencer(mainArgs) {
         var self = {},
             container = ce('div', parentNode, 'seq-list', undefined, 'phraseList');
         self.redraw = function () {
-            var trackAdd,
-                play,
-                pause,
-                stop,
-                tempo,
-                timesigTop,
-                timesigBottom;
-            trackAdd = ce('button', container, 'seq-track-add', 'Add Track', 'addTrack');
-            play = ce('button', container, 'seq-track-add', 'Play', 'playTrack');
-            pause = ce('button', container, 'seq-track-add', 'Pause', 'pauseTrack');
-            stop = ce('button', container, 'seq-track-add', 'Stop', 'stopTrack');
-            /*
-            tempo = ce('input', container, 'seq-track-add', 'Tempo', 'tempoTrack');
-            timesigTop = ce('input', container, 'seq-track-add', '', 'timesigTopTrack');
-            timesigBottom = ce('input', container, 'seq-track-add', '/', 'timesigBottomTrack');
-            */
+            var trackAdd, play, pause, stop, trackDelete, tempoInput, timesigTop, timesigBottom;
+            trackAdd = ce('button', container, 'seq-track-add', '+', 'addTrack', 'Add Track');
+            play = ce('button', container, 'seq-track-play', '►', 'playTrack', 'Play');
+            pause = ce('button', container, 'seq-track-pause', '||', 'pauseTrack', 'Pause');
+            stop = ce('button', container, 'seq-track-stop', '■', 'stopTrack', 'Stop');
+            tempoInput = ce('input', container, 'seq-track-tempo', undefined, 'tempoTrack', 'Tempo');
+            timesigTop = ce('input', container, 'seq-track-timesig-top', undefined, 'timesigTopTrack', 'Beats');
+            timesigBottom = ce('input', container, 'seq-track-timesig-bottom', undefined, 'timesigBottomTrack', 'Value');
+            tempoInput.value = tempo;
+            timesigTop.value = timeSignature[0];
+            timesigBottom.value = timeSignature[1];
             Object.keys(timeLines).forEach(function (timeLinesKey) {
                 var t = timeLines[timeLinesKey],
-                    trackRemove,
                     track = ce('div', container, 'seq-track', undefined, t.id + 'timeline'),
                     trackControl = ce('div', track, 'seq-track-control', null, t.id + 'trackcontrol'),
-                    phraseAdd = ce('button', trackControl, 'seq-track-item-add', 'Add Phrase', t.id + 'phraseadd'),
+                    trackRemove,
+                    trackDelete = ce('button', trackControl, 'seq-track-delete', 'X', 'trackDelete', 'Delete'),
+                    phraseAdd = ce('button', trackControl, 'seq-phrase-add', '+', t.id + 'phraseadd', 'Add Phrase'),
                     trackInfo = ce('div', trackControl, 'seq-track-info', t.info, t.id + 'info');
+                phraseAdd.onclick = function () {
+                    t.createPhrase();
+                    self.redraw();
+                }
+                trackDelete.onclick = function () {
+                    alert('no workey');
+                }
                 createInputs(trackControl, t, 'track');
                 Object.keys(t.items).forEach(function (phraseKey) {
-                    var s = t.items[phraseKey],
-                        phrase = ce('div', track, 'seq-phrase', undefined, s.id + 'phraseitem'),
-                        phraseDuplicate,
-                        phraseMoveUp,
-                        phraseMoveDown,
-                        phraseRemove;
-                    s.highlight = function () {
-                        phrase.classList.add('seq-phrase-highlight');
-                    }
-                    s.unhighlight = function () {
-                        phrase.classList.remove('seq-phrase-highlight');
-                    };
-                    phraseRemove = ce('button', phrase, 'seq-phrase-remove', 'Remove', s.id + 'phraseDelete');
-                    phraseDuplicate = ce('button', phrase, 'seq-phrase-duplicate', 'Duplicate', s.id + 'phraseDuplicate');
-                    phraseMoveUp = ce('button', phrase, 'seq-phrase-moveup', 'Up', s.id + 'phraseUp');
-                    phraseMoveDown = ce('button', phrase, 'seq-phrase-movedown', 'Down', s.id + 'phraseDown');
+                    var s, phrase, phraseDuplicate, phraseMoveUp, phraseMoveDown, phraseRemove, phraseInfo;
+                    s = t.items[phraseKey];
+                    phrase = ce('div', track, 'seq-phrase', undefined, s.id + 'phraseitem'),
+                    phraseInfo = ce('div', phrase, 'seq-phrase-info', undefined, s.id + 'info');
+                    phraseRemove = ce('button', phrase, 'seq-phrase-remove', 'X', s.id + 'phraseDelete', 'Delete Phrase');
+                    phraseDuplicate = ce('button', phrase, 'seq-phrase-duplicate', '⇉', s.id + 'phraseDuplicate', 'Duplicate Phrase');
+                    phraseMoveUp = ce('button', phrase, 'seq-phrase-moveup', '→', s.id + 'phraseUp', 'Move Up');
+                    phraseMoveDown = ce('button', phrase, 'seq-phrase-movedown', '←', s.id + 'phraseDown', 'Move Down');
                     createInputs(phrase, s, 'phrase');
                     phraseRemove.onclick = function () {
                         s.remove();
-                        self.redraw();
+                        phrase.parentNode.removeChild(phrase);
                     };
                     phraseDuplicate.onclick = function () {
                         t.createPhrase(s);
                         self.redraw();
                     };
+                    s.highlight = function () {
+                        phrase.classList.add('seq-phrase-highlight');
+                    };
+                    s.unhighlight = function () {
+                        phrase.classList.remove('seq-phrase-highlight');
+                    };
                 });
-                track.insertBefore(trackControl, track.firstChild);
-                phraseAdd.onclick = function () {
-                    t.createPhrase();
-                    self.redraw();
-                }
             });
-
             trackAdd.onclick = function () {
                 var timeLine = createTimeLine();
                 timeLines[timeLine.id] = timeLine;
@@ -496,6 +516,178 @@ function sequencer(mainArgs) {
         ui = createUI(),
         ui.redraw();
     }
+    styles["Up"] = function (intervals, offset) {
+        var count = -1 + offset;
+        return function (args) {
+            count++;
+            return {
+                number: count,
+                end: count % intervals.length === 0 && count > 0
+            }
+        }
+    }
+    styles["Down"] = function (intervals, offset) {
+        var count = 0 + offset;
+        return function (args) {
+            if (count % intervals.length === 0) {
+                count = intervals.length - 1;
+                return {
+                    number: count,
+                    end: true
+                };
+            }
+            count += (intervals.length - 1);
+            return {
+                number: count,
+                end: false
+            }
+        }
+    }
+    styles['Up Down'] = function (intervals, offset) {
+        var up = true,
+            end,
+            count = 0 + offset;
+        return function (args) {
+            end = false;
+            if (count === intervals.length -1) {
+                end = true;
+                up = false;
+            }
+            if (count === 0) {
+                up = true;
+            }
+            if (up) {
+                return {
+                    number: ++count,
+                    end: end
+                };
+            }
+            return {
+                number: --count,
+                end: end
+            };
+        }
+    }
+    styles['Down Up'] = function (intervals, offset) {
+        var up,
+            end,
+            count = intervals.length + offset;
+        return function (args) {
+            if (count === intervals.length -1) {
+                end = true
+                up = false;
+            }
+            if (count === 0) {
+                up = true;
+            }
+            if (up) {
+                return {
+                    number: ++count,
+                    end: end
+                };
+            }
+            return {
+                number: --count,
+                end: end
+            };
+        }
+    }
+    styles["3rds Cycle"] = function (intervals, offset) {
+        var count = 0 + offset;
+        return function (args) {
+            count += 2;
+            return {
+                number: count,
+                end: count % intervals.length
+            };
+        }
+    }
+    styles["4ths Cycle"] = function (intervals, offset) {
+        var count = 0 + offset;
+        return function (args) {
+            count += 3;
+            return {
+                number: count,
+                end: count % intervals.length
+            };
+        }
+    }
+    styles["5ths Cycle"] = function (intervals, offset) {
+        var count = 0 + offset;
+        return function (args) {
+            count += 4;
+            return {
+                number: count,
+                end: count % intervals.length
+            };
+        }
+    }
+    styles["6ths Cycle"] = function (intervals, offset) {
+        var count = 0 + offset;
+        return function (args) {
+            count += 5;
+            return {
+                number: count,
+                end: count % intervals.length
+            };
+        }
+    }
+    styles["3rds Sequence"] = function (intervals, offset) {
+        var count = 0 + offset,
+            a = createOffsetArray(2, intervals.length * 2);
+        return function (args) {
+            var i = a[count++ % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * .5))) {
+                count = 0;
+            }
+            return {
+                number: i,
+                end: i % (intervals.length * 2)
+            };
+        }
+    }
+    styles["4ths Sequence"] = function (intervals, offset) {
+        var count = 0 + offset,
+            a = createOffsetArray(3, intervals.length * 3);
+        return function (args) {
+            var i = a[count++ % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * .33333333))) {
+                count = 0;
+            }
+            return {
+                number: i,
+                end: i % (intervals.length * 3)
+            };;
+        }
+    }
+    styles["5ths Sequence"] = function (intervals, offset) {
+        var count = 0 + offset,
+            a = createOffsetArray(4, intervals.length * 4);
+        return function (args) {
+            var i = a[count++ % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * .25))) {
+                count = 0;
+            }
+            return {
+                number: i,
+                end: i % (intervals.length * 4)
+            };
+        }
+    }
+    styles["6ths"] = function (intervals, offset) {
+        var count = 0 + offset,
+            a = createOffsetArray(5, intervals.length * 5);
+        return function (args) {
+            var i = a[count++ % a.length];
+            if (count === Math.floor(intervals.length + (intervals.length * .1725))) {
+                count = 0;
+            }
+            return {
+                number: i,
+                end: i % (intervals.length * 5)
+            };
+        }
+    }
     window.navigator.requestMIDIAccess({
         sysex: false
     }).then(function (e) {
@@ -516,50 +708,8 @@ function sequencer(mainArgs) {
         init();
     });
 }
-
 document.addEventListener('DOMContentLoaded', function () {
     sequencer({
         parentNode: document.body
     });
 });
-
-
-function comboBox(args){
-    var self = {};
-    self.input = document.createElement('input');
-    self.select = document.createElement('select');
-    self.select.style.position = 'relative';
-    self.resize = function () {
-        self.select.style.marginLeft = (self.input.offsetWidth * -1) + 'px';
-    }
-    self.resize();
-    window.addEventListener('resize', self.resize);
-    args.parentNode.appendChild(self.input);
-    args.parentNode.appendChild(self.select);
-    // empty row at the top that nobody can see
-    args.items.unshift(['', '']);
-    if (args.items) {
-        args.items.forEach(function (item) {
-            var o = document.createElement('option');
-            self.select.appendChild(o);
-            o.value = item[0];
-            o.innerHTML = item[1] || item[0];
-        });
-    }
-    self.input.onclick = function () {
-        var e = document.createEvent('MouseEvents');
-        e.initMouseEvent('mousedown', true, true, window);
-        self.select.dispatchEvent(e);
-    }
-    self.input.onkeyup = function () {
-        var x, l, r = new RegExp(this.value);
-        for(x = 0, l = self.items.length; x < l; x += 1) {
-            if (r.test(self.items[x])) {
-                this.focus();
-                this.setSelectionRange(this.value.length, 9999);
-                this.value = self.items[x];
-            }
-        }
-    }
-    return self;
-}
