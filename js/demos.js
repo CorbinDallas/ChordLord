@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
     var playbackTimer,
