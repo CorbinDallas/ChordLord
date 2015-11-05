@@ -1,9 +1,12 @@
-/*jslint browser: true */
+/*jslint browser: true, plusplus: true, unparam: false*/
 /*globals Worker: false, setList: false, performance: false, define:false */
-define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, main, tt) {
+define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, piano, main, tt, midi) {
     'use strict';
     function sequencer(mainArgs) {
-        var setList = setListObject.list,
+        var atom,
+            bar,
+            beat,
+            setList = setListObject.list,
             quantizeTime = 'q',
             defaultScale = '0,3,4,6,7,9,11',
             idPrefix,
@@ -11,69 +14,23 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
             tempo = 120,
             midiMiddleC = 60,
             trackLength,
-            timeSignature = [4, 4],
-            styles = {},
-            timings = {
-                // 1/128
-                "a": 128,
-                // 1/64
-                "f": 64,
-                // 1/32
-                "i": 32,
-                // 1/16
-                "s": 16,
-                // 1/8
-                "e": 8,
-                // 1/4
-                "q": 4,
-                // 1/2
-                "h": 2,
-                // 1/1
-                "w": 1,
-                // 2
-                "2": 0.5,
-                // 3
-                "3": 0.33,
-                // 4
-                "4": 0.25,
-                // 5
-                "5": 0.2,
-                // 6
-                "6": 0.16666666666666666667,
-                // 7
-                "7": 0.1428571428571429,
-                // 8
-                "8": 0.125
+            rhythmPatterns = {
+                "Breakbeat 4/4 1/1": "e,e,e,s,s,s,s,e,e,s,s",
+                "Almost a march 4/4 1/1": "q,e,s,s,q,e,s,s",
+                "Skittles a 4/4 1/1": "q,s,e.,q,s,e.",
+                "Skittles b 4/4 1/1": "q,s,e.,q,s,e,s",
+                "Terminator": "s,e,s,sr,s,e",
+                "Fake Triplet": "q.q.q"
             },
-            noEditInputs = /^(pianoInput|index\S*|timeMismatch|stop|remove|items|id|play|createPhrase|pause|schedule|rhythmTimes|unhighlight|highlight|msTime|msLength)$/,
+            timeSignature = [4, 4],
+            timings = midi.timings,
+            noEditInputs = /^(phraseTime|phraseCounter|pianoInput|index\S*|timeMismatch|stop|remove|items|id|play|createPhrase|pause|schedule|rhythmTimes|unhighlight|highlight|msTime|msLength)$/,
             //noEditInputs = /blah/,
             scalesSelect,
             ui,
-            midi,
             pipes,
             parentNode = mainArgs.parentNode,
             elements = {},
-            msg = {
-                off: "0x8",
-                on: "0x9",
-                polyphonicAftertouch: "0xa",
-                controllerChange: "0xb",
-                programChange: "0xc",
-                channelAftertouch: "0xd",
-                pitchBendChange: "0xe",
-                systemExclusive: "0xf",
-                midiTimeCodeQtrFrame: "0xf1",
-                songPositionPointer: "0xf2",
-                songSelect: "0xf3",
-                tuneRequest: "0xf6",
-                endOfSysEx: "0xf7",
-                timingClock: "0xf8",
-                start: "0xfa",
-                "continue": "0xfb",
-                stop: "0xfc",
-                activeSensing: "0xfe",
-                systemReset: "0xff"
-            },
             trackParams = {
                 name: '',
                 channel: '1',
@@ -84,7 +41,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 key: '0',
                 index: '0',
                 indexRest: '0',
-                indexNote: '0',
+                indexNote: '-1',
                 indexStep: '0',
                 transpose: midiMiddleC.toString(),
                 scales: 'Harmonic Minor',
@@ -93,7 +50,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 chords: '[1]',
                 velocities: '64',
                 style: 'Up',
-                step: '0',
+                step: '1',
                 stepStyle: 'Up',
                 offset: '0',
                 gate: '50',
@@ -104,21 +61,6 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
             timer;
         function getById(id) {
             return document.getElementById(idPrefix + id);
-        }
-        function sendMessage(message, deviceId, channel, value, value2, time) {
-            var m, o;
-            value = Math.min(value, 127);
-            value2 = Math.min(value2, 127);
-            value = Math.max(value, 0);
-            value2 = Math.max(value2, 0);
-            m = [parseInt(message + channel.toString(16), 16), value, value2];
-            o = pipes.outputs[deviceId];
-            o.value.open();
-            o.value.send(m, time);
-        }
-        function playNote(note, velocity, duration, deviceId, channel, time) {
-            sendMessage(msg.on, deviceId, channel, note, velocity, time);
-            sendMessage(msg.off, deviceId, channel, note, velocity, time + duration);
         }
         function createScaleSelectArray() {
             scalesSelect = document.createElement('select');
@@ -202,11 +144,10 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                     channel: trackArgs.channel || '0',
                     items: {},
                     deviceId: trackArgs.deviceId || '1',
-                    id: cid()
+                    id: cid(),
+                    phraseTime: 0,
+                    phraseCounter: 0
                 },
-                atom,
-                bar,
-                beat,
                 playing = false,
                 startTime,
                 time;
@@ -225,7 +166,6 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 ties = timingString.split('^');
                 dotCount = 0;
                 for (x = 0; x < ties.length; x += 1) {
-                    console.log('timing', ties[x]);
                     timing = timings[ties[x][0]];
                     // if there was no match, ignore this note
                     if (!timing) {
@@ -252,7 +192,199 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
             function quantizedStart() {
                 var q = toRhythm(quantizeTime);
                 startTime = performance.now();
-                return startTime - (startTime % q) + q;
+                startTime = startTime - (startTime % q) + q;
+                return startTime;
+            }
+            function createStyles() {
+                var styles = {};
+                function createOffsetArray(n, max) {
+                    var x, ca = 0, cb = n, a = [];
+                    for (x = 0; x < max; x += 1) {
+                        ca += 1;
+                        cb += 1;
+                        a.push(ca);
+                        a.push(cb);
+                    }
+                    return a;
+                }
+                styles.Up = function (offset, mod) {
+                    var count = -1 + offset;
+                    return function (args) {
+                        count += 1;
+                        return {
+                            index: count % mod,
+                            end: count % mod === 0 && count > 0
+                        };
+                    };
+                };
+                styles.Down = function (offset, mod) {
+                    var count = offset;
+                    return function (args) {
+                        if (count % mod === 0) {
+                            count = mod - 1;
+                            return {
+                                index: count % mod,
+                                end: true
+                            };
+                        }
+                        count += (mod - 1);
+                        return {
+                            index: count % mod,
+                            end: false
+                        };
+                    };
+                };
+                styles['Up Down'] = function (offset, mod) {
+                    var up = true,
+                        first = true,
+                        end,
+                        count = offset;
+                    return function (args) {
+                        end = false;
+                        if (count === mod - 1) {
+                            up = false;
+                            first = true;
+                        }
+                        if (count === 0) {
+                            if (!first) {
+                                end = true;
+                            }
+                            first = false;
+                            up = true;
+                        }
+                        if (up) {
+                            return {
+                                index: ++count,
+                                end: end
+                            };
+                        }
+                        return {
+                            index: --count,
+                            end: end
+                        };
+                    };
+                };
+                styles['Down Up'] = function (offset, mod) {
+                    var up,
+                        end,
+                        count = mod + offset;
+                    return function (args) {
+                        if (count === mod - 1) {
+                            end = true;
+                            up = false;
+                        }
+                        if (count === 0) {
+                            up = true;
+                        }
+                        if (up) {
+                            return {
+                                index: ++count % mod,
+                                end: end
+                            };
+                        }
+                        return {
+                            index: --count % mod,
+                            end: end
+                        };
+                    };
+                };
+                styles["3rds Cycle"] = function (offset, mod) {
+                    var count = offset;
+                    return function (args) {
+                        count += 2;
+                        return {
+                            index: count % mod,
+                            end: count % mod
+                        };
+                    };
+                };
+                styles["4ths Cycle"] = function (offset, mod) {
+                    var count = offset;
+                    return function (args) {
+                        count += 3;
+                        return {
+                            index: count % mod,
+                            end: count % mod
+                        };
+                    };
+                };
+                styles["5ths Cycle"] = function (offset, mod) {
+                    var count = offset;
+                    return function (args) {
+                        count += 4;
+                        return {
+                            index: count % mod,
+                            end: count % mod
+                        };
+                    };
+                };
+                styles["6ths Cycle"] = function (offset, mod) {
+                    var count = offset;
+                    return function (args) {
+                        count += 5;
+                        return {
+                            index: count % mod,
+                            end: count % mod
+                        };
+                    };
+                };
+                styles["3rds Sequence"] = function (offset, mod) {
+                    var count = offset,
+                        a = createOffsetArray(2, mod * 2);
+                    return function (args) {
+                        var i = a[count++ % a.length];
+                        if (count === Math.floor(mod + (mod * 0.5))) {
+                            count = 0;
+                        }
+                        return {
+                            index: i,
+                            end: i % (mod * 2)
+                        };
+                    };
+                };
+                styles["4ths Sequence"] = function (offset, mod) {
+                    var count = offset,
+                        a = createOffsetArray(3, mod * 3);
+                    return function (args) {
+                        var i = a[count++ % a.length];
+                        if (count === Math.floor(mod + (mod * 0.33333333))) {
+                            count = 0;
+                        }
+                        return {
+                            index: i % mod,
+                            end: i % (mod * 3)
+                        };
+                    };
+                };
+                styles["5ths Sequence"] = function (offset, mod) {
+                    var count = offset,
+                        a = createOffsetArray(4, mod * 4);
+                    return function (args) {
+                        var i = a[count++ % a.length];
+                        if (count === Math.floor(mod + (mod * 0.25))) {
+                            count = 0;
+                        }
+                        return {
+                            index: i % mod,
+                            end: i % (mod * 4)
+                        };
+                    };
+                };
+                styles["6ths"] = function (offset, mod) {
+                    var count = offset,
+                        a = createOffsetArray(5, mod * 5);
+                    return function (args) {
+                        var i = a[count++ % a.length];
+                        if (count === Math.floor(mod + (mod * 0.1725))) {
+                            count = 0;
+                        }
+                        return {
+                            index: i % mod,
+                            end: i % (mod * 5)
+                        };
+                    };
+                };
+                return styles;
             }
             function updateRhythmTimes() {
                 // this function creates an array of rhythmTimes that get used
@@ -268,30 +400,37 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                         phrase = self.items[itemKey],
                         intervals = getIntervals(phrase),
                         offset = parseInt(phrase.offset, 10),
-                        gate = parseInt(phrase.gate, 10),
+                        gate = phrase.gate.split(',').map(numMap),
+                        step = parseInt(phrase.step, 10),
                         chordNames = main.getChordNames(intervals),
                         rhythm = phrase.rhythm.split(',');
                     phrase.rhythmTimes = [];
                     phrase.msTime = scheduledTime;
-                    phrase.msLength = toRhythm(phrase.length, beat);
-                    phrase.timeMismatch = 'no-mismatch';
+                    phrase.msLength = toRhythm(phrase.length);
+                    phrase.timeMismatch = false;
                     phrase.track = self;
-                    phrase.styleFn = styles[phrase.style](intervals, offset);
-                    phrase.stepStyleFn = styles[phrase.stepStyle](intervals, offset);
+                    phrase.parsedIntervals = getIntervals(phrase);
                     phrase.index = parseInt(phrase.index, 10);
                     phrase.indexRest = parseInt(phrase.indexRest, 10);
                     phrase.indexStep = parseInt(phrase.indexStep, 10);
                     phrase.indexNote = parseInt(phrase.indexNote, 10);
                     phrase.chordNames = chordNames;
+                    phrase.noteStyleFn = createStyles()[phrase.style](offset, phrase.parsedIntervals.length);
+                    phrase.stepStyleFn = createStyles()[phrase.stepStyle](1, step);
+                    phrase.stylePrams = {
+                        note: {},
+                        step: {}
+                    };
                     while (phraseTime < phrase.msLength) {
-                        l = toRhythm(rhythm[x % rhythm.length], beat);
+                        l = toRhythm(rhythm[x % rhythm.length]);
                         if (phraseTime + l > phrase.msLength) {
-                            phrase.timeMismatch = 'mismatch';
+                            phrase.timeMismatch = true;
                         }
                         phrase.rhythmTimes.push({
                             time: scheduledTime,
-                            length: l * (gate / 100)
+                            length: l * (gate[x % gate.length] / 100)
                         });
+                        phrase.patternMismatch = x % rhythm.length;
                         x += 1;
                         phraseTime += l;
                         scheduledTime += l;
@@ -306,7 +445,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 return i;
             }
             function scheduleNote(note, v, t, r) {
-                playNote(
+                midi.playNote(
                     note,
                     v,
                     r,
@@ -321,17 +460,13 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                     phrase = self.items[keys[y]];
                     if (phrase.msTime <= pos
                             && phrase.msTime + phrase.msLength >= pos) {
-                        for (x = 0, lx = phrase.rhythmTimes.length; x < lx; x += 1) {
-                            r = phrase.rhythmTimes[x];
-                            if (r.time === pos) {
-                                return phrase;
-                            }
-                        }
+                        return phrase;
                     }
                 }
             }
             function updatePlaybackUI(phrase, pos, trackLength, intervals, intervalIndex, noteLength, midiNoteValue, velocity) {
-                var i = getById(phrase.track.id + 'info'),
+                var h,
+                    i = getById(phrase.track.id + 'info'),
                     pi = getById(phrase.id + 'info'),
                     phrasePct = (pos / trackLength) * 100,
                     trackPct = ((pos - phrase.msTime) / phrase.msLength) * 100;
@@ -347,7 +482,10 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                     }
                     return v;
                 }).join(', ');
-                phrase.track.pianoInput.keys[midiNoteValue - 24].highlight(velocity);
+                h = phrase.track.pianoInput.keys[midiNoteValue - 24].highlight;
+                if (h) {
+                    h();
+                }
                 phrase.highlight();
                 setTimeout(function () {
                     phrase.track.pianoInput.keys[midiNoteValue - 24].unhighlight();
@@ -358,88 +496,97 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 Object.keys(self.items).forEach(function (item) {
                     self.items[item].index = 0;
                     self.items[item].indexRest = 0;
-                    self.items[item].indexNote = 0;
+                    // this should be -1 so the style counter gives the
+                    // first note to index 0
+                    self.items[item].indexNote = -1;
                     self.items[item].indexStep = 0;
                 });
+            }
+            function cycleIntervals(intv, num) {
+                var x;
+                for (x = 0; x < Math.abs(num); x += 1) {
+                    if (num > 0) {
+                        intv.push(intv.shift() + 12);
+                    } else {
+                        intv.push(intv.shift() - 12);
+                    }
+                }
+                return intv;
             }
             self.schedule = function () {
                 // this function is the main timing/scheduling function
                 // this function calls updateRhythmTimes to get times to be played
                 // it figures out if a given time will be played by invoking getParamsAt()
-                var tie, trill, pos, phrase, rest, rMod, vMod, ly, y, x, lx, style, interval,
+                var tie, phrase, trill, pos, rest, rMod, vMod, ly, y, x, lx, style, interval, offset,
                     stepStyle, intervals, rhythmStrings, rhythmString, velocities, chord, intervalIndex,
-                    key, transpose, step, midiNoteValue;
+                    key, transpose, step, midiNoteValue, rhythmLength, originalIntervals,
+                    phraseKeys = Object.keys(self.items);
                 while (time < performance.now() + queueLength && playing) {
                     pos = time % trackLength;
-                    phrase = getParamsAt(pos);
-                    if (phrase) {
-                        key = parseInt(phrase.key, 10);
-                        step = parseInt(phrase.step, 10);
-                        transpose = parseInt(phrase.transpose, 10);
-                        chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
-                        intervals = getIntervals(phrase);
-                        rhythmStrings = phrase.rhythm.split(',');
-                        velocities = phrase.velocities.split(',').map(numMap);
-                        rMod = phrase.index % phrase.rhythmTimes.length;
-                        vMod = phrase.index % velocities.length;
-                        rhythmString = rhythmStrings[phrase.indexRest % rhythmStrings.length];
-                        x = phrase.index % chord.length;
-                        rest = /r/.test(rhythmString);
-                        trill = /!/.test(rhythmString);
-                        style = phrase.styleFn(phrase);
-                        if (style.end) {
-                            console.log('end');
-                            if (step === 0) {
-                                intervals = getIntervals(phrase);
-                                phrase.indexStep = 0;
-                            } else {
-                                stepStyle = phrase.stepStyleFn(phrase);
-                                if (stepStyle.end) {
-                                    for (x = 0; x < stepStyle.number; x += 1) {
-                                        intervals.push(intervals.shift() + 12);
-                                    }
-                                } else {
-                                    for (x = 0; x < Math.abs(stepStyle.number); x += 1) {
-                                        intervals.unshift(intervals.pop() - 12);
-                                    }
-                                }
-                            }
+                    phrase = self.items[phraseKeys[self.phraseCounter % phraseKeys.length]];
+                    pos = time % trackLength;
+                    key = parseInt(phrase.key, 10);
+                    step = parseInt(phrase.step, 10);
+                    offset = parseInt(phrase.offset, 10);
+                    transpose = parseInt(phrase.transpose, 10);
+                    chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
+                    rhythmStrings = phrase.rhythm.split(',');
+                    velocities = phrase.velocities.split(',').map(numMap);
+                    rMod = phrase.index % phrase.rhythmTimes.length;
+                    vMod = phrase.index % velocities.length;
+                    rhythmString = rhythmStrings[phrase.indexRest % rhythmStrings.length];
+                    rhythmLength = toRhythm(rhythmString);
+                    x = phrase.index % chord.length;
+                    rest = /r/.test(rhythmString);
+                    trill = /!/.test(rhythmString);
+                    style = phrase.noteStyleFn();
+                    phrase.indexNote = style.index;
+                    if (style.end || time === 0) {
+                        stepStyle = phrase.stepStyleFn();
+                        console.log('step end', stepStyle.end, 'index', stepStyle.index, 'modded', stepStyle.index % phrase.parsedIntervals.length);
+                        phrase.parsedIntervals = cycleIntervals(getIntervals(phrase), stepStyle.index % phrase.parsedIntervals.length);
+                        if (stepStyle.end) {
+                            phrase.parsedIntervals = getIntervals(phrase);
+                            console.log('step reset');
                         }
-                        if (rest) {
-                            console.log('rest');
-                            phrase.index -= 1;
-                            phrase.indexNote  -= 1;
-                            phrase.indexStep  -= 1;
-                        } else {
-                            for (y = 0, ly = chord[phrase.index % chord.length].length; y < ly; y += 1) {
-                                intervalIndex = (style.number + chord[x][y] - 1) % intervals.length;
-                                interval = intervals[intervalIndex];
-                                midiNoteValue = transpose + key + interval;
-                                scheduleNote(
-                                    midiNoteValue,
-                                    phrase.velocities[vMod],
-                                    time,
-                                    phrase.rhythmTimes[rMod].length
-                                );
-                            }
-                            setTimeout(
-                                updatePlaybackUI,
-                                time - performance.now(),
-                                phrase,
-                                pos,
-                                trackLength,
-                                intervals,
-                                intervalIndex,
-                                phrase.rhythmTimes[rMod].length,
+                    }
+                    if (rest) {
+                        console.log('rest');
+                        phrase.index -= 1;
+                        phrase.indexNote  -= 1;
+                    } else {
+                        for (y = 0, ly = chord[phrase.index % chord.length].length; y < ly; y += 1) {
+                            intervalIndex = (style.index + chord[x][y] - 1) % phrase.parsedIntervals.length;
+                            interval = phrase.parsedIntervals[intervalIndex];
+                            midiNoteValue = transpose + key + interval;
+                            scheduleNote(
                                 midiNoteValue,
-                                phrase.velocities[vMod]
+                                parseInt(phrase.velocities[vMod], 10),
+                                time,
+                                phrase.rhythmTimes[rMod].length
                             );
                         }
-                        phrase.index += 1;
-                        phrase.indexRest += 1;
-                        phrase.indexNote += 1;
+                        setTimeout(
+                            updatePlaybackUI,
+                            time - performance.now(),
+                            phrase,
+                            pos,
+                            trackLength,
+                            phrase.parsedIntervals,
+                            intervalIndex,
+                            phrase.rhythmTimes[rMod].length,
+                            midiNoteValue,
+                            phrase.velocities[vMod]
+                        );
                     }
-                    time = add(time, atom);
+                    time = add(time, rhythmLength);
+                    self.phraseTime = add(self.phraseTime, rhythmLength);
+                    phrase.index += 1;
+                    phrase.indexRest += 1;
+                    if (self.phraseTime >= phrase.msLength) {
+                        self.phraseCounter += 1;
+                        self.phraseTime = 0;
+                    }
                 }
             };
             self.play = function () {
@@ -504,7 +651,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                     v = ctrlType === 'phrase' ? itemParams[key] : trackParams[key];
                     c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key);
                     if (key === 'deviceId') {
-                        args[key] = Object.keys(pipes.outputs)[0];
+                        args[key] = Object.keys(midi.pipes.outputs)[0];
                     }
                     label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key);
                     if (key === 'scales') {
@@ -615,7 +762,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
             var container = ce('div', parentNode, 'seq-list', undefined, 'phraseList');
             function redraw() {
                 var trackAdd, play, pause, stop, tempoInput, timesigTop, timesigBottom,
-                    newSet, pianoViewState = true, trackViewState = false, save, load;
+                    newSet, pianoViewState, trackViewState, save, load;
                 newSet = ce('button', container, 'seq-track-new', 'New', 'newSet', 'Create New Set');
                 trackAdd = ce('button', container, 'seq-track-add', 'Add', 'addTrack', 'Add Track');
                 play = ce('button', container, 'seq-track-play', '►', 'playTrack', 'Play');
@@ -632,6 +779,15 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 tempoInput.value = tempo;
                 timesigTop.value = timeSignature[0];
                 timesigBottom.value = timeSignature[1];
+                timesigTop.addEventListener('update', function () {
+                    timeSignature[0] = parseInt(this.value, 10);
+                });
+                timesigBottom.addEventListener('change', function () {
+                    timeSignature[1] = parseInt(this.value, 10);
+                });
+                tempoInput.addEventListener('change', function () {
+                    tempo = parseFloat(this.value, 10);
+                });
                 load.addEventListener('click', loadSetFromSelect);
                 save.addEventListener('click', saveSet);
                 newSet.addEventListener('click', clearAll);
@@ -754,196 +910,6 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
                 redraw: redraw
             };
         }
-        function createOffsetArray(n, max) {
-            var x, ca = 0, cb = n, a = [];
-            for (x = 0; x < max; x += 1) {
-                ca += 1;
-                cb += 1;
-                a.push(ca);
-                a.push(cb);
-            }
-            return a;
-        }
-        styles.Up = function (intervals, offset) {
-            var count = -1 + offset;
-            return function () {
-                count += 1;
-                return {
-                    number: count,
-                    end: count % intervals.length === 0 && count > 0
-                };
-            };
-        };
-        styles.Down = function (intervals, offset) {
-            var count = offset;
-            return function () {
-                if (count % intervals.length === 0) {
-                    count = intervals.length - 1;
-                    return {
-                        number: count,
-                        end: true
-                    };
-                }
-                count += (intervals.length - 1);
-                return {
-                    number: count,
-                    end: false
-                };
-            };
-        };
-        styles['Up Down'] = function (intervals, offset) {
-            var up = true,
-                end,
-                count = offset;
-            return function () {
-                end = false;
-                if (count === intervals.length - 1) {
-                    end = true;
-                    up = false;
-                }
-                if (count === 0) {
-                    up = true;
-                }
-                if (up) {
-                    count += 1;
-                    return {
-                        number: count,
-                        end: end
-                    };
-                }
-                count -= 1;
-                return {
-                    number: count,
-                    end: end
-                };
-            };
-        };
-        styles['Down Up'] = function (intervals, offset) {
-            var up,
-                end,
-                count = intervals.length + offset;
-            return function () {
-                if (count === intervals.length - 1) {
-                    end = true;
-                    up = false;
-                }
-                if (count === 0) {
-                    up = true;
-                }
-                if (up) {
-                    count += 1;
-                    return {
-                        number: count,
-                        end: end
-                    };
-                }
-                count -= 1;
-                return {
-                    number: count,
-                    end: end
-                };
-            };
-        };
-        styles["3rds Cycle"] = function (intervals, offset) {
-            var count = offset;
-            return function () {
-                count += 2;
-                return {
-                    number: count,
-                    end: count % intervals.length
-                };
-            };
-        };
-        styles["4ths Cycle"] = function (intervals, offset) {
-            var count = offset;
-            return function () {
-                count += 3;
-                return {
-                    number: count,
-                    end: count % intervals.length
-                };
-            };
-        };
-        styles["5ths Cycle"] = function (intervals, offset) {
-            var count = offset;
-            return function () {
-                count += 4;
-                return {
-                    number: count,
-                    end: count % intervals.length
-                };
-            };
-        };
-        styles["6ths Cycle"] = function (intervals, offset) {
-            var count = offset;
-            return function () {
-                count += 5;
-                return {
-                    number: count,
-                    end: count % intervals.length
-                };
-            };
-        };
-        styles["3rds Sequence"] = function (intervals, offset) {
-            var count = offset,
-                a = createOffsetArray(2, intervals.length * 2);
-            return function () {
-                count += 1;
-                var i = a[count % a.length];
-                if (count === Math.floor(intervals.length + (intervals.length * 0.5))) {
-                    count = 0;
-                }
-                return {
-                    number: i,
-                    end: i % (intervals.length * 2)
-                };
-            };
-        };
-        styles["4ths Sequence"] = function (intervals, offset) {
-            var count = offset,
-                a = createOffsetArray(3, intervals.length * 3);
-            return function () {
-                count += 1;
-                var i = a[count % a.length];
-                if (count === Math.floor(intervals.length + (intervals.length * 0.33333333))) {
-                    count = 0;
-                }
-                return {
-                    number: i,
-                    end: i % (intervals.length * 3)
-                };
-            };
-        };
-        styles["5ths Sequence"] = function (intervals, offset) {
-            var count = offset,
-                a = createOffsetArray(4, intervals.length * 4);
-            return function () {
-                count += 1;
-                var i = a[count % a.length];
-                if (count === Math.floor(intervals.length + (intervals.length * 0.25))) {
-                    count = 0;
-                }
-                return {
-                    number: i,
-                    end: i % (intervals.length * 4)
-                };
-            };
-        };
-        styles["6ths"] = function (intervals, offset) {
-            var count = offset,
-                a = createOffsetArray(5, intervals.length * 5);
-            return function () {
-                count += 1;
-                var i = a[count % a.length];
-                if (count === Math.floor(intervals.length + (intervals.length * 0.1725))) {
-                    count = 0;
-                }
-                return {
-                    number: i,
-                    end: i % (intervals.length * 5)
-                };
-            };
-        };
         function init() {
             idPrefix = cid();
             timer = new Worker("js/seqTimer.js");
@@ -957,25 +923,7 @@ define(['setList', 'piano', 'main', '12tone'], function (setListObject, piano, m
             ui = createUI();
             ui.redraw();
         }
-        window.navigator.requestMIDIAccess({
-            sysex: false
-        }).then(function (e) {
-            midi = e;
-            pipes = { inputs: {}, outputs: {} };
-            function getPipes(pipe) {
-                var i, s = midi[pipe].values();
-                for (i = s.next(); i && !i.done; i = s.next()) {
-                    if (i && i.value) {
-                        pipes[pipe][i.value.id] = i;
-                        // if (pipe === 'inputs') {
-                        //     i.value.onmidimessage = readMidiMessage(i, pipe);
-                        // }
-                    }
-                }
-            }
-            ['inputs', 'outputs'].forEach(getPipes);
-            requestAnimationFrame(init);
-        });
+        midi.init(init);
     }
     sequencer({
         parentNode: document.body

@@ -118,11 +118,17 @@
                 display: inline-block;
                 visibility: visible;
             }
-            .seq-track-mismatch {
-                background: yellow;
+            .seq-track-mismatch-note:before {
+                content: "note mismatch";
             }
-            .seq-phrase-mismatch {
-                background: yellow;
+            .seq-phrase-mismatch-note:before {
+                content: "note mismatch";
+            }
+            .seq-track-mismatch-pattern:before {
+                content: "pattern mismatch";
+            }
+            .seq-phrase-mismatch-pattern:before {
+                content: "pattern mismatch";
             }
             .seq-track-control {
                 background: #333;
