@@ -1,0 +1,39 @@
+.ui-combo-menu {
+    border: solid 1px #CCC;
+    overflow: hidden;
+    overflow-y: auto;
+    background: #171727;
+    color: dodgerblue;
+}
+.ui-combo-selected-item {
+    background: #111;
+    color: orange;
+}
+.ui-combo-title {
+    font-size: .75rem;
+}
+.ui-combo-button {
+    background: #111;
+    width: 50px;
+    height: 13px;
+    margin-bottom: -3px;
+    border: solid 1px #444;
+    overflow: hidden;
+    padding: 0;
+}
+.ui-combo-menu-item {
+    margin: 1px 3px 1px 3px;
+}
+.ui-combo-meter {
+    height: 18px;
+    background: green;
+}
+.ui-combo-input {
+    background: #171727;
+    text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em dodgerblue;
+    color: lightblue;
+    padding: 0;
+    border: 0;
+    border: solid 1px #101010;
+    -webkit-appearance: none;
+}

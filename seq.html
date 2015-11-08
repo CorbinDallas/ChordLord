@@ -15,7 +15,7 @@
             }
             .seq-list input, .seq-list select {
                 background: #171727;
-                text-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em dodgerblue;
+                text-shadow: 1px 1px 2px black, 0 0 1rem blue, 0 0 0.2rem dodgerblue;
                 color: lightblue;
                 padding: 0;
                 border: 0;
@@ -57,7 +57,7 @@
                 float: right;
                 clear: both;
             }
-            .seq-phrase select {
+            .seq-phrase select, .seq-phrase input {
                 width: 250px;
             }
             .seq-phrase button, .seq-phrase div {
@@ -149,12 +149,41 @@
                 transition: color 0.25s ease-in-out;
             }
             .seq-track-info, .seq-phrase-info {
-                float: left;
+                display: block;
             }
             .seq-track-piano-container {
                 background: #222;
                 text-align: center;
                 overflow: hidden;
+            }
+            .seq-scale-item {
+                margin: 1px;
+                border-bottom: solid 1px #555;
+            }
+            .seq-scales-xad,
+            .seq-scales-sibling-name,
+            .seq-scales-chord-symbol,
+            .seq-scales-sibling-key,
+            .seq-scales-set,
+            .seq-scales-family,
+            .seq-scales-scale-formula {
+                margin: 0;
+                padding: 1px;
+                display: inline-block;
+            }
+            .seq-scales-xad, .seq-scales-family {
+                float: left;
+                margin-right: 10px;
+            }
+            .seq-track-timesig-top, .seq-track-timesig-bottom {
+                width: 30px;
+            }
+            .seq-scales-xad-title {
+                color: #EEE;
+                font-size: 2rem;
+            }
+            .seq-scales-family-title {
+                color: #EEE;
             }
         </style>
     </head>

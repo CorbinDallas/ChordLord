@@ -1,6 +1,6 @@
 /*jslint browser: true, plusplus: true, unparam: false*/
 /*globals Worker: false, setList: false, performance: false, define:false */
-define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, piano, main, tt, midi) {
+define(['setList', 'piano', 'main', '12tone', 'midi', 'ui'], function (setListObject, piano, main, tt, midi, libui) {
     'use strict';
     function sequencer(mainArgs) {
         var atom,
@@ -24,37 +24,84 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
             },
             timeSignature = [4, 4],
             timings = midi.timings,
-            noEditInputs = /^(phraseTime|phraseCounter|pianoInput|index\S*|timeMismatch|stop|remove|items|id|play|createPhrase|pause|schedule|rhythmTimes|unhighlight|highlight|msTime|msLength)$/,
+            editInputs = /^(channel|deviceId|key|transpose|scales|intervals|rhythm|chords|velocities|style|step|stepStyle|offset|gate|length)$/,
             //noEditInputs = /blah/,
             scalesSelect,
+            scales,
+            simpleScales,
             ui,
             pipes,
             parentNode = mainArgs.parentNode,
             elements = {},
             trackParams = {
                 name: '',
-                channel: '1',
-                deviceId: '1'
+                channel: {
+                    value: 1
+                },
+                deviceId: {}
             },
             itemParams = {
                 name: '',
-                key: '0',
-                index: '0',
-                indexRest: '0',
-                indexNote: '-1',
-                indexStep: '0',
-                transpose: midiMiddleC.toString(),
-                scales: 'Harmonic Minor',
-                intervals: defaultScale,
-                rhythm: 'q',
-                chords: '[1]',
-                velocities: '64',
-                style: 'Up',
-                step: '1',
-                stepStyle: 'Up',
-                offset: '0',
-                gate: '50',
-                length: '4'
+                key: {
+                    value: 0,
+                    min: 0,
+                    max: 127
+                },
+                index: { value: '0'},
+                indexRest: { value: '0'},
+                indexNote: { value: '-1'},
+                indexStep: { value: '0'},
+                transpose: {
+                    value: 0,
+                    min: 0,
+                    max: 127
+                },
+                intervals: {
+                    value: 1,
+                    min: 0,
+                    max: 60
+                },
+                rhythm: {
+                    value: 'q',
+                    min: 0,
+                    max: 60
+                },
+                chords: {
+                    value: '[1]',
+                    min: 0,
+                    max: 60
+                },
+                velocities: {
+                    value: 64,
+                    min: 0,
+                    max: 64
+                },
+                style: {
+                    value: 'Up'
+                },
+                step: {
+                    value: 1,
+                    min: 0,
+                    max: 127
+                },
+                stepStyle: {
+                    value: 'Up'
+                },
+                offset: {
+                    value: 0,
+                    min: 0,
+                    max: 127
+                },
+                gate: {
+                    value: 50,
+                    min: 0,
+                    max: 1200
+                },
+                length: {
+                    value: '4',
+                    min: 0,
+                    max: 127
+                }
             },
             queueLength = 500,
             tracks = {},
@@ -62,15 +109,48 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
         function getById(id) {
             return document.getElementById(idPrefix + id);
         }
+        function noSelect(eles) {
+            try {
+                var x, t = function () { return false; };
+                for (x = 0; eles.length > x; x += 1) {
+                    eles[x].style.userSelect = "none";
+                }
+            } catch (ignore) { }
+        }
         function createScaleSelectArray() {
-            scalesSelect = document.createElement('select');
+            var lastFamily, lastXad;
+            scales = [];
+            simpleScales = [];
             Object.keys(setList).forEach(function (xad) {
                 Object.keys(setList[xad]).forEach(function (family) {
-                    Object.keys(setList[xad][family]).forEach(function (set) {
-                        var o = document.createElement('option');
-                        o.value = setList[xad][family][set].set.join(',');
-                        o.innerHTML = xad + ' - ' + family + ' - ' + set;
-                        scalesSelect.appendChild(o);
+                    Object.keys(setList[xad][family]).forEach(function (siblingKey) {
+                        var sibling = setList[xad][family][siblingKey],
+                            h = [];
+                        if (xad !== lastXad) {
+                            h.push('<h3 class=seq-scales-xad-title>' + xad + '</h3>');
+                            scales.push([h.join(''), sibling.set.join(',')]);
+                            h = [];
+                        }
+                        if (family !== lastFamily) {
+                            h.push('<h4 class=seq-scales-family-title>' + family + '</h4>');
+                            scales.push([h.join(''), sibling.set.join(',')]);
+                            h = [];
+                        }
+                        h.push('<div class=seq-scale-item>');
+                        h.push('<span class=seq-scales-xad>' + xad + '</span>'
+                            + ' <span class=seq-scales-family>' + family + '</span>'
+                            + ' <span class=seq-scales-sibling-key>(' + siblingKey + ')</span>'
+                            + ' <span class=seq-scales-sibling-name>' + sibling.name + '</span>'
+                            + ' <span class=seq-scales-chord-symbol>' + sibling.chordSymbol + '</span>'
+                            + ' <span class=seq-scales-scale-formula> ♪ ' + sibling.scaleFormula.join(',') + '</span>')
+                            + ' <span class=seq-scales-set>#' + sibling.set.join(',') + '</span>';
+                        h.push('</div>');
+                        scales.push([h.join(''), sibling.set.join(',')]);
+                        if (sibling.simple) {
+                            simpleScales.push([h.join(''), sibling.set.join(',')]);
+                        }
+                        lastFamily = family;
+                        lastXad = xad;
                     });
                 });
             });
@@ -88,12 +168,12 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                 elements[cacheId] = e;
             }
             e.id = idPrefix + cacheId;
-            if (e.parentNode === undefined
-                    || e.parentNode !== parentNode) {
+            if (parentNode && (e.parentNode === undefined
+                    || e.parentNode !== parentNode)) {
                 parentNode.appendChild(e);
             }
             if (className) {
-                e.className = className;
+                e.classList.add(className);
             }
             if (title) {
                 e.title = title;
@@ -101,13 +181,16 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
             if (html) {
                 e.innerHTML = html;
             }
+            if (e.tagName !== 'input') {
+                noSelect([e]);
+            }
             return e;
         }
         function numMap(i) {
             return parseInt(i, 10);
         }
         function formatChordName(strIntervals) {
-            var chordNames = main.getChordNames(strIntervals.split(',').map(numMap));
+            var chordNames = main.getChordNames(strIntervals.toString().split(',').map(numMap));
             return chordNames.map(function (i) {
                 return i.sibling.chordSymbol;
             }).join('<br>');
@@ -117,6 +200,11 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
         }
         function add(a, b) {
             return (Math.ceil(a * mag) + Math.ceil(b * mag)) / mag;
+        }
+        function resumeAll() {
+            Object.keys(tracks).forEach(function (tracksKey) {
+                tracks[tracksKey].resume();
+            });
         }
         function playAll() {
             Object.keys(tracks).forEach(function (tracksKey) {
@@ -134,16 +222,209 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
             });
         }
         function formatPhraseInfo(phrase) {
-            var chords = formatChordName(phrase.intervals);
-            return tt.noteNames[(phrase.key + phrase.transpose) % tt.noteNames.length]
+            var transpose = parseInt(phrase.transpose, 10),
+                key = parseInt(phrase.key, 10),
+                chords = formatChordName(phrase.intervals);
+            return tt.noteNames[(120 + transpose + key) % tt.noteNames.length]
                 + ' ' + chords;
+        }
+        function createStyles() {
+            var styles = {};
+            function createOffsetArray(n, max) {
+                var x, ca = 0, cb = n, a = [];
+                for (x = 0; x < max; x += 1) {
+                    ca += 1;
+                    cb += 1;
+                    a.push(ca);
+                    a.push(cb);
+                }
+                return a;
+            }
+            styles.Up = function (offset, mod) {
+                var count = -1 + offset;
+                return function (args) {
+                    count += 1;
+                    return {
+                        index: count % mod,
+                        end: count % mod === 0 && count > 0
+                    };
+                };
+            };
+            styles.Down = function (offset, mod) {
+                var count = offset;
+                return function (args) {
+                    if (count % mod === 0) {
+                        count = mod - 1;
+                        return {
+                            index: count % mod,
+                            end: true
+                        };
+                    }
+                    count += (mod - 1);
+                    return {
+                        index: count % mod,
+                        end: false
+                    };
+                };
+            };
+            styles['Up Down'] = function (offset, mod) {
+                var up = true,
+                    first = true,
+                    end,
+                    count = offset;
+                return function (args) {
+                    end = false;
+                    if (count === mod - 1) {
+                        up = false;
+                        first = true;
+                    }
+                    if (count === 0) {
+                        if (!first) {
+                            end = true;
+                        }
+                        first = false;
+                        up = true;
+                    }
+                    if (up) {
+                        return {
+                            index: ++count,
+                            end: end
+                        };
+                    }
+                    return {
+                        index: --count,
+                        end: end
+                    };
+                };
+            };
+            styles['Down Up'] = function (offset, mod) {
+                var up,
+                    end,
+                    count = mod + offset;
+                return function (args) {
+                    if (count === mod - 1) {
+                        end = true;
+                        up = false;
+                    }
+                    if (count === 0) {
+                        up = true;
+                    }
+                    if (up) {
+                        return {
+                            index: ++count % mod,
+                            end: end
+                        };
+                    }
+                    return {
+                        index: --count % mod,
+                        end: end
+                    };
+                };
+            };
+            styles["3rds Cycle"] = function (offset, mod) {
+                var count = offset;
+                return function (args) {
+                    count += 2;
+                    return {
+                        index: count % mod,
+                        end: count % mod
+                    };
+                };
+            };
+            styles["4ths Cycle"] = function (offset, mod) {
+                var count = offset;
+                return function (args) {
+                    count += 3;
+                    return {
+                        index: count % mod,
+                        end: count % mod
+                    };
+                };
+            };
+            styles["5ths Cycle"] = function (offset, mod) {
+                var count = offset;
+                return function (args) {
+                    count += 4;
+                    return {
+                        index: count % mod,
+                        end: count % mod
+                    };
+                };
+            };
+            styles["6ths Cycle"] = function (offset, mod) {
+                var count = offset;
+                return function (args) {
+                    count += 5;
+                    return {
+                        index: count % mod,
+                        end: count % mod
+                    };
+                };
+            };
+            styles["3rds Sequence"] = function (offset, mod) {
+                var count = offset,
+                    a = createOffsetArray(2, mod * 2);
+                return function (args) {
+                    var i = a[count++ % a.length];
+                    if (count === Math.floor(mod + (mod * 0.5))) {
+                        count = 0;
+                    }
+                    return {
+                        index: i,
+                        end: i % (mod * 2)
+                    };
+                };
+            };
+            styles["4ths Sequence"] = function (offset, mod) {
+                var count = offset,
+                    a = createOffsetArray(3, mod * 3);
+                return function (args) {
+                    var i = a[count++ % a.length];
+                    if (count === Math.floor(mod + (mod * 0.33333333))) {
+                        count = 0;
+                    }
+                    return {
+                        index: i % mod,
+                        end: i % (mod * 3)
+                    };
+                };
+            };
+            styles["5ths Sequence"] = function (offset, mod) {
+                var count = offset,
+                    a = createOffsetArray(4, mod * 4);
+                return function (args) {
+                    var i = a[count++ % a.length];
+                    if (count === Math.floor(mod + (mod * 0.25))) {
+                        count = 0;
+                    }
+                    return {
+                        index: i % mod,
+                        end: i % (mod * 4)
+                    };
+                };
+            };
+            styles["6ths"] = function (offset, mod) {
+                var count = offset,
+                    a = createOffsetArray(5, mod * 5);
+                return function (args) {
+                    var i = a[count++ % a.length];
+                    if (count === Math.floor(mod + (mod * 0.1725))) {
+                        count = 0;
+                    }
+                    return {
+                        index: i % mod,
+                        end: i % (mod * 5)
+                    };
+                };
+            };
+            return styles;
         }
         function createTrack(trackArgs) {
             trackArgs = trackArgs || {};
             var self = {
-                    channel: trackArgs.channel || '0',
+                    channel: trackArgs.channel,
                     items: {},
-                    deviceId: trackArgs.deviceId || '1',
+                    deviceId: trackArgs.deviceId,
                     id: cid(),
                     phraseTime: 0,
                     phraseCounter: 0
@@ -162,7 +443,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     ties;
                 // increase the value of the note by taking into
                 // account the ties "^" and dots "."
-                timingString = r.trim();
+                timingString = r.toString().trim();
                 ties = timingString.split('^');
                 dotCount = 0;
                 for (x = 0; x < ties.length; x += 1) {
@@ -187,204 +468,13 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                 return total;
             }
             function getIntervals(phrase) {
-                return phrase.intervals.split(',').map(numMap);
+                return phrase.intervals.toString().split(',').map(numMap);
             }
             function quantizedStart() {
                 var q = toRhythm(quantizeTime);
                 startTime = performance.now();
                 startTime = startTime - (startTime % q) + q;
                 return startTime;
-            }
-            function createStyles() {
-                var styles = {};
-                function createOffsetArray(n, max) {
-                    var x, ca = 0, cb = n, a = [];
-                    for (x = 0; x < max; x += 1) {
-                        ca += 1;
-                        cb += 1;
-                        a.push(ca);
-                        a.push(cb);
-                    }
-                    return a;
-                }
-                styles.Up = function (offset, mod) {
-                    var count = -1 + offset;
-                    return function (args) {
-                        count += 1;
-                        return {
-                            index: count % mod,
-                            end: count % mod === 0 && count > 0
-                        };
-                    };
-                };
-                styles.Down = function (offset, mod) {
-                    var count = offset;
-                    return function (args) {
-                        if (count % mod === 0) {
-                            count = mod - 1;
-                            return {
-                                index: count % mod,
-                                end: true
-                            };
-                        }
-                        count += (mod - 1);
-                        return {
-                            index: count % mod,
-                            end: false
-                        };
-                    };
-                };
-                styles['Up Down'] = function (offset, mod) {
-                    var up = true,
-                        first = true,
-                        end,
-                        count = offset;
-                    return function (args) {
-                        end = false;
-                        if (count === mod - 1) {
-                            up = false;
-                            first = true;
-                        }
-                        if (count === 0) {
-                            if (!first) {
-                                end = true;
-                            }
-                            first = false;
-                            up = true;
-                        }
-                        if (up) {
-                            return {
-                                index: ++count,
-                                end: end
-                            };
-                        }
-                        return {
-                            index: --count,
-                            end: end
-                        };
-                    };
-                };
-                styles['Down Up'] = function (offset, mod) {
-                    var up,
-                        end,
-                        count = mod + offset;
-                    return function (args) {
-                        if (count === mod - 1) {
-                            end = true;
-                            up = false;
-                        }
-                        if (count === 0) {
-                            up = true;
-                        }
-                        if (up) {
-                            return {
-                                index: ++count % mod,
-                                end: end
-                            };
-                        }
-                        return {
-                            index: --count % mod,
-                            end: end
-                        };
-                    };
-                };
-                styles["3rds Cycle"] = function (offset, mod) {
-                    var count = offset;
-                    return function (args) {
-                        count += 2;
-                        return {
-                            index: count % mod,
-                            end: count % mod
-                        };
-                    };
-                };
-                styles["4ths Cycle"] = function (offset, mod) {
-                    var count = offset;
-                    return function (args) {
-                        count += 3;
-                        return {
-                            index: count % mod,
-                            end: count % mod
-                        };
-                    };
-                };
-                styles["5ths Cycle"] = function (offset, mod) {
-                    var count = offset;
-                    return function (args) {
-                        count += 4;
-                        return {
-                            index: count % mod,
-                            end: count % mod
-                        };
-                    };
-                };
-                styles["6ths Cycle"] = function (offset, mod) {
-                    var count = offset;
-                    return function (args) {
-                        count += 5;
-                        return {
-                            index: count % mod,
-                            end: count % mod
-                        };
-                    };
-                };
-                styles["3rds Sequence"] = function (offset, mod) {
-                    var count = offset,
-                        a = createOffsetArray(2, mod * 2);
-                    return function (args) {
-                        var i = a[count++ % a.length];
-                        if (count === Math.floor(mod + (mod * 0.5))) {
-                            count = 0;
-                        }
-                        return {
-                            index: i,
-                            end: i % (mod * 2)
-                        };
-                    };
-                };
-                styles["4ths Sequence"] = function (offset, mod) {
-                    var count = offset,
-                        a = createOffsetArray(3, mod * 3);
-                    return function (args) {
-                        var i = a[count++ % a.length];
-                        if (count === Math.floor(mod + (mod * 0.33333333))) {
-                            count = 0;
-                        }
-                        return {
-                            index: i % mod,
-                            end: i % (mod * 3)
-                        };
-                    };
-                };
-                styles["5ths Sequence"] = function (offset, mod) {
-                    var count = offset,
-                        a = createOffsetArray(4, mod * 4);
-                    return function (args) {
-                        var i = a[count++ % a.length];
-                        if (count === Math.floor(mod + (mod * 0.25))) {
-                            count = 0;
-                        }
-                        return {
-                            index: i % mod,
-                            end: i % (mod * 4)
-                        };
-                    };
-                };
-                styles["6ths"] = function (offset, mod) {
-                    var count = offset,
-                        a = createOffsetArray(5, mod * 5);
-                    return function (args) {
-                        var i = a[count++ % a.length];
-                        if (count === Math.floor(mod + (mod * 0.1725))) {
-                            count = 0;
-                        }
-                        return {
-                            index: i % mod,
-                            end: i % (mod * 5)
-                        };
-                    };
-                };
-                return styles;
             }
             function updateRhythmTimes() {
                 // this function creates an array of rhythmTimes that get used
@@ -400,7 +490,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                         phrase = self.items[itemKey],
                         intervals = getIntervals(phrase),
                         offset = parseInt(phrase.offset, 10),
-                        gate = phrase.gate.split(',').map(numMap),
+                        gate = phrase.gate.toString().split(',').map(numMap),
                         step = parseInt(phrase.step, 10),
                         chordNames = main.getChordNames(intervals),
                         rhythm = phrase.rhythm.split(',');
@@ -450,7 +540,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     v,
                     r,
                     self.deviceId,
-                    self.channel,
+                    (parseInt(self.channel, 10) - 1).toString(),
                     t
                 );
             }
@@ -521,7 +611,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     stepStyle, intervals, rhythmStrings, rhythmString, velocities, chord, intervalIndex,
                     key, transpose, step, midiNoteValue, rhythmLength, originalIntervals,
                     phraseKeys = Object.keys(self.items);
-                while (time < performance.now() + queueLength && playing) {
+                while (time < performance.now() + queueLength && playing && trackLength > 0) {
                     pos = time % trackLength;
                     phrase = self.items[phraseKeys[self.phraseCounter % phraseKeys.length]];
                     pos = time % trackLength;
@@ -531,8 +621,8 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     transpose = parseInt(phrase.transpose, 10);
                     chord = JSON.parse('{"n":[' + phrase.chords + ']}').n;
                     rhythmStrings = phrase.rhythm.split(',');
-                    velocities = phrase.velocities.split(',').map(numMap);
-                    rMod = phrase.index % phrase.rhythmTimes.length;
+                    velocities = phrase.velocities.toString().split(',').map(numMap);
+                    rMod = phrase.index % rhythmStrings.length;
                     vMod = phrase.index % velocities.length;
                     rhythmString = rhythmStrings[phrase.indexRest % rhythmStrings.length];
                     rhythmLength = toRhythm(rhythmString);
@@ -558,10 +648,10 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                         for (y = 0, ly = chord[phrase.index % chord.length].length; y < ly; y += 1) {
                             intervalIndex = (style.index + chord[x][y] - 1) % phrase.parsedIntervals.length;
                             interval = phrase.parsedIntervals[intervalIndex];
-                            midiNoteValue = transpose + key + interval;
+                            midiNoteValue = midiMiddleC + transpose + key + interval;
                             scheduleNote(
                                 midiNoteValue,
-                                parseInt(phrase.velocities[vMod], 10),
+                                parseInt(velocities[vMod], 10),
                                 time,
                                 phrase.rhythmTimes[rMod].length
                             );
@@ -589,6 +679,13 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     }
                 }
             };
+            self.resume = function () {
+                if (playing) {
+                    self.play();
+                } else {
+                    updateRhythmTimes();
+                }
+            };
             self.play = function () {
                 // the order of these methods is crucial 
                 updateRhythmTimes();
@@ -606,7 +703,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                 phrase.id = self.id + '_' + cid();
                 self.items[phrase.id] = phrase;
                 Object.keys(itemParams).forEach(function (key) {
-                    phrase[key] = args[key] === undefined ? itemParams[key] : args[key];
+                    phrase[key] = args[key] === undefined ? itemParams[key].value : args[key];
                 });
                 phrase.remove = function () {
                     delete self.items[phrase.id];
@@ -635,45 +732,112 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
             trackInit();
             return self;
         }
+        function getNumArray(min, max, step) {
+            var x, a = [];
+            for (x = min; x <= max; x += (step || 1)) {
+                a.push(x);
+            }
+            return a;
+        }
+        function getItemsFor(key) {
+            var k;
+            if (key === 'name') {
+                return [''];
+            }
+            if (key === 'key') {
+                return getNumArray(-12, 12);
+            }
+            if (key === 'transpose' || key === 'offset') {
+                return getNumArray(-30, 30);
+            }
+            if (key === 'step') {
+                return getNumArray(-88, 88);
+            }
+            if (key === 'intervals') {
+                return getNumArray(0, 11);
+            }
+            if (key === 'rhythm') {
+                k = Object.keys(midi.timings);
+                k.concat(rhythmPatterns);
+                return k;
+            }
+            if (key === 'chords') {
+                return ['[1]', '[1, 5]', '[1, 3]', '[1, 3, 5]', '[1, 3, 5, 7]'];
+            }
+            if (key === 'velocities') {
+                return [0, 1, 16, 36, 64, 127, '64, 127'];
+            }
+            if (key === 'style' || key === 'stepStyle') {
+                return Object.keys(createStyles());
+            }
+            if (key === 'gate') {
+                return [0, 1, 10, 20, 25, 35, 50, 75, 100, 150, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
+            }
+            if (key === 'length') {
+                return Object.keys(midi.timings);
+            }
+            if (key === 'channel') {
+                return getNumArray(1, 16);
+            }
+            if (key === 'deviceId') {
+                return Object.keys(midi.pipes.outputs).map(function (key) {
+                    var v = midi.pipes.outputs[key];
+                    return [v.value.name, v.value.id];
+                });
+            }
+            return [];
+        }
         function createInputs(e, args, ctrlType) {
             Object.keys(args).forEach(function (key) {
-                var v, c, label, input;
-                function bindData() {
-                    input.innerHTML = scalesSelect.innerHTML;
-                    input.removeEventListener('mousedown', bindData);
-                }
+                var params, v, c, label, input, combo, i;
                 function update(value) {
                     args[key] = value === undefined ? input.value : value;
-                    pauseAll();
-                    playAll();
+                    resumeAll();
                 }
-                if (!noEditInputs.test(key)) {
-                    v = ctrlType === 'phrase' ? itemParams[key] : trackParams[key];
+                if (editInputs.test(key)) {
+                    params = ctrlType === 'phrase' ? itemParams[key] : trackParams[key];
+                    params = params || {};
+                    v = params.value;
                     c = ce('div', e, 'seq-input-continer', undefined, args.id + 'continer' + key);
-                    if (key === 'deviceId') {
-                        args[key] = Object.keys(midi.pipes.outputs)[0];
-                    }
-                    label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key);
-                    if (key === 'scales') {
-                        input = ce('select', c, 'seq-input', key, args.id + 'input' + key);
-                        input.value = defaultScale;
-                        input.addEventListener('mousedown', bindData);
-                        input.addEventListener('change', function () {
-                            args.intervals = this.value;
-                            getById(args.id + 'inputintervals').value = this.value;
-                            getById(args.id + 'inputintervals').change();
-                        });
-                        input.className = 'seq-input';
-                        if (!input.parentNode) {
-                            c.appendChild(input);
-                        }
-                        input.value = v;
-                    } else {
-                        input = ce('input', c, 'seq-input', key, args.id + 'input' + key);
-                        label.setAttribute('for',  args.id + 'input' + key);
-                    }
-                    // post input creation
+                    // if (key === 'deviceId') {
+                    //     args[key] = Object.keys(midi.pipes.outputs)[0];
+                    // }
                     if (key === 'intervals') {
+                        input = ce('input', undefined, undefined, '', args.id + 'input' + key);
+                        if (!input.parentNode) {
+                            i = [];
+                            i = i.concat(simpleScales);
+                            i = i.concat(scales);
+                            combo = libui.combo({
+                                input: input,
+                                items: i,
+                                parentNode: c,
+                                index: 196,
+                                title: key
+                            });
+                        }
+                    } else {
+                        // label = ce('label', c, 'seq-input-label', key, args.id + 'label' + key);
+                        // label.setAttribute('for',  args.id + 'input' + key);
+                        input = ce('input', undefined, undefined, key, args.id + 'input' + key);
+                        if (!input.parentNode) {
+                            combo = libui.combo({
+                                input: input,
+                                items: getItemsFor(key),
+                                parentNode: c,
+                                min: params.min,
+                                max: params.max,
+                                value: params.value,
+                                index: params.index,
+                                title: key
+                            });
+                        }
+                    }
+                    c.parentNode.addEventListener('transitionend', function () {
+                        requestAnimationFrame(combo.resize);
+                    });
+                    // post input creation
+                    if (/(intervals|key|transpose)/.test(key)) {
                         input.change = function () {
                             args.intervals = this.value;
                             getById(args.id + 'info').innerHTML = formatPhraseInfo(args);
@@ -684,7 +848,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                     input.addEventListener('change', function () {
                         update();
                     });
-                    input.value = args[key] || v;
+                    input.value = args[key] || v || input.value;
                 }
             });
         }
@@ -844,7 +1008,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                         }
                     };
                     trackPlay.onclick = function () {
-                        t.play();
+                        t.resume();
                     };
                     trackPause.onclick = function () {
                         t.pause();
@@ -882,6 +1046,7 @@ define(['setList', 'piano', 'main', '12tone', 'midi'], function (setListObject, 
                         };
                         phraseDuplicate.onclick = function () {
                             t.createPhrase(phrase);
+                            t.resume();
                             redraw();
                         };
                         phrase.highlight = function () {

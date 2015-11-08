@@ -137,6 +137,7 @@ define(function () {
                 },
                 "(6) (2-5) Perfect Fifth": {
                     "b": {
+                        "simple": true,
                         "name": "Perfect 5th, Power Chord",
                         "chordSymbol": "5",
                         "scaleFormula": [
@@ -163,6 +164,7 @@ define(function () {
                 },
                 "(7) (2-6S) Tritone": {
                     "a": {
+                        "simple": true,
                         "name": "Augmented 4th, Diminished 5th, Tritone, Diabolus en Musica",
                         "chordSymbol": "",
                         "scaleFormula": [
@@ -799,6 +801,7 @@ define(function () {
                 },
                 "(22) (3-9) sus4": {
                     "c": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "sus4",
                         "scaleFormula": [
@@ -813,6 +816,7 @@ define(function () {
                         ]
                     },
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "sus2",
                         "scaleFormula": [
@@ -843,6 +847,7 @@ define(function () {
                 },
                 "(23) (3-10) Diminished Triad": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Diminished",
                         "scaleFormula": [
@@ -887,6 +892,7 @@ define(function () {
                 },
                 "(24) (3-11) Minor Triad": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor Triad",
                         "scaleFormula": [
@@ -931,6 +937,7 @@ define(function () {
                 },
                 "(25) (3-11M) Major Triad": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Major Triad",
                         "scaleFormula": [
@@ -975,6 +982,7 @@ define(function () {
                 },
                 "(26) (3-12S) Augmented Triad": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Augmented Triad",
                         "scaleFormula": [
@@ -2855,6 +2863,7 @@ define(function () {
                 },
                 "(55) (4-19) Minor Major 7": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor Major 7",
                         "scaleFormula": [
@@ -2921,6 +2930,7 @@ define(function () {
                 },
                 "(56) (4-19M) Augmented Major 7": {
                     "c": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Augmented Major 7",
                         "scaleFormula": [
@@ -2993,6 +3003,7 @@ define(function () {
                 },
                 "(57) (4-20) Major 7": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Major 7",
                         "scaleFormula": [
@@ -3125,6 +3136,7 @@ define(function () {
                 },
                 "(59) (4-22) Add 9": {
                     "a": {
+                        "simple": true,
                         "name": "Mu Chord, Steely Dan Chord",
                         "chordSymbol": "Add 9, Major (9)",
                         "scaleFormula": [
@@ -3257,6 +3269,7 @@ define(function () {
                 },
                 "(61) (4-23) 7 sus4": {
                     "d": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "7 sus4",
                         "scaleFormula": [
@@ -3323,6 +3336,7 @@ define(function () {
                 },
                 "(62) (4-24) Augmented 7": {
                     "c": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Augmented 7",
                         "scaleFormula": [
@@ -3389,6 +3403,7 @@ define(function () {
                 },
                 "(63) (4-25S) Dominant 7 b5": {
                     "b": {
+                        "simple": true,
                         "name": "French Augmented Sixth",
                         "chordSymbol": "Dominant 7 b5",
                         "scaleFormula": [
@@ -3429,6 +3444,7 @@ define(function () {
                 },
                 "(64) (4-26) Minor 7": {
                     "c": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor 7",
                         "scaleFormula": [
@@ -3495,6 +3511,7 @@ define(function () {
                 },
                 "(65) (4-27) Minor 7 b5": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor 7 b5, Half-Diminished 7",
                         "scaleFormula": [
@@ -3561,6 +3578,7 @@ define(function () {
                 },
                 "(66) (4-27M) Dominant 7": {
                     "d": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Dominant 7",
                         "scaleFormula": [
@@ -3627,6 +3645,7 @@ define(function () {
                 },
                 "(67) (4-28S) Diminished 7": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Diminished 7",
                         "scaleFormula": [
@@ -6373,6 +6392,7 @@ define(function () {
                 },
                 "(98) (5-Z17) Minor Major 9": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor Major 9",
                         "scaleFormula": [
@@ -6943,6 +6963,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Hirajoshi",
                         "chordSymbol": "Minor (9 b13)",
                         "scaleFormula": [
@@ -6961,6 +6982,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Iwato",
                         "chordSymbol": "Half-Diminished 7 sus4 (b9)",
                         "scaleFormula": [
@@ -8025,6 +8047,7 @@ define(function () {
                 },
                 "(116) (5-27) Major 9": {
                     "a": {
+                        "simple": true,
                         "name": "Phrygian #5 Pentachord",
                         "chordSymbol": "Minor #5 (b9 11)",
                         "scaleFormula": [
@@ -8117,6 +8140,7 @@ define(function () {
                 },
                 "(117) (5-27M) Minor 9": {
                     "c": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor 9",
                         "scaleFormula": [
@@ -8503,6 +8527,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Kumoi",
                         "chordSymbol": "Minor 6 (9)",
                         "scaleFormula": [
@@ -8521,6 +8546,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Insen",
                         "chordSymbol": "7 sus4 (b9)",
                         "scaleFormula": [
@@ -8853,6 +8879,7 @@ define(function () {
                 },
                 "(125) (5-31M) Dominant 7 (b9)": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Dominant 7 (b9)",
                         "scaleFormula": [
@@ -9221,6 +9248,7 @@ define(function () {
                 },
                 "(129) (5-34) Dominant 7 (9)": {
                     "b": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Dominant 7 (9)",
                         "scaleFormula": [
@@ -9313,6 +9341,7 @@ define(function () {
                 },
                 "(130) (5-35) Major Pentatonic": {
                     "a": {
+                        "simple": true,
                         "name": "Major Pentatonic",
                         "chordSymbol": "Major 6 (9)",
                         "scaleFormula": [
@@ -9385,6 +9414,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Minor Pentatonic",
                         "chordSymbol": "Minor 7 (11)",
                         "scaleFormula": [
@@ -16433,6 +16463,7 @@ define(function () {
                 },
                 "(192) (6-35S) Whole Tone Scale": {
                     "a": {
+                        "simple": true,
                         "name": "Whole Tone Scale, Messiaen Mode 1",
                         "chordSymbol": "Augmented 7 (9 #11)",
                         "scaleFormula": [
@@ -18768,6 +18799,7 @@ define(function () {
                 },
                 "(212) (6-Y25M) Blues Scale": {
                     "f": {
+                        "simple": true,
                         "name": "Blues Scale",
                         "chordSymbol": "Minor 7 (11 #11)",
                         "scaleFormula": [
@@ -24049,6 +24081,7 @@ define(function () {
                 },
                 "(247) (7-19) look me up, Enigmatic Minor, Ionian #2 b5 b6": {
                     "a": {
+                        "simple": true,
                         "name": "",
                         "chordSymbol": "Minor 6 (b9 9 #11)",
                         "scaleFormula": [
@@ -24361,6 +24394,7 @@ define(function () {
                 },
                 "(249) (7-20) Persian, Ionian #2 #6": {
                     "c": {
+                        "simple": true,
                         "name": "Persian, Ionian #2 #6",
                         "chordSymbol": "Major 7 (#9 11 #13)",
                         "scaleFormula": [
@@ -24405,6 +24439,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Todi, Phrygian #4 nat7, Lydian b2 b3 b6",
                         "chordSymbol": "Minor Major 7 (b9 #11 b13)",
                         "scaleFormula": [
@@ -24517,6 +24552,7 @@ define(function () {
                 },
                 "(250) (7-20M) Composite II, Ionian #2 #5 #6": {
                     "g": {
+                        "simple": true,
                         "name": "Composite II, Ionian #2 #5 #6",
                         "chordSymbol": "Augmented Major 7 (#9 11 #13)",
                         "scaleFormula": [
@@ -24985,6 +25021,7 @@ define(function () {
                 },
                 "(253) (7-22) Hungarian Minor": {
                     "e": {
+                        "simple": true,
                         "name": "Hungarian Minor, Aeolian #4 nat7, Lydian b3 b6",
                         "chordSymbol": "Minor Major 7 (9 #11 b13)",
                         "scaleFormula": [
@@ -25007,6 +25044,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Oriental, Mixolydian b2 b5, Locrian nat3 nat6",
                         "chordSymbol": "Dominant 7 b5 (b9 11 13)",
                         "scaleFormula": [
@@ -25073,6 +25111,7 @@ define(function () {
                         ]
                     },
                     "b": {
+                        "simple": true,
                         "name": "Double Harmonic, Bhairav, Ionian b2 b6",
                         "chordSymbol": "Major 7 (b9 11 b13)",
                         "scaleFormula": [
@@ -25609,6 +25648,7 @@ define(function () {
                 },
                 "(257) (7-24M) Enigmatic": {
                     "a": {
+                        "simple": true,
                         "name": "Enigmatic, Lydian Hexachord add b6",
                         "chordSymbol": "Major 6 (9 #11 b13)",
                         "scaleFormula": [
@@ -27234,6 +27274,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Marwa, Lydian b2",
                         "chordSymbol": "Major 7 ( b9 #11 13 )",
                         "scaleFormula": [
@@ -27324,6 +27365,7 @@ define(function () {
                 },
                 "(268) (7-30) Neapolitan Minor": {
                     "b": {
+                        "simple": true,
                         "name": "Neapolitan Minor, Phrygian nat7",
                         "chordSymbol": "Minor Major 7 ( b9 11 b13 )",
                         "scaleFormula": [
@@ -27390,6 +27432,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Hungarian Gypsy, Aeolian #4",
                         "chordSymbol": "Minor 7 ( 9 #11 b13 )",
                         "scaleFormula": [
@@ -27636,6 +27679,7 @@ define(function () {
                 },
                 "(270) (7-31) Hungarian Major": {
                     "g": {
+                        "simple": true,
                         "name": "Hungarian Major, Lydian #2 b7, Mixolydian #2 #4",
                         "chordSymbol": "Dominant 7 ( #9 #11 13 )",
                         "scaleFormula": [
@@ -27948,6 +27992,7 @@ define(function () {
                 },
                 "(272) (7-32) Harmonic Minor": {
                     "b": {
+                        "simple": true,
                         "name": "Harmonic Minor, Aeolian nat7",
                         "chordSymbol": "Minor Major 7 ( 9 11 b13 )",
                         "scaleFormula": [
@@ -27970,6 +28015,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Locrian nat6",
                         "chordSymbol": "Half-Diminished 7 ( b9 11 13 )",
                         "scaleFormula": [
@@ -27992,6 +28038,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Ionian #5",
                         "chordSymbol": "Augmented Major 7 ( 9 11 13)",
                         "scaleFormula": [
@@ -28014,6 +28061,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Dorian #4",
                         "chordSymbol": "Minor 7 ( 9 #11 13 )",
                         "scaleFormula": [
@@ -28036,6 +28084,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Phrygian nat3, Phrygian Dominant",
                         "chordSymbol": "Dominant 7 ( b9 11 b13 )",
                         "scaleFormula": [
@@ -28058,6 +28107,7 @@ define(function () {
                         ]
                     },
                     "g": {
+                        "simple": true,
                         "name": "Lydian #2",
                         "chordSymbol": "Major 7 ( #9 #11 13 )",
                         "scaleFormula": [
@@ -28080,6 +28130,7 @@ define(function () {
                         ]
                     },
                     "a": {
+                        "simple": true,
                         "name": "Locrian b4 bb7",
                         "chordSymbol": "Diminished 7 ( b9 b11 b13 )",
                         "scaleFormula": [
@@ -28104,6 +28155,7 @@ define(function () {
                 },
                 "(273) (7-32M) Harmonic Major": {
                     "b": {
+                        "simple": true,
                         "name": "Harmonic Major, Ionian b6",
                         "chordSymbol": "Major 7 ( 9 11 b13 )",
                         "scaleFormula": [
@@ -28126,6 +28178,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Dorian b5",
                         "chordSymbol": "Half-Diminished 7 ( 9  11 13 )",
                         "scaleFormula": [
@@ -28148,6 +28201,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Phrygian b4",
                         "chordSymbol": "Minor 7 ( b9 b11 b13 ), Dominant 7 ( b9 #9 b13 )",
                         "scaleFormula": [
@@ -28170,6 +28224,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Lydian b3",
                         "chordSymbol": "Minor Major 7 ( 9 #11 13 )",
                         "scaleFormula": [
@@ -28192,6 +28247,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Mixolydian b2",
                         "chordSymbol": "Dominant 7 ( b9 11 13 )",
                         "scaleFormula": [
@@ -28214,6 +28270,7 @@ define(function () {
                         ]
                     },
                     "g": {
+                        "simple": true,
                         "name": "Lydian augmented #2",
                         "chordSymbol": "Augmented Major 7 ( #9 #11 13 )",
                         "scaleFormula": [
@@ -28236,6 +28293,7 @@ define(function () {
                         ]
                     },
                     "a": {
+                        "simple": true,
                         "name": "Locrian bb7",
                         "chordSymbol": "Diminished 7 ( b9 11 b13 )",
                         "scaleFormula": [
@@ -28260,6 +28318,7 @@ define(function () {
                 },
                 "(274) (7-33) Neapolitan Major": {
                     "b": {
+                        "simple": true,
                         "name": "Neapolitan Major, Melodic Minor b2",
                         "chordSymbol": "Minor Major 7 ( b9 11 13 )",
                         "scaleFormula": [
@@ -28416,6 +28475,7 @@ define(function () {
                 },
                 "(275) (7-34) Melodic Minor": {
                     "b": {
+                        "simple": true,
                         "name": "Melodic Minor, Ionian b3, Dorian nat7, Jazz Minor",
                         "chordSymbol": "Minor Major 7 ( 9 11 13 )",
                         "scaleFormula": [
@@ -28438,6 +28498,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Dorian b2, Phrygian nat6",
                         "chordSymbol": "Minor 7 ( b9 11 13 )",
                         "scaleFormula": [
@@ -28460,6 +28521,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Lydian Augmented",
                         "chordSymbol": "Augmented Major 7 ( 9 #11 13 )",
                         "scaleFormula": [
@@ -28482,6 +28544,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Lydian b7, Mixolydian #4, Overtone Scale",
                         "chordSymbol": "Dominant 7 ( 9 #11 13 )",
                         "scaleFormula": [
@@ -28504,6 +28567,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Hindu, Mixolydian b6, Aeolian nat3",
                         "chordSymbol": "Dominant 7 ( 9 11 b13 )",
                         "scaleFormula": [
@@ -28526,6 +28590,7 @@ define(function () {
                         ]
                     },
                     "g": {
+                        "simple": true,
                         "name": "Locrian nat2, Aeolian b5",
                         "chordSymbol": "Half-Diminished ( 9 11 b13 )",
                         "scaleFormula": [
@@ -28548,6 +28613,7 @@ define(function () {
                         ]
                     },
                     "a": {
+                        "simple": true,
                         "name": "Super Locrian, Locrian b4, Altered Dominant",
                         "chordSymbol": "Half-Diminished ( b9 b11 b13), Dominant 7 (#5 b5 #9 b9), Altered",
                         "scaleFormula": [
@@ -28572,6 +28638,7 @@ define(function () {
                 },
                 "(276) (7-35) Major Scale": {
                     "b": {
+                        "simple": true,
                         "name": "Major Scale, Ionian, Bilawal",
                         "chordSymbol": "Major 7 ( 9 11 13 )",
                         "scaleFormula": [
@@ -28594,6 +28661,7 @@ define(function () {
                         ]
                     },
                     "c": {
+                        "simple": true,
                         "name": "Dorian, Kafi",
                         "chordSymbol": "Minor 7 ( 9 11 13 )",
                         "scaleFormula": [
@@ -28616,6 +28684,7 @@ define(function () {
                         ]
                     },
                     "d": {
+                        "simple": true,
                         "name": "Phrygian, Bhairavi",
                         "chordSymbol": "Minor 7 ( b9 11 b13 )",
                         "scaleFormula": [
@@ -28638,6 +28707,7 @@ define(function () {
                         ]
                     },
                     "e": {
+                        "simple": true,
                         "name": "Lydian, Kalyan",
                         "chordSymbol": "Major 7 ( 9 #11 13 )",
                         "scaleFormula": [
@@ -28660,6 +28730,7 @@ define(function () {
                         ]
                     },
                     "f": {
+                        "simple": true,
                         "name": "Mixolydian, Khamaj",
                         "chordSymbol": "Dominant 7 ( 9 11 13 )",
                         "scaleFormula": [
@@ -28682,6 +28753,7 @@ define(function () {
                         ]
                     },
                     "g": {
+                        "simple": true,
                         "name": "Aeolian, Asavari",
                         "chordSymbol": "Minor 7 ( 9 11 b13 )",
                         "scaleFormula": [
@@ -28704,6 +28776,7 @@ define(function () {
                         ]
                     },
                     "a": {
+                        "simple": true,
                         "name": "Locrian",
                         "chordSymbol": "Half-Diminished ( b9 11 b13 )",
                         "scaleFormula": [
@@ -37075,6 +37148,7 @@ define(function () {
                 },
                 "(322) (8-28S) Half-Whole Diminished Scale": {
                     "a": {
+                        "simple": true,
                         "name": "Half-Whole Diminished Scale, Messiaen Mode 2",
                         "chordSymbol": "Dominant 7 (b9 #9 #11 13)",
                         "scaleFormula": [
@@ -37099,6 +37173,7 @@ define(function () {
                         ]
                     },
                     "b": {
+                        "simple": true,
                         "name": "Whole-Half Diminished Scale",
                         "chordSymbol": "Diminished Major 7 (9 11 b13 13)",
                         "scaleFormula": [
